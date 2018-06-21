@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{58D5FD90-F169-4363-B5A5-D633E2F69158}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>mana.Foundation</RootNamespace>
+    <AssemblyName>mana.Foundation</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Buffer\BufferExtension.cs" />
+    <Compile Include="src\Buffer\ByteBuffer.cs" />
+    <Compile Include="src\Buffer\ByteReader.cs" />
+    <Compile Include="src\Buffer\IReadableBuffer.cs" />
+    <Compile Include="src\Buffer\IWritableBuffer.cs" />
+    <Compile Include="src\Data\DataObject.cs" />
+    <Compile Include="src\Data\DataObjectConfigAttribute.cs" />
+    <Compile Include="src\Data\DataObjectExtension.cs" />
+    <Compile Include="src\Data\Dynamic\DataField.cs" />
+    <Compile Include="src\Data\Dynamic\DataFieldTmpl.cs" />
+    <Compile Include="src\Data\Dynamic\DataNode.cs" />
+    <Compile Include="src\Data\Dynamic\DataNodeExtension.cs" />
+    <Compile Include="src\Data\Dynamic\DataNodeTmpl.cs" />
+    <Compile Include="src\Data\Dynamic\DataToken.cs" />
+    <Compile Include="src\Data\Mask.cs" />
+    <Compile Include="src\Logger.cs" />
+    <Compile Include="src\Net\NetChannel.cs" />
+    <Compile Include="src\Net\NetClient.cs" />
+    <Compile Include="src\Net\Packet.cs" />
+    <Compile Include="src\Net\PacketRcver.cs" />
+    <Compile Include="src\Net\PacketSnder.cs" />
+    <Compile Include="src\Net\Proto.cs" />
+    <Compile Include="src\Net\Protocol.cs" />
+    <Compile Include="src\Util\Cacheable.cs" />
+    <Compile Include="src\Util\CodingUtil.cs" />
+    <Compile Include="src\Util\ListCache.cs" />
+    <Compile Include="src\Util\MathTools.cs" />
+    <Compile Include="src\Util\ObjectCache.cs" />
+    <Compile Include="src\Util\ObjectPool.cs" />
+    <Compile Include="src\Util\StringBuilderCache.cs" />
+    <Compile Include="src\Util\Utils.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
