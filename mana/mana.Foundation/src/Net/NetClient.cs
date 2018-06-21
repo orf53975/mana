@@ -181,7 +181,7 @@ namespace mana.Foundation
         }
 
         public void Request<TRSP>(string route, Action<TRSP> rspHandler)
-            where TRSP : class, DataObject, new()
+            where TRSP : class, DataObject, Cacheable, new()
         {
             if (EnableCheckError)
             {
@@ -216,7 +216,7 @@ namespace mana.Foundation
         }
 
         public void Notify<T>(string route, Action<T> notifySetter)
-            where T : class, DataObject, new()
+            where T : class, DataObject, Cacheable, new()
         {
             if (EnableCheckError)
             {
@@ -245,7 +245,7 @@ namespace mana.Foundation
         }
 
         public void AddPushListener<T>(string route, Action<T> handler)
-            where T : class, DataObject, new()
+            where T : class, DataObject, Cacheable, new()
         {
             if (EnableCheckError)
             {
@@ -260,7 +260,7 @@ namespace mana.Foundation
         }
 
         public void RemovePushListener<T>(string route, Action<T> handler)
-             where T : class, DataObject, new()
+             where T : class, DataObject, Cacheable, new()
         {
             pushDispatcher.Unregister(route, handler);
         }

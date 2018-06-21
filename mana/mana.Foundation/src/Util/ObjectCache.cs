@@ -11,7 +11,8 @@ namespace mana.Foundation
         {
             private readonly Dictionary<Type, IObjectPool> _objectPools = new Dictionary<Type, IObjectPool>();
 
-            internal ObjectPool<T> GetPool<T>() where T : class, new()
+            internal ObjectPool<T> GetPool<T>() 
+                where T : class, new()
             {
                 var pool = GetPool(typeof(T));
                 if (pool != null)
@@ -62,7 +63,7 @@ namespace mana.Foundation
         private static readonly ObjectCacheImpl _instance = new ObjectCacheImpl();
 
         public static T Get<T>() 
-            where T : class, new()
+            where T : class, Cacheable, new()
         {
             var pool = _instance.GetPool<T>();
             if (pool == null)
@@ -73,7 +74,7 @@ namespace mana.Foundation
         }
 
         public static T Get<T>(Action<T> handler) 
-            where T : class, new()
+            where T : class, Cacheable, new()
         {
             var obj = Get<T>();
             if (handler != null)
@@ -112,7 +113,7 @@ namespace mana.Foundation
         }
 
         public static void Clear<T>()
-            where T : class, new()
+            where T : class, Cacheable, new()
         {
             var pool = _instance.GetPool(typeof(T));
             if (pool != null)

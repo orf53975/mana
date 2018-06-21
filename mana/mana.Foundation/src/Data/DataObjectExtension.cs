@@ -4,7 +4,8 @@ namespace mana.Foundation
 {
     public static class DataObjectExtension
     {
-        public static void DeepCopyTo<T>(this T src, T dst) where T : class, DataObject, new()
+        public static void DeepCopyTo<T>(this T src, T dst) 
+            where T : class, DataObject, Cacheable, new()
         {
             if (src == null || dst == null)
             {
@@ -17,7 +18,8 @@ namespace mana.Foundation
             }
         }
 
-        public static T DeepClone<T>(this T src) where T : class, DataObject, new()
+        public static T DeepClone<T>(this T src) 
+            where T : class, DataObject, Cacheable, new()
         {
             var ret = ObjectCache.Get<T>();
             src.DeepCopyTo(ret);
@@ -88,7 +90,8 @@ namespace mana.Foundation
         #endregion
 
         #region <<Reader Extension>>
-        public static T Read<T>(this IReadableBuffer br) where T : class, DataObject, new()
+        public static T Read<T>(this IReadableBuffer br) 
+            where T : class, DataObject, Cacheable, new()
         {
             var len = (int)br.ReadUnsignedVarint();
             if (len == 0)
@@ -117,7 +120,8 @@ namespace mana.Foundation
             return null;
         }
 
-        public static T[] ReadArray<T>(this IReadableBuffer br) where T : class, DataObject, new()
+        public static T[] ReadArray<T>(this IReadableBuffer br) 
+            where T : class, DataObject, Cacheable, new()
         {
             var len = (int)br.ReadUnsignedVarint();
             if (len == 0)
