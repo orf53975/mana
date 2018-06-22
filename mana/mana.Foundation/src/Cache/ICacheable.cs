@@ -1,6 +1,6 @@
 ﻿namespace mana.Foundation
 {
-    public interface Cacheable
+    public interface ICacheable
     {
         void ReleaseToCache();
     }

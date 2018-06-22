@@ -1,6 +1,6 @@
 ﻿namespace mana.Foundation
 {
-    public enum DataToken
+    public enum DDToken
     {
         ft_none = 0,
         ft_bool = 1,

@@ -2,14 +2,16 @@
 
 namespace mana.Foundation
 {
-    public sealed class DataField : DataObject, Cacheable
+    public sealed class DDField : ISerializable, ICacheable, IFormatString
     {
-        internal void InitTmpl(DataFieldTmpl tmpl)
+        const string ERR_FMT_SET_VALUE_FAILED = "SetValue failed! {0} Do not accept a {1}!";
+
+        internal void InitTmpl(DDFieldTmpl tmpl)
         {
             this.Tmpl = tmpl;
         }
 
-        public DataFieldTmpl Tmpl
+        public DDFieldTmpl Tmpl
         {
             get;
             internal set;
@@ -39,7 +41,7 @@ namespace mana.Foundation
             private set;
         }
 
-        public DataNode objValue
+        public DDNode objValue
         {
             get;
             private set;
@@ -51,11 +53,11 @@ namespace mana.Foundation
             private set;
         }
 
-        const string ERR_FMT_SET_VALUE_FAILED = "SetValue failed! {0} Do not accept a {1}!";
+        #region <<SetValue>>
 
         public bool SetValue(bool v)
         {
-            if (Tmpl.token != DataToken.ft_bool)
+            if (Tmpl.token != DDToken.ft_bool)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -67,9 +69,9 @@ namespace mana.Foundation
 
         public bool SetValue(int v)
         {
-            if (Tmpl.token != DataToken.ft_byte &&
-                Tmpl.token != DataToken.ft_int16 &&
-                Tmpl.token != DataToken.ft_int32)
+            if (Tmpl.token != DDToken.ft_byte &&
+                Tmpl.token != DDToken.ft_int16 &&
+                Tmpl.token != DDToken.ft_int32)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -80,9 +82,9 @@ namespace mana.Foundation
 
         public bool SetValue(long v)
         {
-            if (Tmpl.token != DataToken.ft_int64 &&
-                Tmpl.token != DataToken.ft_intX &&
-                Tmpl.token != DataToken.ft_intXU)
+            if (Tmpl.token != DDToken.ft_int64 &&
+                Tmpl.token != DDToken.ft_intX &&
+                Tmpl.token != DDToken.ft_intXU)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -93,8 +95,8 @@ namespace mana.Foundation
 
         public bool SetValue(float v)
         {
-            if (Tmpl.token != DataToken.ft_float &&
-                Tmpl.token != DataToken.ft_float16)
+            if (Tmpl.token != DDToken.ft_float &&
+                Tmpl.token != DDToken.ft_float16)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -105,7 +107,7 @@ namespace mana.Foundation
 
         public bool SetValue(string v)
         {
-            if (Tmpl.token != DataToken.ft_str)
+            if (Tmpl.token != DDToken.ft_str)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -114,20 +116,20 @@ namespace mana.Foundation
             return true;
         }
 
-        public bool MatchTmplType(DataNode v)
+        public bool MatchTmplType(DDNode v)
         {
-            if (Tmpl.token == DataToken.ft_object)
+            if (Tmpl.token == DDToken.ft_object)
             {
-                return v == null || Tmpl.isUnknowType || Tmpl.objTmpl == v.Tmpl.name;
+                return v == null || Tmpl.isUnknowType || Tmpl.objTmpl == v.Tmpl.fullName;
             }
             return false;
         }
 
-        public bool SetValue(DataNode v)
+        public bool SetValue(DDNode v)
         {
             if (!MatchTmplType(v))
             {
-                Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.Tmpl.name);
+                Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.Tmpl.fullName);
                 return false;
             }
             objValue = v;
@@ -137,7 +139,7 @@ namespace mana.Foundation
 
         public bool SetValue(bool[] v)
         {
-            if (!Tmpl.isArray && Tmpl.token != DataToken.ft_bool)
+            if (!Tmpl.isArray && Tmpl.token != DDToken.ft_bool)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -149,7 +151,7 @@ namespace mana.Foundation
 
         public bool SetValue(byte[] v)
         {
-            if (!Tmpl.isArray && Tmpl.token != DataToken.ft_byte)
+            if (!Tmpl.isArray && Tmpl.token != DDToken.ft_byte)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -160,7 +162,7 @@ namespace mana.Foundation
 
         public bool SetValue(short[] v)
         {
-            if (!Tmpl.isArray && Tmpl.token != DataToken.ft_int16)
+            if (!Tmpl.isArray && Tmpl.token != DDToken.ft_int16)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -171,7 +173,7 @@ namespace mana.Foundation
 
         public bool SetValue(int[] v)
         {
-            if (!Tmpl.isArray && Tmpl.token != DataToken.ft_int32)
+            if (!Tmpl.isArray && Tmpl.token != DDToken.ft_int32)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -183,9 +185,9 @@ namespace mana.Foundation
         public bool SetValue(long[] v)
         {
             if (!Tmpl.isArray || (
-                Tmpl.token != DataToken.ft_int64 &&
-                Tmpl.token != DataToken.ft_intX &&
-                Tmpl.token != DataToken.ft_intXU))
+                Tmpl.token != DDToken.ft_int64 &&
+                Tmpl.token != DDToken.ft_intX &&
+                Tmpl.token != DDToken.ft_intXU))
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -196,7 +198,7 @@ namespace mana.Foundation
 
         public bool SetValue(string[] v)
         {
-            if (!Tmpl.isArray || Tmpl.token != DataToken.ft_str)
+            if (!Tmpl.isArray || Tmpl.token != DDToken.ft_str)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -205,9 +207,9 @@ namespace mana.Foundation
             return true;
         }
 
-        public bool SetValue(DataNode[] v)
+        public bool SetValue(DDNode[] v)
         {
-            if (!Tmpl.isArray || Tmpl.token != DataToken.ft_object)
+            if (!Tmpl.isArray || Tmpl.token != DDToken.ft_object)
             {
                 Logger.Error(ERR_FMT_SET_VALUE_FAILED, Tmpl, v.GetType());
                 return false;
@@ -226,14 +228,15 @@ namespace mana.Foundation
             arrValue = v;
             return true;
         }
+        #endregion
 
-        #region <<implement DataObject>>
+        #region <<implement ISerializable>>
 
         public void Encode(IWritableBuffer bw, bool isMaskAll)
         {
             switch (Tmpl.token)
             {
-                case DataToken.ft_bool:
+                case DDToken.ft_bool:
                     if (Tmpl.isArray)
                     {
                         bw.WriteBooleanArray((bool[])arrValue);
@@ -244,7 +247,7 @@ namespace mana.Foundation
                         bw.WriteBoolean(bv);
                     }
                     break;
-                case DataToken.ft_byte:
+                case DDToken.ft_byte:
                     if (Tmpl.isArray)
                     {
                         bw.WriteByteArray((byte[])arrValue);
@@ -254,7 +257,7 @@ namespace mana.Foundation
                         bw.WriteByte((byte)int32Value);
                     }
                     break;
-                case DataToken.ft_int16:
+                case DDToken.ft_int16:
                     if (Tmpl.isArray)
                     {
                         bw.WriteShortArray((short[])arrValue);
@@ -264,7 +267,7 @@ namespace mana.Foundation
                         bw.WriteShort((short)int32Value);
                     }
                     break;
-                case DataToken.ft_int32:
+                case DDToken.ft_int32:
                     if (Tmpl.isArray)
                     {
                         bw.WriteIntArray((int[])arrValue);
@@ -274,7 +277,7 @@ namespace mana.Foundation
                         bw.WriteInt(int32Value);
                     }
                     break;
-                case DataToken.ft_int64:
+                case DDToken.ft_int64:
                     if (Tmpl.isArray)
                     {
                         bw.WriteLongArray((long[])arrValue);
@@ -284,7 +287,7 @@ namespace mana.Foundation
                         bw.WriteLong(int64Value);
                     }
                     break;
-                case DataToken.ft_intXU:
+                case DDToken.ft_intXU:
                     if (Tmpl.isArray)
                     {
                         bw.WriteUnsignedVarintArray((long[])arrValue);
@@ -294,7 +297,7 @@ namespace mana.Foundation
                         bw.WriteUnsignedVarint(int64Value);
                     }
                     break;
-                case DataToken.ft_intX:
+                case DDToken.ft_intX:
                     if (Tmpl.isArray)
                     {
                         bw.WriteVarintArray((long[])arrValue);
@@ -304,7 +307,7 @@ namespace mana.Foundation
                         bw.WriteVarint(int64Value);
                     }
                     break;
-                case DataToken.ft_float:
+                case DDToken.ft_float:
                     if (Tmpl.isArray)
                     {
                         bw.WriteFloatArray((float[])arrValue);
@@ -314,7 +317,7 @@ namespace mana.Foundation
                         bw.WriteFloat(floatValue);
                     }
                     break;
-                case DataToken.ft_float16:
+                case DDToken.ft_float16:
                     if (Tmpl.isArray)
                     {
                         bw.WriteFloat16Array((float[])arrValue);
@@ -324,7 +327,7 @@ namespace mana.Foundation
                         bw.WriteFloat16(floatValue);
                     }
                     break;
-                case DataToken.ft_str:
+                case DDToken.ft_str:
                     if (Tmpl.isArray)
                     {
                         bw.WriteUTF8Array((string[])arrValue);
@@ -334,14 +337,14 @@ namespace mana.Foundation
                         bw.WriteUTF8(strValue);
                     }
                     break;
-                case DataToken.ft_object:
+                case DDToken.ft_object:
                     if (Tmpl.isArray)
                     {
-                        bw.WriteDataNodeArray((DataNode[])arrValue, Tmpl, isMaskAll);
+                        bw.WriteNodeArray((DDNode[])arrValue, Tmpl, isMaskAll);
                     }
                     else
                     {
-                        bw.WriteDataNode(objValue, Tmpl, isMaskAll);
+                        bw.WritNode(objValue, Tmpl, isMaskAll);
                     }
                     break;
             }
@@ -356,7 +359,7 @@ namespace mana.Foundation
         {
             switch (Tmpl.token)
             {
-                case DataToken.ft_bool:
+                case DDToken.ft_bool:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadBoolArray();
@@ -367,7 +370,7 @@ namespace mana.Foundation
                         int32Value = bv;
                     }
                     break;
-                case DataToken.ft_byte:
+                case DDToken.ft_byte:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadByteArray();
@@ -377,7 +380,7 @@ namespace mana.Foundation
                         int32Value = br.ReadByte();
                     }
                     break;
-                case DataToken.ft_int16:
+                case DDToken.ft_int16:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadShortArray();
@@ -387,7 +390,7 @@ namespace mana.Foundation
                         int32Value = br.ReadShort();
                     }
                     break;
-                case DataToken.ft_int32:
+                case DDToken.ft_int32:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadIntArray();
@@ -397,7 +400,7 @@ namespace mana.Foundation
                         int32Value = br.ReadInt();
                     }
                     break;
-                case DataToken.ft_int64:
+                case DDToken.ft_int64:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadLongArray();
@@ -407,7 +410,7 @@ namespace mana.Foundation
                         int64Value = br.ReadLong();
                     }
                     break;
-                case DataToken.ft_intXU:
+                case DDToken.ft_intXU:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadUnsignedVarintArray();
@@ -417,7 +420,7 @@ namespace mana.Foundation
                         int64Value = br.ReadUnsignedVarint();
                     }
                     break;
-                case DataToken.ft_intX:
+                case DDToken.ft_intX:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadVarintArray();
@@ -427,7 +430,7 @@ namespace mana.Foundation
                         int64Value = br.ReadVarint();
                     }
                     break;
-                case DataToken.ft_float:
+                case DDToken.ft_float:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadFloatArray();
@@ -437,7 +440,7 @@ namespace mana.Foundation
                         floatValue = br.ReadFloat();
                     }
                     break;
-                case DataToken.ft_float16:
+                case DDToken.ft_float16:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadFloat16Array();
@@ -447,7 +450,7 @@ namespace mana.Foundation
                         floatValue = br.ReadFloat16();
                     }
                     break;
-                case DataToken.ft_str:
+                case DDToken.ft_str:
                     if (Tmpl.isArray)
                     {
                         arrValue = br.ReadUTF8Array();
@@ -457,19 +460,22 @@ namespace mana.Foundation
                         strValue = br.ReadUTF8();
                     }
                     break;
-                case DataToken.ft_object:
+                case DDToken.ft_object:
                     if (Tmpl.isArray)
                     {
-                        arrValue = br.ReadDataNodeArray(Tmpl);
+                        arrValue = br.ReadNodeArray(Tmpl);
                     }
                     else
                     {
-                        objValue = br.ReadDataNode(Tmpl);
+                        objValue = br.ReadNode(Tmpl);
                     }
                     break;
             }
         }
 
+        #endregion
+
+        #region <<implement IFormatString>>
         public string ToFormatString(string nlIndent)
         {
             //fd.FormatStringValue(fields[i], curIndent)
@@ -477,10 +483,10 @@ namespace mana.Foundation
         }
         #endregion
 
-        #region <<implement Cacheable>>
+        #region <<implement ICacheable>>
         public void ReleaseToCache()
         {
-            Tmpl = DataFieldTmpl.Empty;
+            Tmpl = DDFieldTmpl.Empty;
 
             if (objValue != null)
             {
@@ -490,7 +496,7 @@ namespace mana.Foundation
 
             if (arrValue != null)
             {
-                var objArr = arrValue as DataNode[];
+                var objArr = arrValue as DDNode[];
                 if (objArr != null)
                 {
                     objArr.ReleaseToCache();

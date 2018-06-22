@@ -72,7 +72,7 @@ namespace mana.Foundation
                 byte d = data[i];
                 sb.Append(d.ToString("x2"));
             }
-            return StringBuilderCache.GetStringAndRelease(sb);
+            return StringBuilderCache.GetAndRelease(sb);
         }
 
         public static string CalculateMD5(Stream stream)

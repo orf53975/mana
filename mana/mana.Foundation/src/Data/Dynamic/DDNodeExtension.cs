@@ -2,11 +2,9 @@
 
 namespace mana.Foundation
 {
-    public static class DataNodeExtension
+    internal static class DDNodeExtension
     {
-        #region <<Reader Extension>>
-
-        public static DataNode ReadDataNode(this IReadableBuffer br, DataFieldTmpl fieldTmpl)
+        internal static DDNode ReadNode(this IReadableBuffer br, DDFieldTmpl fieldTmpl)
         {
             var len = (int)br.ReadUnsignedVarint();
             if (len == 0)
@@ -31,7 +29,7 @@ namespace mana.Foundation
                 }
                 if (tmpl != null)
                 {
-                    var ret = DataNode.Creat(tmpl);
+                    var ret = DDNode.Creat(tmpl);
                     ret.Decode(br);
                     return ret;
                 }
@@ -48,7 +46,7 @@ namespace mana.Foundation
             return null;
         }
 
-        public static DataNode[] ReadDataNodeArray(this IReadableBuffer br, DataFieldTmpl fieldTmpl)
+        internal static DDNode[] ReadNodeArray(this IReadableBuffer br, DDFieldTmpl fieldTmpl)
         {
             var len = (int)br.ReadUnsignedVarint();
             if (len == 0)
@@ -59,19 +57,15 @@ namespace mana.Foundation
             {
                 throw new OutOfMemoryException();
             }
-            var ret = new DataNode[len];
+            var ret = new DDNode[len];
             for (var i = 0; i < len; i++)
             {
-                ret[i] = br.ReadDataNode(fieldTmpl);
+                ret[i] = br.ReadNode(fieldTmpl);
             }
             return ret;
         }
 
-        #endregion
-
-        #region <<Writer Extension>>
-
-        public static void WriteDataNode(this IWritableBuffer bw, DataNode obj, DataFieldTmpl fieldTmpl, bool isMaskAll)
+        internal static void WritNode(this IWritableBuffer bw, DDNode obj, DDFieldTmpl fieldTmpl, bool isMaskAll)
         {
             if (obj != null)
             {
@@ -79,7 +73,7 @@ namespace mana.Foundation
                 {
                     if (fieldTmpl.isUnknowType)
                     {
-                        var typeCode = Protocol.Instance.GetTypeCode(obj.Tmpl.name);
+                        var typeCode = Protocol.Instance.GetTypeCode(obj.Tmpl.fullName);
                         tempBw.WriteUnsignedShort(typeCode);
                         if (typeCode == 0)
                         {
@@ -92,9 +86,9 @@ namespace mana.Foundation
                     }
                     else
                     {
-                        if (fieldTmpl.objTmpl != obj.Tmpl.name)
+                        if (fieldTmpl.objTmpl != obj.Tmpl.fullName)
                         {
-                            Logger.Error("write failed! can't match tmpl {0} -> {1} ", fieldTmpl.objTmpl, obj.Tmpl.name);
+                            Logger.Error("write failed! can't match tmpl {0} -> {1} ", fieldTmpl.objTmpl, obj.Tmpl.fullName);
                         }
                         else
                         {
@@ -111,16 +105,14 @@ namespace mana.Foundation
             }
         }
 
-        public static void WriteDataNodeArray(this IWritableBuffer bw, DataNode[] arr, DataFieldTmpl dataTmpl, bool isMaskAll)
+        internal static void WriteNodeArray(this IWritableBuffer bw, DDNode[] arr, DDFieldTmpl dataTmpl, bool isMaskAll)
         {
             int len = arr == null ? 0 : arr.Length;
             bw.WriteUnsignedVarint(len);
             for (int i = 0; i < len; i++)
             {
-                bw.WriteDataNode(arr[i], dataTmpl, isMaskAll);
+                bw.WritNode(arr[i], dataTmpl, isMaskAll);
             }
         }
-
-        #endregion
     }
 }

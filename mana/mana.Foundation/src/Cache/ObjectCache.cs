@@ -63,7 +63,7 @@ namespace mana.Foundation
         private static readonly ObjectCacheImpl _instance = new ObjectCacheImpl();
 
         public static T Get<T>() 
-            where T : class, Cacheable, new()
+            where T : class, ICacheable, new()
         {
             var pool = _instance.GetPool<T>();
             if (pool == null)
@@ -74,7 +74,7 @@ namespace mana.Foundation
         }
 
         public static T Get<T>(Action<T> handler) 
-            where T : class, Cacheable, new()
+            where T : class, ICacheable, new()
         {
             var obj = Get<T>();
             if (handler != null)
@@ -98,9 +98,9 @@ namespace mana.Foundation
         }
 
         public static bool Put<T>(T obj) 
-            where T : class, Cacheable, new()
+            where T : class, ICacheable, new()
         {
-            if (obj is Cacheable)
+            if (obj is ICacheable)
             {
                 var pool = _instance.GetPool<T>();
                 if (pool == null)
@@ -113,7 +113,7 @@ namespace mana.Foundation
         }
 
         public static void Clear<T>()
-            where T : class, Cacheable, new()
+            where T : class, ICacheable, new()
         {
             var pool = _instance.GetPool(typeof(T));
             if (pool != null)

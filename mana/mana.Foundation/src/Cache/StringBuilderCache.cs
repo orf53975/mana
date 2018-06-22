@@ -7,7 +7,7 @@ namespace mana.Foundation
     {
         private const int MAX_BUILDER_SIZE = 512;
 
-        private static ObjectPool<StringBuilder> sbPool = new ObjectPool<StringBuilder>(() => new StringBuilder(), (sb) => sb.Length = 0, null, 32);
+        private static ObjectPool<StringBuilder> sbPool = new ObjectPool<StringBuilder>(() => new StringBuilder(), (sb) => sb.Length = 0, null, 16);
 
         public static StringBuilder Acquire(int capacity = 64)
         {
@@ -29,7 +29,7 @@ namespace mana.Foundation
             return false;
         }
 
-        public static string GetStringAndRelease(StringBuilder sb)
+        public static string GetAndRelease(StringBuilder sb)
         {
             string result = sb.ToString();
             StringBuilderCache.Release(sb);

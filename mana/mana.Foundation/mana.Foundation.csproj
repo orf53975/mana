@@ -11,6 +11,7 @@
     <AssemblyName>mana.Foundation</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -45,31 +48,39 @@
     <Compile Include="src\Buffer\ByteReader.cs" />
     <Compile Include="src\Buffer\IReadableBuffer.cs" />
     <Compile Include="src\Buffer\IWritableBuffer.cs" />
-    <Compile Include="src\Data\DataObject.cs" />
-    <Compile Include="src\Data\DataObjectConfigAttribute.cs" />
-    <Compile Include="src\Data\DataObjectExtension.cs" />
-    <Compile Include="src\Data\Dynamic\DataField.cs" />
-    <Compile Include="src\Data\Dynamic\DataFieldTmpl.cs" />
-    <Compile Include="src\Data\Dynamic\DataNode.cs" />
-    <Compile Include="src\Data\Dynamic\DataNodeExtension.cs" />
-    <Compile Include="src\Data\Dynamic\DataNodeTmpl.cs" />
-    <Compile Include="src\Data\Dynamic\DataToken.cs" />
+    <Compile Include="src\Data\DataExtension.cs" />
+    <Compile Include="src\Data\Dynamic\DDFieldTmpl.cs" />
+    <Compile Include="src\Data\Dynamic\DDNodeTmpl.cs" />
+    <Compile Include="src\Data\Dynamic\DDTmpl.cs" />
+    <Compile Include="src\Data\IFormatString.cs" />
+    <Compile Include="src\Data\ISerializable.cs" />
+    <Compile Include="src\Data\Static\DataObject.cs" />
+    <Compile Include="src\Data\Static\DataObjectConfigAttribute.cs" />
+    <Compile Include="src\Data\Static\DataObjectExtension.cs" />
+    <Compile Include="src\Data\Dynamic\DDField.cs" />
+    <Compile Include="src\Data\Dynamic\DDNode.cs" />
+    <Compile Include="src\Data\Dynamic\DDNodeExtension.cs" />
+    <Compile Include="src\Data\Dynamic\DDToken.cs" />
     <Compile Include="src\Data\Mask.cs" />
     <Compile Include="src\Logger.cs" />
+    <Compile Include="src\Net\NetRecivedCallBack.cs" />
     <Compile Include="src\Net\NetChannel.cs" />
     <Compile Include="src\Net\NetClient.cs" />
+    <Compile Include="src\Net\NetDispatcher.Response.cs" />
     <Compile Include="src\Net\Packet.cs" />
     <Compile Include="src\Net\PacketRcver.cs" />
     <Compile Include="src\Net\PacketSnder.cs" />
     <Compile Include="src\Net\Proto.cs" />
     <Compile Include="src\Net\Protocol.cs" />
-    <Compile Include="src\Util\Cacheable.cs" />
+    <Compile Include="src\Cache\ICacheable.cs" />
+    <Compile Include="src\Net\NetDispatcher.Push.cs" />
+    <Compile Include="src\Net\ProtoType.cs" />
     <Compile Include="src\Util\CodingUtil.cs" />
-    <Compile Include="src\Util\ListCache.cs" />
+    <Compile Include="src\Cache\ListCache.cs" />
     <Compile Include="src\Util\MathTools.cs" />
-    <Compile Include="src\Util\ObjectCache.cs" />
-    <Compile Include="src\Util\ObjectPool.cs" />
-    <Compile Include="src\Util\StringBuilderCache.cs" />
+    <Compile Include="src\Cache\ObjectCache.cs" />
+    <Compile Include="src\Cache\ObjectPool.cs" />
+    <Compile Include="src\Cache\StringBuilderCache.cs" />
     <Compile Include="src\Util\Utils.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

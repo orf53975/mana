@@ -1,23 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace mana.Foundation
 {
-    public sealed class DataNode : DataObject , Cacheable
+    public sealed class DDNode : ISerializable, ICacheable
     {
 
-        public static DataNode Creat(string nodeTmpl)
+        public static DDNode Creat(string nodeTmpl)
         {
-            var ret = ObjectCache.Get<DataNode>();
+            var ret = ObjectCache.Get<DDNode>();
             ret.InitTmpl(nodeTmpl);
             return ret;
         }
 
-        private List<DataField> fields = new List<DataField>(8);
+        private List<DDField> fields = new List<DDField>(8);
 
         public readonly Mask mask = new Mask();
 
-        public DataNodeTmpl Tmpl
+        public DDNodeTmpl Tmpl
         {
             get;
             private set;
@@ -25,31 +24,32 @@ namespace mana.Foundation
 
         public void InitTmpl(string tmplName)
         {
-            this.Tmpl = DataNodeTmpl.GetTmpl(tmplName);
+            this.Tmpl = DDTmpl.GetTmpl(tmplName);
             this.fields.Clear();
             var fts = Tmpl.fieldTmpls;
             for (int i = 0; i < fts.Length; i++)
             {
-                var field = ObjectCache.Get<DataField>();
+                var field = ObjectCache.Get<DDField>();
                 field.InitTmpl(fts[i]);
                 fields.Add(field);
             }
         }
 
-        public DataField this[string fieldName]
+        public DDField this[string fieldName]
         {
             get
             {
                 var fi = Tmpl.GetFieldIndex(fieldName);
                 if (fi == -1)
                 {
-                    Logger.Error("can't find field[{0}] in [{1}]", fieldName, Tmpl.name);
+                    Logger.Error("can't find field[{0}] in [{1}]", fieldName, Tmpl.fullName);
                     return null;
                 }
                 return fields[fi];
             }
         }
 
+        #region <<implement ISerializable>>
         public void Encode(IWritableBuffer bw, bool isMaskAll)
         {
             if (isMaskAll)
@@ -85,13 +85,15 @@ namespace mana.Foundation
                 }
             }
         }
+        #endregion
 
+        #region <<implement IFormatString>>
         public string ToFormatString(string nlIndent)
         {
             var sb = StringBuilderCache.Acquire();
             sb.Append("{\r\n");
             var curIndent = nlIndent + '\t';
-            sb.Append(curIndent).Append("tmpl = \"").Append(Tmpl.name).Append('\"');
+            sb.Append(curIndent).Append("tmpl = \"").Append(Tmpl.fullName).Append('\"');
             for (int i = 0; i < fields.Count; i++)
             {
                 sb.Append(",\r\n").Append(curIndent);
@@ -99,9 +101,11 @@ namespace mana.Foundation
             }
             sb.Append("\r\n");
             sb.Append(nlIndent).Append('}');
-            return StringBuilderCache.GetStringAndRelease(sb);
+            return StringBuilderCache.GetAndRelease(sb);
         }
+        #endregion
 
+        #region <<implement ICacheable>>
         public void ReleaseToCache()
         {
             for (var i = fields.Count - 1; i >= 0; i--)
@@ -112,5 +116,6 @@ namespace mana.Foundation
             this.Tmpl = null;
             ObjectCache.Put(this);
         }
+        #endregion
     }
 }

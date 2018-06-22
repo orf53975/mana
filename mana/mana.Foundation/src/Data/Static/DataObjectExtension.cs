@@ -4,94 +4,17 @@ namespace mana.Foundation
 {
     public static class DataObjectExtension
     {
-        public static void DeepCopyTo<T>(this T src, T dst) 
-            where T : class, DataObject, Cacheable, new()
-        {
-            if (src == null || dst == null)
-            {
-                throw new NullReferenceException();
-            }
-            using (var buf = ByteBuffer.Pool.Get())
-            {
-                src.Encode(buf, true);
-                dst.Decode(buf);
-            }
-        }
-
         public static T DeepClone<T>(this T src) 
-            where T : class, DataObject, Cacheable, new()
+            where T : class, DataObject, new()
         {
             var ret = ObjectCache.Get<T>();
             src.DeepCopyTo(ret);
             return ret;
         }
 
-        public static void ReleaseToCache(this Cacheable[] arr)
-        {
-            if (arr == null)
-            {
-                return;
-            }
-            for(int i = 0; i < arr.Length; i++)
-            {
-                arr[i].ReleaseToCache();
-                arr[i] = null;
-            }
-        }
-
-        #region <<Format Extension>>
-        public static string ToFormatString(this DataObject[] arr, string newLineIndent)
-        {
-            var sb = StringBuilderCache.Acquire();
-            sb.Append('{');
-            if (arr != null)
-            {
-                var newIndent = newLineIndent + "\t";
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    sb.Append("\r\n").Append(newIndent).Append(arr[i].ToFormatString(newIndent));
-                    if (i != arr.Length - 1)
-                    {
-                        sb.Append(',');
-                    }
-                }
-            }
-            else
-            {
-                sb.Append("null");
-            }
-            sb.Append("\r\n").Append(newLineIndent).Append('}');
-            return StringBuilderCache.GetStringAndRelease(sb);
-        }
-
-
-        public static string ToFormatStr<T>(T[] arr, string newLineIndent) where T : IComparable
-        {
-            var sb = StringBuilderCache.Acquire();
-            sb.Append('{');
-            if (arr != null)
-            {
-                for (int i = 0; i < arr.Length; i++)
-                {
-                    sb.Append(arr[i]);
-                    if (i != arr.Length - 1)
-                    {
-                        sb.Append(',');
-                    }
-                }
-            }
-            else
-            {
-                sb.Append("null");
-            }
-            sb.Append('}');
-            return StringBuilderCache.GetStringAndRelease(sb);
-        }
-        #endregion
-
         #region <<Reader Extension>>
         public static T Read<T>(this IReadableBuffer br) 
-            where T : class, DataObject, Cacheable, new()
+            where T : class, DataObject, new()
         {
             var len = (int)br.ReadUnsignedVarint();
             if (len == 0)
@@ -121,7 +44,7 @@ namespace mana.Foundation
         }
 
         public static T[] ReadArray<T>(this IReadableBuffer br) 
-            where T : class, DataObject, Cacheable, new()
+            where T : class, DataObject, new()
         {
             var len = (int)br.ReadUnsignedVarint();
             if (len == 0)

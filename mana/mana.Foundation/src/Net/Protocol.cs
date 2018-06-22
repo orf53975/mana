@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace mana.Foundation
 {
-    public sealed partial class Protocol : DataObject
+    public sealed partial class Protocol : ISerializable , IFormatString
     {
         internal static readonly Protocol Instance = new Protocol();
 
@@ -172,9 +172,9 @@ namespace mana.Foundation
 
         #endregion
 
-        #region <<implement DataObject>>
+        #region <<implement ISerializable>>
 
-        public void Encode(IWritableBuffer bw, bool isMaskAll)
+        public void Encode(IWritableBuffer bw, bool bMaskAll)
         {
             // -- protos
             bw.WriteUnsignedShort(protoMap.Count);
@@ -215,6 +215,9 @@ namespace mana.Foundation
             }
         }
 
+        #endregion
+
+        #region <<implement IFormatString>>
         public string ToFormatString(string nlIndent)
         {
             var sb = StringBuilderCache.Acquire();
@@ -244,7 +247,7 @@ namespace mana.Foundation
 
             sb.Append("\r\n");
             sb.Append(nlIndent).Append('}');
-            return StringBuilderCache.GetStringAndRelease(sb);
+            return StringBuilderCache.GetAndRelease(sb);
         }
         #endregion
     }

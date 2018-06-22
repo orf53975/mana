@@ -55,7 +55,7 @@ namespace mana.Foundation
 
         #region <<Static Functions>>
 
-        public static Packet CreatRequest(string msgRoute, int requestId, DataObject msgObject)
+        public static Packet CreatRequest(string msgRoute, int requestId, ISerializable msgObject)
         {
             var p = Packet.Pool.Get();
             p.msgType = MessageType.REQUEST;
@@ -68,7 +68,7 @@ namespace mana.Foundation
             return p;
         }
 
-        public static Packet CreatResponse(string msgRoute, int requestId, DataObject msgObject)
+        public static Packet CreatResponse(string msgRoute, int requestId, ISerializable msgObject)
         {
             var p = Packet.Pool.Get();
             p.msgType = MessageType.RESPONSE;
@@ -81,7 +81,7 @@ namespace mana.Foundation
             return p;
         }
 
-        public static Packet CreatNotify(string msgRoute, DataObject msgObject)
+        public static Packet CreatNotify(string msgRoute, ISerializable msgObject)
         {
             var p = Packet.Pool.Get();
             p.msgType = MessageType.NOTIFY;
@@ -93,7 +93,7 @@ namespace mana.Foundation
             return p;
         }
 
-        public static Packet CreatPush(string msgRoute, DataObject msgObject)
+        public static Packet CreatPush(string msgRoute, ISerializable msgObject)
         {
             var p = Packet.Pool.Get();
             p.msgType = MessageType.PUSH;
@@ -266,7 +266,7 @@ namespace mana.Foundation
             msgData = new ByteBuffer(64);
         }
 
-        public bool TryGet(DataObject obj)
+        public bool TryGet(ISerializable obj)
         {
             if (obj == null)
             {
@@ -290,12 +290,12 @@ namespace mana.Foundation
             }
         }
 
-        public DataObject TryGet(Type t)
+        public ISerializable TryGet(Type t)
         {
-            var ret = ObjectCache.Get(t) as DataObject;
+            var ret = ObjectCache.Get(t) as ISerializable;
             if (!this.TryGet(ret))
             {
-                var cachedObj = ret as Cacheable;
+                var cachedObj = ret as ICacheable;
                 if (cachedObj != null)
                 {
                     cachedObj.ReleaseToCache();
@@ -306,14 +306,14 @@ namespace mana.Foundation
         }
 
         public T TryGet<T>() 
-            where T : class, DataObject, new()
+            where T : class, ISerializable, new()
         {
             return TryGet(typeof(T)) as T;
         }
 
-        public DataNode TryGetDataNode(string typeName)
+        public DDNode TryGetDataNode(string tmplName)
         {
-            var ret = DataNode.Creat(typeName);
+            var ret = DDNode.Creat(tmplName);
             if (!this.TryGet(ret))
             {
                 ret.ReleaseToCache();
