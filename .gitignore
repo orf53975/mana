@@ -3,3 +3,5 @@
 /mana/.vs
 /mana/mana.Test/obj
 /mana/mana.Test/bin
+/mana/mana.ClassGen
+/mana/mana.ScriptExport
