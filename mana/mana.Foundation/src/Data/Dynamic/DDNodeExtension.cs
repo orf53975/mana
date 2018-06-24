@@ -65,7 +65,7 @@ namespace mana.Foundation
             return ret;
         }
 
-        internal static void WritNode(this IWritableBuffer bw, DDNode obj, DDFieldTmpl fieldTmpl, bool isMaskAll)
+        internal static void WritNode(this IWritableBuffer bw, DDNode obj, DDFieldTmpl fieldTmpl)
         {
             if (obj != null)
             {
@@ -81,7 +81,7 @@ namespace mana.Foundation
                         }
                         else
                         {
-                            obj.Encode(tempBw, isMaskAll);
+                            obj.Encode(tempBw);
                         }
                     }
                     else
@@ -92,7 +92,7 @@ namespace mana.Foundation
                         }
                         else
                         {
-                            obj.Encode(tempBw, isMaskAll);
+                            obj.Encode(tempBw);
                         }
                     }
                     bw.WriteUnsignedVarint(tempBw.Length);
@@ -105,13 +105,13 @@ namespace mana.Foundation
             }
         }
 
-        internal static void WriteNodeArray(this IWritableBuffer bw, DDNode[] arr, DDFieldTmpl dataTmpl, bool isMaskAll)
+        internal static void WriteNodeArray(this IWritableBuffer bw, DDNode[] arr, DDFieldTmpl dataTmpl)
         {
             int len = arr == null ? 0 : arr.Length;
             bw.WriteUnsignedVarint(len);
             for (int i = 0; i < len; i++)
             {
-                bw.WritNode(arr[i], dataTmpl, isMaskAll);
+                bw.WritNode(arr[i], dataTmpl);
             }
         }
     }

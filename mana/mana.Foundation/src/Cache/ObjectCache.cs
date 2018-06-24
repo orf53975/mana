@@ -84,17 +84,14 @@ namespace mana.Foundation
             return obj;
         }
 
-        internal static object Get(Type t)
+        internal static object TryGet(Type t)
         {
             var pool = _instance.GetPool(t);
-            if (pool == null)
-            {
-                return Activator.CreateInstance(t);
-            }
-            else
+            if (pool != null)
             {
                 return pool.Get();
             }
+            return null;
         }
 
         public static bool Put<T>(T obj) 

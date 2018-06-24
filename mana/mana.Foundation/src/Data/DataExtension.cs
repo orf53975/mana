@@ -4,7 +4,8 @@ namespace mana.Foundation
 {
     public static class DataExtension
     {
-        public static void DeepCopyTo<T>(this T src, T dst) where T : class, ISerializable, new()
+        public static void DeepCopyTo<T>(this T src, T dst) 
+            where T : class, ISerializable, new()
         {
             if (src == null || dst == null)
             {
@@ -12,9 +13,23 @@ namespace mana.Foundation
             }
             using (var buf = ByteBuffer.Pool.Get())
             {
-                src.Encode(buf, true);
+                src.Encode(buf);
                 dst.Decode(buf);
             }
+        }
+
+        public static T DeepClone<T>(this T src)
+            where T : class, ISerializable, new()
+        {
+            var __t = typeof(T);
+            var obj = ObjectCache.TryGet(__t);
+            if (obj == null)
+            {
+                obj = Activator.CreateInstance(__t);
+            }
+            var ret = obj as T;
+            src.DeepCopyTo(ret);
+            return ret;
         }
 
         public static void ReleaseToCache(this ICacheable[] arr)

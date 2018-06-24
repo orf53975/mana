@@ -4,23 +4,13 @@ namespace mana.Foundation
 {
     public sealed class Mask
     {
-        #region <<static>>
-
-        public static void EncodeValue(IWritableBuffer bw, long value)
-        {
-            bw.WriteUnsignedVarint(value);
-        }
-
-        public static void EncodeAllBit(IWritableBuffer bw, int count)
-        {
-            bw.WriteUnsignedVarint((1L << count) - 1);
-        }
-
+        #region <<Static Cache>>
+        internal static readonly ObjectPool<Mask> Cache = new ObjectPool<Mask>(() => new Mask(), null, (e) => e.ClearAllFlag());
         #endregion
 
         private long value = 0;
 
-        public Mask(long value)
+        internal Mask(long value)
         {
             this.value = value;
         }

@@ -3,7 +3,7 @@ using System.Text;
 
 namespace mana.Foundation
 {
-    internal static class StringBuilderCache
+    public static class StringBuilderCache
     {
         private const int MAX_BUILDER_SIZE = 512;
 

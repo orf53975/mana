@@ -4,7 +4,6 @@ namespace mana.Foundation
 {
     public sealed class DDNode : ISerializable, ICacheable
     {
-
         public static DDNode Creat(string nodeTmpl)
         {
             var ret = ObjectCache.Get<DDNode>();
@@ -13,8 +12,6 @@ namespace mana.Foundation
         }
 
         private List<DDField> fields = new List<DDField>(8);
-
-        public readonly Mask mask = new Mask();
 
         public DDNodeTmpl Tmpl
         {
@@ -50,33 +47,31 @@ namespace mana.Foundation
         }
 
         #region <<implement ISerializable>>
-        public void Encode(IWritableBuffer bw, bool isMaskAll)
-        {
-            if (isMaskAll)
-            {
-                Mask.EncodeAllBit(bw, fields.Count);
-            }
-            else
-            {
-                mask.Encode(bw);
-            }
-            for (byte i = 0; i < fields.Count; i++)
-            {
-                if (isMaskAll || mask.CheckFlag(i))
-                {
-                    fields[i].Encode(bw, isMaskAll);
-                }
-            }
-        }
-
         public void Encode(IWritableBuffer bw)
         {
-            this.Encode(bw, false);
+            var mask = Mask.Cache.Get();
+            for (byte i = 0; i < fields.Count; i++)
+            {
+                if (fields[i].maskBit)
+                {
+                    mask.AddFlag(i);
+                }
+            }
+            mask.Encode(bw);
+            for (byte i = 0; i < fields.Count; i++)
+            {
+                if (mask.CheckFlag(i))
+                {
+                    fields[i].Encode(bw);
+                }
+            }
+            Mask.Cache.Put(mask);
         }
 
         public void Decode(IReadableBuffer br)
         {
-            this.mask.Decode(br);
+            var mask = Mask.Cache.Get();
+            mask.Decode(br);
             for (byte i = 0; i < fields.Count; i++)
             {
                 if (mask.CheckFlag(i))
@@ -84,6 +79,7 @@ namespace mana.Foundation
                     fields[i].Decode(br);
                 }
             }
+            Mask.Cache.Put(mask);
         }
         #endregion
 

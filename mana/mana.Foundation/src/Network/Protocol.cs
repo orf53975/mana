@@ -3,17 +3,34 @@ using System.Collections.Generic;
 
 namespace mana.Foundation
 {
-    public sealed partial class Protocol : ISerializable , IFormatString
+    public sealed partial class Protocol : DataObject
     {
-        internal static readonly Protocol Instance = new Protocol();
+        public static readonly Protocol Instance = new Protocol(true);
 
-        private Protocol()
+        private Protocol(bool bAddDefaultProto)
         {
-            AddProto(0x0001, new Proto("Connector.UpdateProtocol", ProtoType.PUSH, null, typeof(Protocol).Name));
-            AddProto(0x0002, new Proto("Connector.Heartbeat", ProtoType.REQRSP, null, null));
+            if (bAddDefaultProto)
+            {
+                AddProto(0x0001, new Proto("Connector.UpdateProtocol", ProtoType.PUSH, null, typeof(Protocol).Name));
+                AddProto(0x0002, new Proto("Connector.Heartbeat", ProtoType.REQRSP, null, null));
+            }
         }
 
-        #region <<protoMap>>
+        public Protocol() : this(false) { }
+
+        public void Push(Protocol other)
+        {
+            for (var iter = protoMap.GetEnumerator(); iter.MoveNext();)
+            {
+                this.AddProto(iter.Current.Key, iter.Current.Value);
+            }
+            for (var iter = code2dataType.GetEnumerator(); iter.MoveNext();)
+            {
+                this.AddDataType(iter.Current.Key, iter.Current.Value);
+            }
+        }
+
+        #region <<proto Dictionary>>
 
         readonly Dictionary<string, ushort> routeMap = new Dictionary<string, ushort>();
 
@@ -99,7 +116,7 @@ namespace mana.Foundation
 
         #endregion
 
-        #region <<dataTypeMap>>
+        #region <<dataType Dictionary>>
 
         readonly Dictionary<ushort, string> code2dataType = new Dictionary<ushort, string>();
 
@@ -174,29 +191,22 @@ namespace mana.Foundation
 
         #region <<implement ISerializable>>
 
-        public void Encode(IWritableBuffer bw, bool bMaskAll)
+        public void Encode(IWritableBuffer bw)
         {
             // -- protos
             bw.WriteUnsignedShort(protoMap.Count);
-            var iter1 = protoMap.GetEnumerator();
-            while (iter1.MoveNext())
+            for (var iter = protoMap.GetEnumerator(); iter.MoveNext();)
             {
-                bw.WriteShort(iter1.Current.Key);
-                iter1.Current.Value.EncodeTo(bw);
+                bw.WriteShort(iter.Current.Key);
+                iter.Current.Value.EncodeTo(bw);
             }
             // -- types
             bw.WriteUnsignedShort(code2dataType.Count);
-            var iter2 = code2dataType.GetEnumerator();
-            while (iter2.MoveNext())
+            for (var iter = code2dataType.GetEnumerator(); iter.MoveNext();)
             {
-                bw.WriteShort(iter2.Current.Key);
-                bw.WriteUTF8(iter2.Current.Value);
+                bw.WriteShort(iter.Current.Key);
+                bw.WriteUTF8(iter.Current.Value);
             }
-        }
-
-        public void Encode(IWritableBuffer bw)
-        {
-            this.Encode(bw, false);
         }
 
         public void Decode(IReadableBuffer br)
@@ -249,6 +259,16 @@ namespace mana.Foundation
             sb.Append(nlIndent).Append('}');
             return StringBuilderCache.GetAndRelease(sb);
         }
+
+        #endregion
+
+        #region <<implement ICacheable>>
+
+        public void ReleaseToCache()
+        {
+            ObjectCache.Put(this);
+        }
+
         #endregion
     }
 }

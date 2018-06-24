@@ -10,6 +10,7 @@ namespace mana.Test
             try
             {
                 Console.WriteLine("Start Test!");
+                Program.InitLogger();
                 DoTestNetClient();
             }
             catch (Exception e)
@@ -18,6 +19,48 @@ namespace mana.Test
             }
             Console.ReadKey();
         }
+
+        #region InitLogger
+
+        static void InitLogger()
+        {
+            Logger.SetPrintHandler((str) =>
+            {
+                var saveColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(str);
+                Console.ForegroundColor = saveColor;
+            });
+
+            Logger.SetWarningHandler((str) =>
+            {
+                var saveColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(str);
+                Console.ForegroundColor = saveColor;
+            });
+
+            Logger.SetErrorHandler((str) =>
+            {
+                var saveColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(str);
+                Console.ForegroundColor = saveColor;
+            });
+
+            Logger.SetExceptionHandler((e) =>
+            {
+                var saveColor = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                Console.ForegroundColor = saveColor;
+            });
+
+        }
+
+        #endregion
+
 
         #region NetClient
 

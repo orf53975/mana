@@ -1,0 +1,211 @@
+using mana.Foundation;
+
+@start[list:import]
+using <import-name-space>;
+@end
+
+namespace <name-space>
+{
+	@start[class-note]
+	/// <summary>
+	/// <note>
+	/// </summary>
+	@end
+
+	@start[class-condition:IsHadTypeCode]
+	[DataObjectConfig(TypeCode = <class-TypeCode>)]
+	@end
+    public class <class-name> : DataObject
+    {
+
+		#region ---flags---
+		@start[list:variable]
+		public const byte __FLAG_<NAME> = [index];
+		@end
+		public const long __MASK_ALL_VALUE = <class-mask-all-value>;
+
+		#endregion
+
+		@start[class-condition:HadConsts]
+		#region ---constants---
+		@start[list:constant]
+		@start[field-note]
+		/// <summary>
+		/// <note>
+		/// </summary>
+		@end
+		public const <type> <name> = <value>;
+		@end
+		#endregion
+		@end
+
+		#region ---mask---
+		public readonly Mask mask = new Mask();
+		#endregion
+
+
+        @start[list:variable]
+
+		#region ---<name>---
+		private <type> _<name> = <value>;
+		@start[field-note]
+		/// <summary>
+        /// <note>
+        /// </summary>
+		@end
+		public <type> <name>
+		{
+			get
+			{
+				return _<name>;
+			}
+			set
+			{
+				if(this._<name> != value)
+				{
+					this._<name> = value;
+					this.mask.AddFlag(__FLAG_<NAME>);
+				}
+			}
+		}
+
+		public bool Has<Name>()
+		{
+			return this.mask.CheckFlag(__FLAG_<NAME>);
+		}
+		#endregion //<name>
+		@end
+		
+		#region ---Encode---
+        public void Encode(IWritableBuffer bw)
+        {
+			@start[list:variable]
+			if (mask.CheckFlag(__FLAG_<NAME>))
+			{
+				@start[field-condition:isBaseType,!isArray]
+				bw.Write<rw-type>(_<name>);
+				@end
+				@start[field-condition:isBaseType, isArray]
+				bw.Write<rw-type>Array(_<name>);
+				@end
+				@start[field-condition:!isBaseType,!isArray,!isUnknowType]
+				bw.Write(_<name>);
+				@end
+				@start[field-condition:!isBaseType,isArray,!isUnknowType]
+				bw.WriteArray(_<name>);
+				@end
+				@start[field-condition:isUnknowType,!isArray]
+				bw.WriteUnknow(_<name>);
+				@end
+				@start[field-condition:isUnknowType,isArray]
+				bw.WriteUnknowArray(_<name>);
+				@end
+			}
+			@end
+        }
+		#endregion
+
+		#region ---Decode---
+		public void Decode(IReadableBuffer br)
+		{
+			this.mask.Decode(br);
+			@start[list:variable]
+			if (Has<Name>())
+			{	
+				@start[field-condition:isBaseType,!isArray]
+				_<name> = br.Read<rw-type>();
+				@end
+				@start[field-condition:isBaseType,isArray]
+				_<name> = br.Read<rw-type>Array();
+				@end
+				@start[field-condition:!isBaseType,!isArray,!isUnknowType]
+				_<name> = br.Read<<raw-type>>();
+				@end
+				@start[field-condition:!isBaseType,isArray,!isUnknowType]
+				_<name> = br.ReadArray<<raw-type>>();
+				@end
+				@start[field-condition:isUnknowType,!isArray]
+				_<name> = br.ReadUnknow();
+				@end
+				@start[field-condition:isUnknowType,isArray]
+				_<name> = br.ReadUnknowArray();
+				@end
+			}
+			@end
+		}
+		#endregion
+
+		#region ---Clone---
+		public <class-name> Clone()
+		{            
+			var _clone = ObjectCache.Get<<class-name>>();
+			@start[list:variable]
+			_clone._<name> = this._<name>;
+			@end
+			return _clone;
+		}
+		#endregion
+		
+		#region ---ReleaseToCache---
+		public void ReleaseToCache()
+        {
+			this.mask.ClearAllFlag();
+			@start[list:variable]
+			@start[field-condition:isBaseType]
+			_<name> = <defalutValue>;
+			@end
+			@start[field-condition:!isBaseType]
+			if(_<name> != <defalutValue>)
+			{
+				_<name>.ReleaseToCache();
+                _<name> = null;
+			}
+			@end
+			@end
+			ObjectCache.Put(this);
+        }
+		#endregion
+
+		#region ---ToFormatString---
+		public string ToFormatString(string newLineIndent)
+        {
+            var sb = StringBuilderCache.Acquire();
+            sb.Append("<class-name>{\r\n");
+			var curIndent = newLineIndent + '\t';
+			@start[list:variable]
+			@start[field-condition:isBaseType,!isArray]
+			if(Has<Name>())
+			{
+				sb.Append(",\r\n").Append(curIndent).Append("<name> = ");
+				sb.Append(<name>);
+			}
+			@end
+			@start[field-condition:isBaseType,isArray]
+			if(Has<Name>())
+			{
+				sb.Append(",\r\n").Append(curIndent).Append("<name> = ");
+				sb.Append(<name> == null ? "null" : <name>.ToFormatStr(<name>, curIndent));
+			}
+			@end
+			@start[field-condition:!isBaseType]
+			if(Has<Name>())
+			{
+				sb.Append(",\r\n").Append(curIndent).Append("<name> = ");
+				sb.Append(<name> == null ? "null" : <name>.ToFormatString(curIndent));
+			}
+			@end
+			@end
+			sb.Append("\r\n");
+            sb.Append(newLineIndent).Append('}');
+            return StringBuilderCache.GetAndRelease(sb);
+        }
+		#endregion
+
+		#region ---ToString---
+        public override string ToString()
+        {
+            return ToFormatString("");
+        }
+		#endregion
+    }
+}

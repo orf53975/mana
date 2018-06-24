@@ -4,6 +4,14 @@
     {
         private readonly ByteBuffer sendingData = new ByteBuffer(1024);
 
+        public bool HasSendingData
+        {
+            get
+            {
+                return sendingData.Available > 0;
+            }
+        }
+
         public void WriteTo(byte[] buffer, ref int offset, int sendBufferLimit)
         {
             lock (sendingData)
@@ -24,7 +32,15 @@
 
         public void Push(Packet p)
         {
-            lock (sendingData) { Packet.Encode(p, sendingData); }
+            lock (sendingData)
+            {
+                Packet.Encode(p, sendingData);
+            }
+        }
+
+        public void Clear()
+        {
+            sendingData.Clear();
         }
     }
 }

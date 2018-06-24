@@ -4,13 +4,6 @@ namespace mana.Foundation
 {
     public static class DataObjectExtension
     {
-        public static T DeepClone<T>(this T src) 
-            where T : class, DataObject, new()
-        {
-            var ret = ObjectCache.Get<T>();
-            src.DeepCopyTo(ret);
-            return ret;
-        }
 
         #region <<Reader Extension>>
         public static T Read<T>(this IReadableBuffer br) 
@@ -82,9 +75,21 @@ namespace mana.Foundation
                 var t = Type.GetType(typeName);
                 if (t != null)
                 {
-                    var ret = ObjectCache.Get(t) as DataObject;
-                    ret.Decode(br);
-                    return ret;
+                    var obj = ObjectCache.TryGet(t);
+                    if (obj == null)
+                    {
+                        obj = Activator.CreateInstance(t);
+                    }
+                    var ret = obj as DataObject;
+                    if (ret == null)
+                    {
+                        Logger.Error("{0} is not DataObject", typeName);
+                    }
+                    else
+                    {
+                        ret.Decode(br);
+                        return ret;
+                    }
                 }
                 else
                 {
@@ -125,13 +130,13 @@ namespace mana.Foundation
         #endregion
 
         #region <<Writer Extension>>
-        public static void Write<T>(this IWritableBuffer bw, T obj, bool isWriteAll) where T : DataObject, new()
+        public static void Write<T>(this IWritableBuffer bw, T obj) where T : DataObject, new()
         {
             if (obj != null)
             {
                 using (var tempBw = ByteBuffer.Pool.Get())
                 {
-                    obj.Encode(tempBw, isWriteAll);
+                    obj.Encode(tempBw);
 
                     bw.WriteUnsignedVarint(tempBw.Length);
                     bw.Write(tempBw);
@@ -143,17 +148,17 @@ namespace mana.Foundation
             }
         }
 
-        public static void WriteArray<T>(this IWritableBuffer bw, T[] arr, bool isWriteAll) where T : DataObject, new()
+        public static void WriteArray<T>(this IWritableBuffer bw, T[] arr) where T : DataObject, new()
         {
             int len = arr == null ? 0 : arr.Length;
             bw.WriteUnsignedVarint(len);
             for (int i = 0; i < len; i++)
             {
-                bw.Write(arr[i], isWriteAll);
+                bw.Write(arr[i]);
             }
         }
 
-        public static void WriteUnknow(this IWritableBuffer bw, DataObject obj, bool isWriteAll)
+        public static void WriteUnknow(this IWritableBuffer bw, DataObject obj)
         {
             if (obj != null)
             {
@@ -167,7 +172,7 @@ namespace mana.Foundation
                     }
                     else
                     {
-                        obj.Encode(tempBw, isWriteAll);
+                        obj.Encode(tempBw);
                     }
                     bw.WriteUnsignedVarint(tempBw.Length);
                     bw.Write(tempBw);
@@ -179,13 +184,13 @@ namespace mana.Foundation
             }
         }
 
-        public static void WriteUnknowArray(this IWritableBuffer bw, DataObject[] arr, bool isWriteAll)
+        public static void WriteUnknowArray(this IWritableBuffer bw, DataObject[] arr)
         {
             int len = arr == null ? 0 : arr.Length;
             bw.WriteUnsignedVarint(len);
             for (int i = 0; i < len; i++)
             {
-                bw.WriteUnknow(arr[i], isWriteAll);
+                bw.WriteUnknow(arr[i]);
             }
         }
         #endregion

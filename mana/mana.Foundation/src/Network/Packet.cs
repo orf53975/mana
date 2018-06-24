@@ -46,9 +46,9 @@ namespace mana.Foundation
 
         #endregion
 
-        #region <<Static Pool>>
+        #region <<Static Cache>>
 
-        public static readonly ObjectPool<Packet> Pool = new ObjectPool<Packet>(
+        private static readonly ObjectPool<Packet> Cache = new ObjectPool<Packet>(
             () => new Packet(), null, (e) => e.Clear());
 
         #endregion
@@ -57,7 +57,7 @@ namespace mana.Foundation
 
         public static Packet CreatRequest(string msgRoute, int requestId, ISerializable msgObject)
         {
-            var p = Packet.Pool.Get();
+            var p = Packet.Cache.Get();
             p.msgType = MessageType.REQUEST;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -70,7 +70,7 @@ namespace mana.Foundation
 
         public static Packet CreatResponse(string msgRoute, int requestId, ISerializable msgObject)
         {
-            var p = Packet.Pool.Get();
+            var p = Packet.Cache.Get();
             p.msgType = MessageType.RESPONSE;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -83,7 +83,7 @@ namespace mana.Foundation
 
         public static Packet CreatNotify(string msgRoute, ISerializable msgObject)
         {
-            var p = Packet.Pool.Get();
+            var p = Packet.Cache.Get();
             p.msgType = MessageType.NOTIFY;
             p.msgRoute = msgRoute;
             if (msgObject != null)
@@ -95,7 +95,7 @@ namespace mana.Foundation
 
         public static Packet CreatPush(string msgRoute, ISerializable msgObject)
         {
-            var p = Packet.Pool.Get();
+            var p = Packet.Cache.Get();
             p.msgType = MessageType.PUSH;
             p.msgRoute = msgRoute;
             if (msgObject != null)
@@ -123,7 +123,7 @@ namespace mana.Foundation
             var msgFlag = (Flag)((packetHead) & 0xF);
 
             var endPositon = br.Position + packetSize;
-            var p = Packet.Pool.Get();
+            var p = Packet.Cache.Get();
             // -- 2. message type
             p.msgType = msgType;
             // -- 3. message route
@@ -292,7 +292,17 @@ namespace mana.Foundation
 
         public ISerializable TryGet(Type t)
         {
-            var ret = ObjectCache.Get(t) as ISerializable;
+            var obj = ObjectCache.TryGet(t);
+            if (obj == null)
+            {
+                obj = Activator.CreateInstance(t);
+            }
+            var ret = obj as ISerializable;
+            if (ret == null)
+            {
+                Logger.Error("Type[] does not implement the interface", t.FullName);
+                return null;
+            }
             if (!this.TryGet(ret))
             {
                 var cachedObj = ret as ICacheable;

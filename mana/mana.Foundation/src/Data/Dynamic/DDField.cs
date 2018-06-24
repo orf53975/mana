@@ -17,6 +17,8 @@ namespace mana.Foundation
             internal set;
         }
 
+        public bool maskBit;
+
         public Int32 int32Value
         {
             get;
@@ -53,6 +55,8 @@ namespace mana.Foundation
             private set;
         }
 
+
+ 
         #region <<SetValue>>
 
         public bool SetValue(bool v)
@@ -64,6 +68,7 @@ namespace mana.Foundation
             }
 
             int32Value = v ? 1 : 0;
+            maskBit = true;
             return true;
         }
 
@@ -77,6 +82,7 @@ namespace mana.Foundation
                 return false;
             }
             int32Value = v;
+            maskBit = true;
             return true;
         }
 
@@ -90,6 +96,7 @@ namespace mana.Foundation
                 return false;
             }
             int64Value = v;
+            maskBit = true;
             return true;
         }
 
@@ -102,6 +109,7 @@ namespace mana.Foundation
                 return false;
             }
             floatValue = v;
+            maskBit = true;
             return true;
         }
 
@@ -113,10 +121,11 @@ namespace mana.Foundation
                 return false;
             }
             strValue = v;
+            maskBit = true;
             return true;
         }
 
-        public bool MatchTmplType(DDNode v)
+        private bool MatchTmplType(DDNode v)
         {
             if (Tmpl.token == DDToken.ft_object)
             {
@@ -133,6 +142,7 @@ namespace mana.Foundation
                 return false;
             }
             objValue = v;
+            maskBit = true;
             return true;
         }
 
@@ -145,6 +155,7 @@ namespace mana.Foundation
                 return false;
             }
             arrValue = v;
+            maskBit = true;
             return true;
         }
 
@@ -157,6 +168,7 @@ namespace mana.Foundation
                 return false;
             }
             arrValue = v;
+            maskBit = true;
             return true;
         }
 
@@ -168,6 +180,7 @@ namespace mana.Foundation
                 return false;
             }
             arrValue = v;
+            maskBit = true;
             return true;
         }
 
@@ -179,6 +192,7 @@ namespace mana.Foundation
                 return false;
             }
             arrValue = v;
+            maskBit = true;
             return true;
         }
 
@@ -193,6 +207,7 @@ namespace mana.Foundation
                 return false;
             }
             arrValue = v;
+            maskBit = true;
             return true;
         }
 
@@ -204,6 +219,7 @@ namespace mana.Foundation
                 return false;
             }
             arrValue = v;
+            maskBit = true;
             return true;
         }
 
@@ -226,13 +242,14 @@ namespace mana.Foundation
                 }
             }
             arrValue = v;
+            maskBit = true;
             return true;
         }
         #endregion
 
         #region <<implement ISerializable>>
 
-        public void Encode(IWritableBuffer bw, bool isMaskAll)
+        public void Encode(IWritableBuffer bw)
         {
             switch (Tmpl.token)
             {
@@ -340,19 +357,14 @@ namespace mana.Foundation
                 case DDToken.ft_object:
                     if (Tmpl.isArray)
                     {
-                        bw.WriteNodeArray((DDNode[])arrValue, Tmpl, isMaskAll);
+                        bw.WriteNodeArray((DDNode[])arrValue, Tmpl);
                     }
                     else
                     {
-                        bw.WritNode(objValue, Tmpl, isMaskAll);
+                        bw.WritNode(objValue, Tmpl);
                     }
                     break;
             }
-        }
-
-        public void Encode(IWritableBuffer bw)
-        {
-            this.Encode(bw, false);
         }
 
         public void Decode(IReadableBuffer br)

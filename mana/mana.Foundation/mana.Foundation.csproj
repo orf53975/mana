@@ -63,18 +63,27 @@
     <Compile Include="src\Data\Dynamic\DDToken.cs" />
     <Compile Include="src\Data\Mask.cs" />
     <Compile Include="src\Logger.cs" />
-    <Compile Include="src\Net\NetRecivedCallBack.cs" />
-    <Compile Include="src\Net\NetChannel.cs" />
-    <Compile Include="src\Net\NetClient.cs" />
-    <Compile Include="src\Net\NetDispatcher.Response.cs" />
-    <Compile Include="src\Net\Packet.cs" />
-    <Compile Include="src\Net\PacketRcver.cs" />
-    <Compile Include="src\Net\PacketSnder.cs" />
-    <Compile Include="src\Net\Proto.cs" />
-    <Compile Include="src\Net\Protocol.cs" />
+    <Compile Include="src\Network\Client\NetRecivedCallBack.cs" />
+    <Compile Include="src\Network\Client\NetChannel.cs" />
+    <Compile Include="src\Network\Client\NetClient.cs" />
+    <Compile Include="src\Network\Client\NetDispatcher.Response.cs" />
+    <Compile Include="src\Network\Packet.cs" />
+    <Compile Include="src\Network\PacketRcver.cs" />
+    <Compile Include="src\Network\PacketSnder.cs" />
+    <Compile Include="src\Network\Proto.cs" />
+    <Compile Include="src\Network\Protocol.cs" />
     <Compile Include="src\Cache\ICacheable.cs" />
-    <Compile Include="src\Net\NetDispatcher.Push.cs" />
-    <Compile Include="src\Net\ProtoType.cs" />
+    <Compile Include="src\Network\Client\NetDispatcher.Push.cs" />
+    <Compile Include="src\Network\ProtoType.cs" />
+    <Compile Include="src\Network\Sever\BufferManager.cs" />
+    <Compile Include="src\Network\Sever\handle\IMessageHandler.cs" />
+    <Compile Include="src\Network\Sever\handle\MessageBindingAttribute.cs" />
+    <Compile Include="src\Network\Sever\handle\MessageDispatcher.cs" />
+    <Compile Include="src\Network\Sever\handle\OnBindDefault.cs" />
+    <Compile Include="src\Network\Sever\handle\OnPing.cs" />
+    <Compile Include="src\Network\Sever\IOCPServer.cs" />
+    <Compile Include="src\Network\Sever\UserToken.cs" />
+    <Compile Include="src\Network\Sever\UserTokenPool.cs" />
     <Compile Include="src\Util\CodingUtil.cs" />
     <Compile Include="src\Cache\ListCache.cs" />
     <Compile Include="src\Util\MathTools.cs" />
@@ -83,5 +92,6 @@
     <Compile Include="src\Cache\StringBuilderCache.cs" />
     <Compile Include="src\Util\Utils.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
