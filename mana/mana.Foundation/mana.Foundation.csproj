@@ -67,6 +67,9 @@
     <Compile Include="src\Network\Client\NetChannel.cs" />
     <Compile Include="src\Network\Client\NetClient.cs" />
     <Compile Include="src\Network\Client\NetDispatcher.Response.cs" />
+    <Compile Include="src\Network\Client\Test\Client.cs" />
+    <Compile Include="src\Network\Client\Test\IOCPClient.cs" />
+    <Compile Include="src\Network\Client\Test\Program.cs" />
     <Compile Include="src\Network\Packet.cs" />
     <Compile Include="src\Network\PacketRcver.cs" />
     <Compile Include="src\Network\PacketSnder.cs" />
