@@ -54,6 +54,7 @@
     <Compile Include="src\Data\Dynamic\DDTmpl.cs" />
     <Compile Include="src\Data\IFormatString.cs" />
     <Compile Include="src\Data\ISerializable.cs" />
+    <Compile Include="src\Data\Static\Heartbeat.cs" />
     <Compile Include="src\Data\Static\DataObject.cs" />
     <Compile Include="src\Data\Static\DataObjectConfigAttribute.cs" />
     <Compile Include="src\Data\Static\DataObjectExtension.cs" />
@@ -67,9 +68,6 @@
     <Compile Include="src\Network\Client\NetChannel.cs" />
     <Compile Include="src\Network\Client\NetClient.cs" />
     <Compile Include="src\Network\Client\NetDispatcher.Response.cs" />
-    <Compile Include="src\Network\Client\Test\Client.cs" />
-    <Compile Include="src\Network\Client\Test\IOCPClient.cs" />
-    <Compile Include="src\Network\Client\Test\Program.cs" />
     <Compile Include="src\Network\Packet.cs" />
     <Compile Include="src\Network\PacketRcver.cs" />
     <Compile Include="src\Network\PacketSnder.cs" />
@@ -79,12 +77,13 @@
     <Compile Include="src\Network\Client\NetDispatcher.Push.cs" />
     <Compile Include="src\Network\ProtoType.cs" />
     <Compile Include="src\Network\Sever\BufferManager.cs" />
-    <Compile Include="src\Network\Sever\handle\IMessageHandler.cs" />
-    <Compile Include="src\Network\Sever\handle\MessageBindingAttribute.cs" />
-    <Compile Include="src\Network\Sever\handle\MessageDispatcher.cs" />
-    <Compile Include="src\Network\Sever\handle\OnBindDefault.cs" />
-    <Compile Include="src\Network\Sever\handle\OnPing.cs" />
+    <Compile Include="src\Network\Sever\Handlers\OnBind.cs" />
+    <Compile Include="src\Network\Sever\Handlers\OnPing.cs" />
+    <Compile Include="src\Network\Sever\Message\IMessageHandler.cs" />
+    <Compile Include="src\Network\Sever\Message\MessageBindingAttribute.cs" />
+    <Compile Include="src\Network\Sever\Message\MessageDispatcher.cs" />
     <Compile Include="src\Network\Sever\IOCPServer.cs" />
+    <Compile Include="src\Network\Sever\Push\PushPong.cs" />
     <Compile Include="src\Network\Sever\UserToken.cs" />
     <Compile Include="src\Network\Sever\UserTokenPool.cs" />
     <Compile Include="src\Util\CodingUtil.cs" />
@@ -93,6 +92,7 @@
     <Compile Include="src\Cache\ObjectCache.cs" />
     <Compile Include="src\Cache\ObjectPool.cs" />
     <Compile Include="src\Cache\StringBuilderCache.cs" />
+    <Compile Include="src\Util\TimeUtil.cs" />
     <Compile Include="src\Util\Utils.cs" />
   </ItemGroup>
   <ItemGroup />

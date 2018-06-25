@@ -12,6 +12,7 @@ namespace mana.Server.Test
         {
             StartUpdateThread();
         }
+
 #if ___AAA
         #region <<battleGroups>>
 

@@ -32,6 +32,7 @@ namespace mana.Foundation
             this.m_numConnectedSockets = 0;
             this.tokenUnbindTimeOut = tokenUnbindTimeOut;
             this.tokenWorkTimeOut = tokenWorkTimeOut;
+            MessageDispatcher.Instance.ApplyProtocol();
         }
 
         // Starts the server such that it is listening for 
@@ -100,6 +101,7 @@ namespace mana.Foundation
                     OnSocketConnected(e.AcceptSocket.RemoteEndPoint.ToString());
                     var token = mTokenPool.Get();
                     token.Init(e.AcceptSocket);
+                    token.SendPush("Connector.Protocol", Protocol.Instance);
                 }
             }
             catch (Exception ex)

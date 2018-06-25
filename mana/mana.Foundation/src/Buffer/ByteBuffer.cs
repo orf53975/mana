@@ -80,7 +80,7 @@ namespace mana.Foundation
             this.Read(r_buffer, 0, 2);
             return (short)(
                 (int)this.r_buffer[0] << 8 |
-                (int)r_buffer[1]
+                (int)this.r_buffer[1]
                 );
         }
 
@@ -88,9 +88,9 @@ namespace mana.Foundation
         {
             this.Read(r_buffer, 0, 3);
             return
-                (int)r_buffer[1] << 16 |
-                (int)r_buffer[2] << 8 |
-                (int)r_buffer[3];
+                (int)r_buffer[0] << 16 |
+                (int)r_buffer[1] << 8 |
+                (int)r_buffer[2];
         }
 
         public int ReadInt32()

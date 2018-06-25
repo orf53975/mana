@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Test", "mana.Test\mana
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.ClassGen", "mana.ClassGen\mana.ClassGen.csproj", "{357761D7-9D8C-42AE-BF30-0E2AE614DEFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Server.Test", "mana.Server.Test\mana.Server.Test.csproj", "{53720AA4-8638-4593-9C19-E4ADE9E1813B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Server.Test", "mana.Server.Test\mana.Server.Test.csproj", "{53720AA4-8638-4593-9C19-E4ADE9E1813B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Test.Client", "mana.Test.Client\mana.Test.Client.csproj", "{6B1A43AC-5C63-41B7-AC5F-7611E893499F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,14 @@ Global
 		{53720AA4-8638-4593-9C19-E4ADE9E1813B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{53720AA4-8638-4593-9C19-E4ADE9E1813B}.Release|x86.ActiveCfg = Release|Any CPU
 		{53720AA4-8638-4593-9C19-E4ADE9E1813B}.Release|x86.Build.0 = Release|Any CPU
+		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Debug|x86.Build.0 = Debug|Any CPU
+		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|x86.ActiveCfg = Release|Any CPU
+		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

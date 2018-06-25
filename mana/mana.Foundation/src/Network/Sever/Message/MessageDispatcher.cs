@@ -1,5 +1,4 @@
-﻿using mana.Foundation;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
@@ -17,7 +16,7 @@ namespace mana.Foundation
             RegistAllMessageHandler();
         }
 
-        void RegistAllMessageHandler()
+        private void RegistAllMessageHandler()
         {
             var mhts = AppDomain.CurrentDomain.FindAllTypes((type) =>
             {
@@ -38,26 +37,26 @@ namespace mana.Foundation
                     Trace.TraceError("MessageHandler Regist falied! {0} require MessageBindingAttribute", t.ToString());
                     continue;
                 }
-                if (!mba.overrideable)
+                if (!mba.Overrideable)
                 {
-                    if (handlers.TryGetValue(mba.route, out obj))
+                    if (handlers.TryGetValue(mba.Route, out obj))
                     {
                         Trace.TraceError("MessageHandler Regist falied! opcode conflict {0}->{1}", obj.GetType(), t);
                     }
                     else
                     {
-                        handlers.Add(mba.route, Activator.CreateInstance(t) as IMessageHandler);
+                        handlers.Add(mba.Route, Activator.CreateInstance(t) as IMessageHandler);
                     }
                 }
                 else
                 {
-                    if (overrideableHandlers.TryGetValue(mba.route, out obj))
+                    if (overrideableHandlers.TryGetValue(mba.Route, out obj))
                     {
                         Trace.TraceError("MessageHandler Regist falied! opcode conflict {0}->{1}", obj.GetType(), t);
                     }
                     else
                     {
-                        overrideableHandlers.Add(mba.route, Activator.CreateInstance(t) as IMessageHandler);
+                        overrideableHandlers.Add(mba.Route, Activator.CreateInstance(t) as IMessageHandler);
                     }
                 }
             }
@@ -68,6 +67,18 @@ namespace mana.Foundation
                     handlers.Add(kv.Key, kv.Value);
                 }
             }
+        }
+
+        public void ApplyProtocol()
+        {
+            var protocol = Protocol.Instance;
+            foreach (var kv in handlers)
+            {
+                var route = kv.Key;
+                var mba = kv.Value.GetType().TryGetAttribute<MessageBindingAttribute>();
+                protocol.AddProtoAutoGenCode(route, mba.ProtoType, mba.InDataType, mba.OutDataType);
+            }
+            Trace.TraceInformation(protocol.ToFormatString(""));
         }
 
         public bool Dispatch(UserToken token, Packet p)

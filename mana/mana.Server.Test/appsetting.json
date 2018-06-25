@@ -7,9 +7,5 @@
 
   "connMax": 255,
 
-  "plugins": [
-    "Extend.Abilities.dll",
-    "Extend.AI.dll",
-    "Extend.Buffs.dll"
-  ]
+  "plugins": []
 }

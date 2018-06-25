@@ -94,8 +94,8 @@ namespace mana.Foundation
             var sb = StringBuilderCache.Acquire();
             sb.Append("ptype = ").Append(ptype).Append(',');
             sb.Append("route = ").Append(route).Append(',');
-            sb.Append("c2sdt = ").Append(c2sdt).Append(',');
-            sb.Append("s2cdt = ").Append(s2cdt);
+            sb.Append("c2sdt = ").Append(c2sdt != null ? c2sdt : "null").Append(',');
+            sb.Append("s2cdt = ").Append(s2cdt != null ? s2cdt : "null");
             return StringBuilderCache.GetAndRelease(sb);
         }
 

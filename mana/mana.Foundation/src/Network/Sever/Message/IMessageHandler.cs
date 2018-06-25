@@ -1,6 +1,4 @@
-﻿using mana.Foundation;
-
-namespace mana.Foundation
+﻿namespace mana.Foundation
 {
     public interface IMessageHandler
     {

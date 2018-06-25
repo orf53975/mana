@@ -5,3 +5,5 @@
 /mana/mana.Test/bin
 /mana/mana.ClassGen
 /mana/mana.ScriptExport
+/mana/mana.Test.Client/bin
+/mana/mana.Test.Client/obj

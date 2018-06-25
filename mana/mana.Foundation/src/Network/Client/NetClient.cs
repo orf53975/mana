@@ -27,21 +27,21 @@ namespace mana.Foundation
         {
             if (p.msgType == Packet.MessageType.RESPONSE)
             {
-                if (responseDispatcher.Dispatch(p))
+                if (!responseDispatcher.Dispatch(p))
                 {
-                    Logger.Warning("no handler!", p);
+                    Logger.Warning("no handler! [{0}]", p.msgRoute);
                 }
                 return;
             }
             if (p.msgType == Packet.MessageType.PUSH)
             {
-                if (pushDispatcher.Dispatch(p))
+                if (!pushDispatcher.Dispatch(p))
                 {
-                    Logger.Warning("no handler!", p);
+                    Logger.Warning("no handler! [{0}]", p.msgRoute);
                 }
                 return;
             }
-            Logger.Error("error type[{0}]!", p.msgType);
+            Logger.Error("error type! [{0}]", p.msgType);
         }
 
         #region <<Request>>

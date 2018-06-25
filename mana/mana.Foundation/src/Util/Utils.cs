@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Text;
 
 namespace mana.Foundation
 {
@@ -132,16 +131,6 @@ namespace mana.Foundation
             {
                 return defaultValue;
             }
-        }
-
-        public static int GetTimeSpan(int curTime, int preTime)
-        {
-            if (curTime < 0 && preTime > 0)
-            {
-                long ret = curTime & uint.MaxValue;
-                return (int)(ret - preTime);
-            }
-            return curTime - preTime;
         }
 
         public static int BinarySearch<T>(List<T> lists, Func<T, long> compareFunc)

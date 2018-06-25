@@ -1,11 +1,9 @@
 ﻿using mana.Foundation;
-using mana.Server.Test.Config;
 using System;
 using System.Diagnostics;
-using System.Net;
 using System.Threading;
 
-namespace mana.Server.Test
+namespace mana.Test.Client
 {
     class Program
     {
@@ -13,33 +11,7 @@ namespace mana.Server.Test
         {
             Trace.Listeners.Add(new CustomTrace());
             Program.InitLogger();
-            var setting = ConfigMgr.AppSetting;
-            // -- 1
-            LoadPlugins();
-            // -- 2
-            var sev = new MainServer(setting.connMax, setting.connBuffSize);
-            var ipAddr = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
-            sev.Start(new IPEndPoint(ipAddr, setting.port));
-            // -- 3
-            StartCommandConsoleThread();
-        }
-
-        static void LoadPlugins()
-        {
-            var setting = ConfigMgr.AppSetting;
-            foreach (var s in setting.plugins)
-            {
-                var fp = ConfigMgr.GetFullPath(s);
-                var err = Utils.LoadDll(AppDomain.CurrentDomain, fp);
-                if (err == null)
-                {
-                    Trace.TraceInformation("dll loaded > " + s);
-                }
-                else
-                {
-                    Trace.TraceError(err);
-                }
-            }
+            Program.StartCommandConsoleThread();
         }
 
         #region InitLogger
@@ -83,8 +55,10 @@ namespace mana.Server.Test
 
         #endregion
 
+
         #region <<CommandConsole>>
 
+        #region <<CommandConsoleThread>>
         static bool isCommandConsoleRunning = false;
         static void StartCommandConsoleThread()
         {
@@ -95,7 +69,7 @@ namespace mana.Server.Test
                 while (isCommandConsoleRunning)
                 {
                     var cmd = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(cmd))
+                    if (!string.IsNullOrEmpty(cmd))
                     {
                         try
                         {
@@ -110,8 +84,8 @@ namespace mana.Server.Test
                 }
             }).Start();
         }
+        #endregion
 
-        // 控制台逻辑
         static void OnCommond(string cmd)
         {
             if (cmd == "exit" || cmd == "quit")
@@ -119,20 +93,51 @@ namespace mana.Server.Test
                 isCommandConsoleRunning = false;
                 return;
             }
-            //if (cmd == "attack")
-            //{
-            //    var ab = BattleSystem.Units.Abilities.AbilityFactory.Creat(0x2001, 100);
-            //    Trace.TraceError(ab.name);
-            //    return;
-            //}
-            //if (cmd == "buff")
-            //{
-            //    var bf = BattleSystem.Units.Buffs.BuffFactory.Creat(0x0001, 1);
-            //    Trace.TraceError(bf.name);
-            //    return;
-            //}
+            if (cmd == "nc")
+            {
+                if (mTestClient == null)
+                {
+                    mTestClient = StartNetClient();
+                    mTestClient.AddPushListener<Protocol>("Connector.Protocol", (protocol) =>
+                    {
+                        Protocol.Instance.Push(protocol);
+                        Logger.Print(Protocol.Instance.ToFormatString(""));
+                    });
+                    mTestClient.AddPushListener<Heartbeat>("Connector.Pong", (protocol) =>
+                    {
+                        Logger.Print(protocol.ToFormatString(""));
+                    });
+                    mTestClient.Connect("127.0.0.1", 8088, null);
+                }
+                else
+                {
+                    Console.WriteLine("TestClient had already existed!");
+                }
+                return;
+            }
+            if (cmd == "ping")
+            {
+                if (mTestClient != null)
+                {
+                    mTestClient.Notify<Heartbeat>("Connector.Ping", (hb) =>
+                    {
+                        TimeSpan ts = DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1);
+                        hb.timestamp = (int)ts.TotalSeconds;
+                    });
+                }
+            }
+            Console.WriteLine("invalid command:{0}", cmd);
         }
 
         #endregion
+
+        private static NetClient mTestClient = null;
+        public static NetClient StartNetClient()
+        {
+            var channel = new CustomNetChannel();
+            channel.StartThread();
+            return new NetClient(channel);
+        }
+
     }
 }

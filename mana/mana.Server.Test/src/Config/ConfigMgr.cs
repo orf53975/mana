@@ -7,14 +7,11 @@ using System.Text;
 
 namespace mana.Server.Test.Config
 {
-    internal static class ConfigManager
+    internal static class ConfigMgr
     {
         internal static string CurrentDirectory
         {
-            get
-            {
-                return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-            }
+            get { return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); }
         }
 
         internal static string GetFullPath(string relativeFilePath)

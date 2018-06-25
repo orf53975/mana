@@ -1,11 +1,10 @@
-﻿using mana.Foundation;
-using System;
+﻿using System;
 using System.Diagnostics;
 
 namespace mana.Foundation
 {
-    [MessageBinding("Connector.BindToken", true)]
-    public sealed class OnBindDefault : IMessageHandler
+    [MessageBinding("Connector.Bind", ProtoType.REQRSP, null, null, true)]
+    public sealed class OnBind : IMessageHandler
     {
         public void Process(UserToken token, Packet msg)
         {

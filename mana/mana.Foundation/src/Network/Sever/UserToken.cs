@@ -327,7 +327,7 @@ namespace mana.Foundation
 
         internal void CheckLinkStateTimeOut(int curTime)
         {
-            if (Utils.GetTimeSpan(curTime, startTime) > server.tokenUnbindTimeOut)
+            if (TimeUtil.GetTimeSpan(curTime, startTime) > server.tokenUnbindTimeOut)
             {
                 Release();
             }
@@ -335,7 +335,7 @@ namespace mana.Foundation
 
         internal void CheckWorkStateTimeOut(int curTime)
         {
-            if (Utils.GetTimeSpan(curTime, lastActiveTime) > server.tokenWorkTimeOut)
+            if (TimeUtil.GetTimeSpan(curTime, lastActiveTime) > server.tokenWorkTimeOut)
             {
                 Release();
             }

@@ -11,8 +11,9 @@ namespace mana.Foundation
         {
             if (bAddDefaultProto)
             {
-                AddProto(0x0001, new Proto("Connector.UpdateProtocol", ProtoType.PUSH, null, typeof(Protocol).Name));
-                AddProto(0x0002, new Proto("Connector.Heartbeat", ProtoType.REQRSP, null, null));
+                AddProto(0x0001, new Proto("Connector.Protocol", ProtoType.PUSH, null, typeof(Protocol).FullName));
+                AddProto(0x0002, new Proto("Connector.Ping", ProtoType.NOTIFY, typeof(Heartbeat).FullName, null));
+                AddProto(0x0003, new Proto("Connector.Pong", ProtoType.PUSH, null, typeof(Heartbeat).FullName));
             }
         }
 
@@ -111,7 +112,20 @@ namespace mana.Foundation
 
         public bool AddProtoAutoGenCode(string route, ProtoType type, Type uldt, Type dldt)
         {
-            return this.AddProto(GenProtoCode(), new Proto(route, type, uldt.Name, dldt.Name));
+            var c2sdt = uldt != null ? uldt.FullName : null;
+            var s2cdt = dldt != null ? dldt.FullName : null;
+            var proto = new Proto(route, type, c2sdt, s2cdt);
+            var exist = this.GetProto(route);
+            if (exist == null)
+            {
+                return AddProto(GenProtoCode(), proto);
+            }
+            if (proto.Equals(exist))
+            {
+                return true;
+            }
+            Logger.Error("Proto conflict! route = {0} , \n{1}\n{2}" , route , proto , exist);
+            return false;
         }
 
         #endregion

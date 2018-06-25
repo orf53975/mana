@@ -7,5 +7,6 @@ namespace mana.Foundation
         void StartConnect(string ip, ushort port, Action<bool, Exception> callback);
         void Send(Packet p);
         void AddListener(Action<Packet> p);
+        //void Disconnect();
     }
 }

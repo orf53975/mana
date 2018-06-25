@@ -61,7 +61,6 @@ namespace mana.Test
 
         #endregion
 
-
         #region NetClient
 
         public static void DoTestNetClient()

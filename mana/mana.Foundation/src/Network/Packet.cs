@@ -119,8 +119,8 @@ namespace mana.Foundation
                 br.Seek(markPosition);
                 return null;
             }
-            var msgType = (MessageType)((packetHead >> 4) & 0xF);
-            var msgFlag = (Flag)((packetHead) & 0xF);
+            var msgType = (MessageType)(packetHead & 0xF);
+            var msgFlag = (Flag)((packetHead >> 4) & 0xF);
 
             var endPositon = br.Position + packetSize;
             var p = Packet.Cache.Get();
