@@ -68,6 +68,24 @@ namespace mana.Foundation
             return p;
         }
 
+        public static Packet CreatRequest<T>(string msgRoute, int requestId, Action<T> reqSetter) 
+            where T : class, ISerializable, ICacheable, new()
+        {
+            var p = Packet.Cache.Get();
+            p.msgType = MessageType.REQUEST;
+            p.msgRequestId = requestId;
+            p.msgRoute = msgRoute;
+            if (reqSetter != null)
+            {
+                var d = ObjectCache.Get(reqSetter);
+                d.Encode(p.msgData);
+                ObjectCache.Put(d);
+            }
+            return p;
+        }
+
+
+
         public static Packet CreatResponse(string msgRoute, int requestId, ISerializable msgObject)
         {
             var p = Packet.Cache.Get();
@@ -81,6 +99,24 @@ namespace mana.Foundation
             return p;
         }
 
+
+        public static Packet CreatResponse<T>(string msgRoute, int requestId, Action<T> rspSetter)
+            where T : class, ISerializable, ICacheable, new()
+        {
+            var p = Packet.Cache.Get();
+            p.msgType = MessageType.RESPONSE;
+            p.msgRequestId = requestId;
+            p.msgRoute = msgRoute;
+            if (rspSetter != null)
+            {
+                var d = ObjectCache.Get(rspSetter);
+                d.Encode(p.msgData);
+                ObjectCache.Put(d);
+            }
+            return p;
+        }
+
+
         public static Packet CreatNotify(string msgRoute, ISerializable msgObject)
         {
             var p = Packet.Cache.Get();
@@ -93,6 +129,22 @@ namespace mana.Foundation
             return p;
         }
 
+        public static Packet CreatNotify<T>(string msgRoute, Action<T> notifySetter) 
+            where T : class, ISerializable, ICacheable, new()
+        {
+            var p = Packet.Cache.Get();
+            p.msgType = MessageType.NOTIFY;
+            p.msgRoute = msgRoute;
+            if (notifySetter != null)
+            {
+                var d = ObjectCache.Get(notifySetter);
+                d.Encode(p.msgData);
+                ObjectCache.Put(d);
+            }
+            return p;
+        }
+
+
         public static Packet CreatPush(string msgRoute, ISerializable msgObject)
         {
             var p = Packet.Cache.Get();
@@ -101,6 +153,21 @@ namespace mana.Foundation
             if (msgObject != null)
             {
                 msgObject.Encode(p.msgData);
+            }
+            return p;
+        }
+
+        public static Packet CreatPush<T>(string msgRoute, Action<T> pushSetter)
+            where T : class, ISerializable, ICacheable, new()
+        {
+            var p = Packet.Cache.Get();
+            p.msgType = MessageType.PUSH;
+            p.msgRoute = msgRoute;
+            if (pushSetter != null)
+            {
+                var d = ObjectCache.Get(pushSetter);
+                d.Encode(p.msgData);
+                ObjectCache.Put(d);
             }
             return p;
         }

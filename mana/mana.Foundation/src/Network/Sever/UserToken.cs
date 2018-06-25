@@ -272,14 +272,16 @@ namespace mana.Foundation
             }
         }
 
-        public void SendResponse(string route, int responseId, ISerializable dataObj)
+        public void SendResponse<T>(string route, int responseId, Action<T> rspSetter)
+            where T : class, DataObject, new()
         {
-            this.Send(Packet.CreatResponse(route, responseId, dataObj));
+            this.Send(Packet.CreatResponse(route, responseId, rspSetter));
         }
 
-        public void SendPush(string route, ISerializable dataObj)
+        public void SendPush<T>(string route, Action<T> setter)
+            where T : class, DataObject, new()
         {
-            this.Send(Packet.CreatPush(route, dataObj));
+            this.Send(Packet.CreatPush(route, setter));
         }
 
         void CloseSocket()

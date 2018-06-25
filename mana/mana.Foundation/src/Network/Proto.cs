@@ -12,17 +12,17 @@ namespace mana.Foundation
             var rt = br.ReadUTF8();
             var pt = (ProtoType)br.ReadByte();
             string c2s, s2c;
-            if (pt == ProtoType.REQRSP)
+            if (pt == ProtoType.Request)
             {
                 c2s = br.ReadUTF8();
                 s2c = br.ReadUTF8();
             }
-            else if (pt == ProtoType.NOTIFY)
+            else if (pt == ProtoType.Notify)
             {
                 c2s = br.ReadUTF8();
                 s2c = null;
             }
-            else if (pt == ProtoType.PUSH)
+            else if (pt == ProtoType.Push)
             {
                 c2s = null;
                 s2c = br.ReadUTF8();
@@ -54,16 +54,16 @@ namespace mana.Foundation
         {
             bw.WriteUTF8(route);
             bw.WriteByte((byte)ptype);
-            if (ptype == ProtoType.REQRSP)
+            if (ptype == ProtoType.Request)
             {
                 bw.WriteUTF8(c2sdt);
                 bw.WriteUTF8(s2cdt);
             }
-            else if (ptype == ProtoType.NOTIFY)
+            else if (ptype == ProtoType.Notify)
             {
                 bw.WriteUTF8(c2sdt);
             }
-            else if (ptype == ProtoType.PUSH)
+            else if (ptype == ProtoType.Push)
             {
                 bw.WriteUTF8(s2cdt);
             }

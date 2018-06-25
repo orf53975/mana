@@ -125,6 +125,7 @@ namespace mana.Test.Client
                         hb.timestamp = (int)ts.TotalSeconds;
                     });
                 }
+                return;
             }
             Console.WriteLine("invalid command:{0}", cmd);
         }

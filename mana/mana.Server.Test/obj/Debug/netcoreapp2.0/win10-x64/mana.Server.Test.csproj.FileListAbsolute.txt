@@ -13,6 +13,5 @@ E:\GitHub\mana\mana\mana.Server.Test\obj\Debug\netcoreapp2.0\win10-x64\mana.Serv
 E:\GitHub\mana\mana\mana.Server.Test\obj\Debug\netcoreapp2.0\win10-x64\mana.Server.Test.csproj.CoreCompileInputs.cache
 E:\GitHub\mana\mana\mana.Server.Test\obj\Debug\netcoreapp2.0\win10-x64\mana.Server.Test.AssemblyInfoInputs.cache
 E:\GitHub\mana\mana\mana.Server.Test\obj\Debug\netcoreapp2.0\win10-x64\mana.Server.Test.AssemblyInfo.cs
-E:\GitHub\mana\mana\mana.Server.Test\obj\Debug\netcoreapp2.0\win10-x64\mana.Server.Test.csproj.CopyComplete
 E:\GitHub\mana\mana\mana.Server.Test\obj\Debug\netcoreapp2.0\win10-x64\mana.Server.Test.dll
 E:\GitHub\mana\mana\mana.Server.Test\obj\Debug\netcoreapp2.0\win10-x64\mana.Server.Test.pdb

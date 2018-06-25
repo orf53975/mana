@@ -11,9 +11,9 @@ namespace mana.Foundation
         {
             if (bAddDefaultProto)
             {
-                AddProto(0x0001, new Proto("Connector.Protocol", ProtoType.PUSH, null, typeof(Protocol).FullName));
-                AddProto(0x0002, new Proto("Connector.Ping", ProtoType.NOTIFY, typeof(Heartbeat).FullName, null));
-                AddProto(0x0003, new Proto("Connector.Pong", ProtoType.PUSH, null, typeof(Heartbeat).FullName));
+                AddProto(0x0001, new Proto("Connector.Protocol", ProtoType.Push, null, typeof(Protocol).FullName));
+                AddProto(0x0002, new Proto("Connector.Ping", ProtoType.Notify, typeof(Heartbeat).FullName, null));
+                AddProto(0x0003, new Proto("Connector.Pong", ProtoType.Push, null, typeof(Heartbeat).FullName));
             }
         }
 
@@ -21,11 +21,11 @@ namespace mana.Foundation
 
         public void Push(Protocol other)
         {
-            for (var iter = protoMap.GetEnumerator(); iter.MoveNext();)
+            for (var iter = other.protoMap.GetEnumerator(); iter.MoveNext();)
             {
                 this.AddProto(iter.Current.Key, iter.Current.Value);
             }
-            for (var iter = code2dataType.GetEnumerator(); iter.MoveNext();)
+            for (var iter = other.code2dataType.GetEnumerator(); iter.MoveNext();)
             {
                 this.AddDataType(iter.Current.Key, iter.Current.Value);
             }

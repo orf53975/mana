@@ -9,9 +9,9 @@ namespace mana.Foundation
 
         public readonly ProtoType ProtoType;
 
-        public readonly Type InDataType;
+        public readonly Type InType;
 
-        public readonly Type OutDataType;
+        public readonly Type OutType;
 
         public readonly bool Overrideable;
 
@@ -19,8 +19,8 @@ namespace mana.Foundation
         {
             this.Route = route;
             this.ProtoType = pType;
-            this.InDataType = inType;
-            this.OutDataType = outType;
+            this.InType = inType;
+            this.OutType = outType;
             this.Overrideable = overrideable;
         }
     }

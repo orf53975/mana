@@ -32,8 +32,19 @@ namespace mana.Foundation
             this.m_numConnectedSockets = 0;
             this.tokenUnbindTimeOut = tokenUnbindTimeOut;
             this.tokenWorkTimeOut = tokenWorkTimeOut;
-            MessageDispatcher.Instance.ApplyProtocol();
+            this.InitProtocol();
         }
+
+        private Packet ProtocolPacket = null;
+        private void InitProtocol()
+        {
+            var protocol = Protocol.Instance;
+            MessageDispatcher.Instance.ApplyProtocol(protocol);
+            //TODO Apply Push Protocol 
+            //TODO Apply Type Protocol 
+            ProtocolPacket = Packet.CreatPush("Connector.Protocol", protocol);
+        }
+
 
         // Starts the server such that it is listening for 
         // incoming connection requests.    
@@ -101,7 +112,7 @@ namespace mana.Foundation
                     OnSocketConnected(e.AcceptSocket.RemoteEndPoint.ToString());
                     var token = mTokenPool.Get();
                     token.Init(e.AcceptSocket);
-                    token.SendPush("Connector.Protocol", Protocol.Instance);
+                    token.Send(ProtocolPacket);
                 }
             }
             catch (Exception ex)
@@ -118,7 +129,7 @@ namespace mana.Foundation
         void OnSocketConnected(string ipInfo)
         {
             Interlocked.Increment(ref m_numConnectedSockets);
-            Trace.TraceInformation("socket connected[{0}] ,conn = {1}", ipInfo , m_numConnectedSockets);
+            Trace.TraceInformation("socket connected[{0}] ,conn = {1}", ipInfo, m_numConnectedSockets);
         }
 
         internal void OnSocketClosed(string ipInfo)

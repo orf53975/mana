@@ -69,14 +69,13 @@ namespace mana.Foundation
             }
         }
 
-        public void ApplyProtocol()
+        public void ApplyProtocol(Protocol protocol)
         {
-            var protocol = Protocol.Instance;
             foreach (var kv in handlers)
             {
                 var route = kv.Key;
                 var mba = kv.Value.GetType().TryGetAttribute<MessageBindingAttribute>();
-                protocol.AddProtoAutoGenCode(route, mba.ProtoType, mba.InDataType, mba.OutDataType);
+                protocol.AddProtoAutoGenCode(route, mba.ProtoType, mba.InType, mba.OutType);
             }
             Trace.TraceInformation(protocol.ToFormatString(""));
         }

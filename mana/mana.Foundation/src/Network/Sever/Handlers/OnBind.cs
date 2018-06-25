@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace mana.Foundation
 {
-    [MessageBinding("Connector.Bind", ProtoType.REQRSP, null, null, true)]
+    [MessageBinding("Connector.Bind", ProtoType.Request, null, null, true)]
     public sealed class OnBind : IMessageHandler
     {
         public void Process(UserToken token, Packet msg)

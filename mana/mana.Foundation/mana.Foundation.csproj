@@ -83,7 +83,6 @@
     <Compile Include="src\Network\Sever\Message\MessageBindingAttribute.cs" />
     <Compile Include="src\Network\Sever\Message\MessageDispatcher.cs" />
     <Compile Include="src\Network\Sever\IOCPServer.cs" />
-    <Compile Include="src\Network\Sever\Push\PushPong.cs" />
     <Compile Include="src\Network\Sever\UserToken.cs" />
     <Compile Include="src\Network\Sever\UserTokenPool.cs" />
     <Compile Include="src\Util\CodingUtil.cs" />
@@ -95,6 +94,8 @@
     <Compile Include="src\Util\TimeUtil.cs" />
     <Compile Include="src\Util\Utils.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="src\Network\Sever\Push\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

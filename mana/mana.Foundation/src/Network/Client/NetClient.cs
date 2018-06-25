@@ -62,7 +62,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.REQRSP)
+            if (proto.ptype != ProtoType.Request)
             {
                 Logger.Error("proto type not match! [{0}->REQRSP]", proto.ptype);
                 return false;
@@ -79,9 +79,8 @@ namespace mana.Foundation
                 Logger.Error("proto dldt not match! [{0}->{1}]", proto.s2cdt, dldt);
                 return false;
             }
-            var d = ObjectCache.Get(reqSetter);
             var requestId = this.GenRequestId();
-            var p = Packet.CreatRequest(route, requestId, d);
+            var p = Packet.CreatRequest(route, requestId, reqSetter);
             this.channel.Send(p);
             this.responseDispatcher.Register(requestId, rspHandler);
             return true;
@@ -96,7 +95,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.REQRSP)
+            if (proto.ptype != ProtoType.Request)
             {
                 Logger.Error("proto type not match! [{0}->REQRSP]", proto.ptype);
                 return false;
@@ -127,7 +126,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.REQRSP)
+            if (proto.ptype != ProtoType.Request)
             {
                 Logger.Error("proto type not match! [{0}->REQRSP]", proto.ptype);
                 return false;
@@ -153,7 +152,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.REQRSP)
+            if (proto.ptype != ProtoType.Request)
             {
                 Logger.Error("proto type not match! [{0}->REQRSP]", proto.ptype);
                 return false;
@@ -183,7 +182,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.NOTIFY)
+            if (proto.ptype != ProtoType.Notify)
             {
                 Logger.Error("proto type not match! [{0}->Notify]", proto.ptype);
                 return false;
@@ -194,8 +193,7 @@ namespace mana.Foundation
                 Logger.Error("proto uldt not match! [{0}->{1}]", proto.c2sdt, uldt);
                 return false;
             }
-            var d = ObjectCache.Get(notifySetter);
-            var p = Packet.CreatNotify(route, d);
+            var p = Packet.CreatNotify(route, notifySetter);
             this.channel.Send(p);
             return true;
         }
@@ -208,7 +206,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.NOTIFY)
+            if (proto.ptype != ProtoType.Notify)
             {
                 Logger.Error("proto type not match! [{0}->Notify]", proto.ptype);
                 return false;
@@ -232,7 +230,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.NOTIFY)
+            if (proto.ptype != ProtoType.Notify)
             {
                 Logger.Error("proto type not match! [{0}->Notify]", proto.ptype);
                 return false;
@@ -255,7 +253,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.PUSH)
+            if (proto.ptype != ProtoType.Push)
             {
                 Logger.Error("proto type not match! [{0}->Push]", proto.ptype);
                 return false;
@@ -278,7 +276,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.PUSH)
+            if (proto.ptype != ProtoType.Push)
             {
                 Logger.Error("proto type not match! [{0}->Push]", proto.ptype);
                 return false;
@@ -296,7 +294,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.PUSH)
+            if (proto.ptype != ProtoType.Push)
             {
                 Logger.Error("proto type not match! [{0}->Push]", proto.ptype);
                 return false;
@@ -313,7 +311,7 @@ namespace mana.Foundation
                 Logger.Error("route[{0}] error!", route);
                 return false;
             }
-            if (proto.ptype != ProtoType.PUSH)
+            if (proto.ptype != ProtoType.Push)
             {
                 Logger.Error("proto type not match! [{0}->Push]", proto.ptype);
                 return false;
