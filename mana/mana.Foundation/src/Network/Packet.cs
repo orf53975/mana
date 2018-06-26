@@ -79,7 +79,7 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(reqSetter);
                 d.Encode(p.msgData);
-                ObjectCache.Put(d);
+                ObjectCache.Put(ref d);
             }
             return p;
         }
@@ -111,7 +111,7 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(rspSetter);
                 d.Encode(p.msgData);
-                ObjectCache.Put(d);
+                ObjectCache.Put(ref d);
             }
             return p;
         }
@@ -139,7 +139,7 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(notifySetter);
                 d.Encode(p.msgData);
-                ObjectCache.Put(d);
+                ObjectCache.Put(ref d);
             }
             return p;
         }
@@ -167,7 +167,7 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(pushSetter);
                 d.Encode(p.msgData);
-                ObjectCache.Put(d);
+                ObjectCache.Put(ref d);
             }
             return p;
         }

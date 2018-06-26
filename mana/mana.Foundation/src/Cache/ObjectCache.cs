@@ -97,16 +97,20 @@ namespace mana.Foundation
         public static bool Put<T>(T obj) 
             where T : class, ICacheable, new()
         {
-            if (obj is ICacheable)
+            var pool = _instance.GetPool<T>();
+            if (pool == null)
             {
-                var pool = _instance.GetPool<T>();
-                if (pool == null)
-                {
-                    pool = _instance.AddPool<T>();
-                }
-                return pool.Put(obj);
+                pool = _instance.AddPool<T>();
             }
-            return false;
+            return pool.Put(obj);
+        }
+
+        public static bool Put<T>(ref T obj)
+            where T : class, ICacheable, new()
+        {
+            var releaseObj = obj;
+            obj = null;
+            return Put(releaseObj);
         }
 
         public static void Clear<T>()
