@@ -105,14 +105,6 @@ namespace mana.Foundation
             return pool.Put(obj);
         }
 
-        public static bool Put<T>(ref T obj)
-            where T : class, ICacheable, new()
-        {
-            var releaseObj = obj;
-            obj = null;
-            return Put(releaseObj);
-        }
-
         public static void Clear<T>()
             where T : class, ICacheable, new()
         {

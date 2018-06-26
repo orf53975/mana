@@ -21,7 +21,7 @@ namespace mana.Foundation
                 string tmpl = null;
                 if (fieldTmpl.isUnknowType)
                 {
-                    tmpl = Protocol.Instance.GetDataType(br.ReadUnsignedShort());
+                    tmpl = Protocol.Instance.GetTypeName(br.ReadUnsignedShort());
                 }
                 else
                 {

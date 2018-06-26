@@ -71,7 +71,7 @@ namespace mana.Foundation
             try
             {
                 var typeCode = br.ReadUnsignedShort();
-                var typeName = Protocol.Instance.GetDataType(typeCode);
+                var typeName = Protocol.Instance.GetTypeName(typeCode);
                 var t = Type.GetType(typeName);
                 if (t != null)
                 {

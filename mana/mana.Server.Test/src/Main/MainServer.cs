@@ -1,6 +1,5 @@
-﻿using mana.Foundation;
+﻿using mana.Foundation.Network.Sever;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace mana.Server.Test

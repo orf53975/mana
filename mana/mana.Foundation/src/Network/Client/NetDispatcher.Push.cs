@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Client
 {
     internal class NetPushDispatcher
     {

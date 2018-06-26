@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Sever
 {
     public class MessageDispatcher
     {
@@ -13,71 +13,36 @@ namespace mana.Foundation
         private MessageDispatcher()
         {
             handlers = new Dictionary<string, IMessageHandler>();
-            RegistAllMessageHandler();
         }
 
-        private void RegistAllMessageHandler()
+        public bool RegistHandler(Type msgHandlerType)
         {
-            var mhts = AppDomain.CurrentDomain.FindAllTypes((type) =>
+            var mca = msgHandlerType.TryGetAttribute<MessageConfigAttribute>();
+            if (mca == null)
             {
-                if (type.IsClass && !type.IsAbstract && typeof(IMessageHandler).IsAssignableFrom(type))
-                {
-                    return true;
-                }
+                Trace.TraceError("Regist falied! {0} require MessageRequestAttribute or MessageNotifyAttribute", msgHandlerType.FullName);
                 return false;
-            });
-
-            var overrideableHandlers = new Dictionary<string, IMessageHandler>();
-            IMessageHandler obj = null;
-            foreach (var t in mhts)
+            }
+            IMessageHandler existed;
+            if (handlers.TryGetValue(mca.route, out existed))
             {
-                var mba = t.TryGetAttribute<MessageBindingAttribute>();
-                if (mba == null)
+                var existed_mca = existed.GetType().TryGetAttribute<MessageConfigAttribute>();
+                if (!existed_mca.overrideable)
                 {
-                    Trace.TraceError("MessageHandler Regist falied! {0} require MessageBindingAttribute", t.ToString());
-                    continue;
-                }
-                if (!mba.Overrideable)
-                {
-                    if (handlers.TryGetValue(mba.Route, out obj))
+                    if (mca.overrideable)
                     {
-                        Trace.TraceError("MessageHandler Regist falied! opcode conflict {0}->{1}", obj.GetType(), t);
+                        Trace.TraceError("MessageHandler[{0}] can't override by[{1}]! ->{1}", existed.GetType(), msgHandlerType);
                     }
                     else
                     {
-                        handlers.Add(mba.Route, Activator.CreateInstance(t) as IMessageHandler);
+                        Trace.TraceError("MessageHandler conflict! {0}->{1}", existed.GetType(), msgHandlerType);
                     }
-                }
-                else
-                {
-                    if (overrideableHandlers.TryGetValue(mba.Route, out obj))
-                    {
-                        Trace.TraceError("MessageHandler Regist falied! opcode conflict {0}->{1}", obj.GetType(), t);
-                    }
-                    else
-                    {
-                        overrideableHandlers.Add(mba.Route, Activator.CreateInstance(t) as IMessageHandler);
-                    }
+                    return false;
                 }
             }
-            foreach (var kv in overrideableHandlers)
-            {
-                if (!handlers.ContainsKey(kv.Key))
-                {
-                    handlers.Add(kv.Key, kv.Value);
-                }
-            }
-        }
-
-        public void ApplyProtocol(Protocol protocol)
-        {
-            foreach (var kv in handlers)
-            {
-                var route = kv.Key;
-                var mba = kv.Value.GetType().TryGetAttribute<MessageBindingAttribute>();
-                protocol.AddProtoAutoGenCode(route, mba.ProtoType, mba.InType, mba.OutType);
-            }
-            Trace.TraceInformation(protocol.ToFormatString(""));
+            handlers[mca.route] = Activator.CreateInstance(msgHandlerType) as IMessageHandler;
+            ProtocolManager.AddProto(mca.route, mca.protoType, mca.inType, mca.outType);
+            return true;
         }
 
         public bool Dispatch(UserToken token, Packet p)

@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Sever
 {
-    [MessageBinding("Connector.Bind", ProtoType.Request, null, null, true)]
-    public sealed class OnBind : IMessageHandler
+    [MessageRequest("Connector.BindToken", typeof(Heartbeat), typeof(Heartbeat), true)]
+    public sealed class OnBindToken : IMessageHandler
     {
         public void Process(UserToken token, Packet msg)
         {

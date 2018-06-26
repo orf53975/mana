@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Sever
 {
     public sealed class UserToken
     {

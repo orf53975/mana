@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
-using System.Reflection;
 
 namespace mana.Foundation
 {
@@ -180,68 +179,5 @@ namespace mana.Foundation
             }
             return ~start;
         }
-
-
-        public static List<Type> FindAllTypes(this AppDomain appDomain, Predicate<Type> match)
-        {
-            if (appDomain == null)
-            {
-                throw new NullReferenceException();
-            }
-            var ret = new List<Type>();
-            foreach (var assembly in appDomain.GetAssemblies())
-            {
-                ret.AddRange(assembly.FindAllTypes(match));
-            }
-            return ret;
-        }
-
-        public static List<Type> FindAllTypes(this Assembly assembly, Predicate<Type> match)
-        {
-            if (assembly == null)
-            {
-                throw new NullReferenceException();
-            }
-            var ret = new List<Type>();
-            foreach (var type in assembly.GetTypes())
-            {
-                if (match(type))
-                {
-                    ret.Add(type);
-                }
-            }
-            return ret;
-        }
-
-        private static bool ExistAssembly(AppDomain domain, string assemblyName)
-        {
-            Assembly[] asms = domain.GetAssemblies();
-            for (int i = asms.Length - 1; i >= 0; i--)
-            {
-                if (asms[i].FullName.Equals(assemblyName))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public static string LoadDll(AppDomain appDomain, string filePath)
-        {
-            try
-            {
-                var asm = Assembly.LoadFrom(filePath);
-                if (ExistAssembly(appDomain, asm.FullName))
-                {
-                    appDomain.Load(asm.FullName);
-                }
-                return null;
-            }
-            catch (Exception err)
-            {
-                return err.Message;
-            }
-        }
-
     }
 }

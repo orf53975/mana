@@ -1,5 +1,6 @@
-﻿using System;
-using mana.Foundation;
+﻿using mana.Foundation;
+using mana.Foundation.Network.Client;
+using System;
 
 namespace mana.Test
 {
@@ -10,6 +11,7 @@ namespace mana.Test
 
         }
 
+
         public void Send(Packet p)
         {
 
@@ -19,5 +21,11 @@ namespace mana.Test
         {
 
         }
+
+        public void Disconnect()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

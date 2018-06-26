@@ -30,7 +30,7 @@ namespace mana.Server.Test
             foreach (var s in setting.plugins)
             {
                 var fp = ConfigMgr.GetFullPath(s);
-                var err = Utils.LoadDll(AppDomain.CurrentDomain, fp);
+                var err = TypeUtil.LoadDll(AppDomain.CurrentDomain, fp);
                 if (err == null)
                 {
                     Trace.TraceInformation("dll loaded > " + s);

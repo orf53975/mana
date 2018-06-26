@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Client
 {
     public sealed class NetClient
     {
@@ -44,7 +44,7 @@ namespace mana.Foundation
             Logger.Error("error type! [{0}]", p.msgType);
         }
 
-        #region <<Request>>
+        #region <<About Request>>
 
         private int requestIdGenIndex = 0;
         public int GenRequestId()

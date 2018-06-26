@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Sockets;
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Sever
 {
     internal sealed class BufferManager
     {

@@ -1,6 +1,6 @@
-﻿namespace mana.Foundation
+﻿namespace mana.Foundation.Network.Sever
 {
-    [MessageBinding("Connector.Ping", ProtoType.Notify, typeof(Heartbeat), null, true)]
+    [MessageNotify("Connector.Ping", typeof(Heartbeat), true)]
     public sealed class OnPing : IMessageHandler
     {
         public void Process(UserToken token, Packet msg)

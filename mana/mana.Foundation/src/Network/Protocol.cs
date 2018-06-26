@@ -5,44 +5,34 @@ namespace mana.Foundation
 {
     public sealed partial class Protocol : DataObject
     {
+
+        #region <<Single Instance>>
+
         public static readonly Protocol Instance = new Protocol(true);
 
-        private Protocol(bool bAddDefaultProto)
+        private Protocol(bool bInstance)
         {
-            if (bAddDefaultProto)
-            {
-                AddProto(0x0001, new Proto("Connector.Protocol", ProtoType.Push, null, typeof(Protocol).FullName));
-                AddProto(0x0002, new Proto("Connector.Ping", ProtoType.Notify, typeof(Heartbeat).FullName, null));
-                AddProto(0x0003, new Proto("Connector.Pong", ProtoType.Push, null, typeof(Heartbeat).FullName));
-            }
+            AddProto(0x0001, new Proto("Connector.Protocol", ProtoType.Push, null, typeof(Protocol).FullName));
+            AddProto(0x0002, new Proto("Connector.Ping", ProtoType.Notify, typeof(Heartbeat).FullName, null));
+            AddProto(0x0003, new Proto("Connector.Pong", ProtoType.Push, null, typeof(Heartbeat).FullName));
         }
 
-        public Protocol() : this(false) { }
+        #endregion
 
-        public void Push(Protocol other)
-        {
-            for (var iter = other.protoMap.GetEnumerator(); iter.MoveNext();)
-            {
-                this.AddProto(iter.Current.Key, iter.Current.Value);
-            }
-            for (var iter = other.code2dataType.GetEnumerator(); iter.MoveNext();)
-            {
-                this.AddDataType(iter.Current.Key, iter.Current.Value);
-            }
-        }
+        public Protocol() { }
 
-        #region <<proto Dictionary>>
+        #region <<protosDic>>
 
-        readonly Dictionary<string, ushort> routeMap = new Dictionary<string, ushort>();
-
-        readonly Dictionary<ushort, Proto>  protoMap = new Dictionary<ushort, Proto>();
+        readonly Dictionary<ushort, Proto> protosDic = new Dictionary<ushort, Proto>();
 
         public ushort GetRouteCode(string routePath)
         {
-            ushort ret;
-            if (routeMap.TryGetValue(routePath, out ret))
+            for (var it = protosDic.GetEnumerator(); it.MoveNext();)
             {
-                return ret;
+                if (it.Current.Value.route == routePath)
+                {
+                    return it.Current.Key;
+                }
             }
             return 0;
         }
@@ -50,7 +40,7 @@ namespace mana.Foundation
         public string GetRoutePath(ushort routeCode)
         {
             Proto ret;
-            if (protoMap.TryGetValue(routeCode, out ret))
+            if (protosDic.TryGetValue(routeCode, out ret))
             {
                 return ret.route;
             }
@@ -60,7 +50,7 @@ namespace mana.Foundation
         public Proto GetProto(ushort routeCode)
         {
             Proto ret;
-            if (protoMap.TryGetValue(routeCode, out ret))
+            if (protosDic.TryGetValue(routeCode, out ret))
             {
                 return ret;
             }
@@ -73,7 +63,7 @@ namespace mana.Foundation
             if (routeCode != 0)
             {
                 Proto ret;
-                if (protoMap.TryGetValue(routeCode, out ret))
+                if (protosDic.TryGetValue(routeCode, out ret))
                 {
                     return ret;
                 }
@@ -81,10 +71,15 @@ namespace mana.Foundation
             return null;
         }
 
-        private bool AddProto(ushort code, Proto proto)
+        internal bool AddProto(ushort code, Proto proto)
         {
+            if (code == 0)
+            {
+                Logger.Error("proto code must not be zero!");
+                return false;
+            }
             Proto existed;
-            if (protoMap.TryGetValue(code, out existed))
+            if (protosDic.TryGetValue(code, out existed))
             {
                 if (!existed.Equals(proto))
                 {
@@ -93,114 +88,73 @@ namespace mana.Foundation
                 }
                 return true;
             }
-            protoMap.Add(code, proto);
-            routeMap.Add(proto.route, code);
+            protosDic.Add(code, proto);
             return true;
-        }
-
-
-        ushort protoCodeGenIndexer = 0x1001;
-        private ushort GenProtoCode()
-        {
-            var ret = protoCodeGenIndexer++;
-            while (protoMap.ContainsKey(ret))
-            {
-                ret++;
-            }
-            return ret;
-        }
-
-        public bool AddProtoAutoGenCode(string route, ProtoType type, Type uldt, Type dldt)
-        {
-            var c2sdt = uldt != null ? uldt.FullName : null;
-            var s2cdt = dldt != null ? dldt.FullName : null;
-            var proto = new Proto(route, type, c2sdt, s2cdt);
-            var exist = this.GetProto(route);
-            if (exist == null)
-            {
-                return AddProto(GenProtoCode(), proto);
-            }
-            if (proto.Equals(exist))
-            {
-                return true;
-            }
-            Logger.Error("Proto conflict! route = {0} , \n{1}\n{2}" , route , proto , exist);
-            return false;
         }
 
         #endregion
 
-        #region <<dataType Dictionary>>
+        #region <<typesCode>>
 
-        readonly Dictionary<ushort, string> code2dataType = new Dictionary<ushort, string>();
+        readonly Dictionary<string, ushort> typesCode = new Dictionary<string, ushort>();
 
-        readonly Dictionary<string, ushort> dataType2code = new Dictionary<string, ushort>();
-
-        ushort typeCodeGenIndexer = 0xC001;
-        private ushort GenDataTypeCode()
+        public string GetTypeName(ushort typeCode)
         {
-            var ret = typeCodeGenIndexer++;
-            while (code2dataType.ContainsKey(ret))
+            for (var it = typesCode.GetEnumerator(); it.MoveNext();)
             {
-                ret++;
-            }
-            return ret;
-        }
-
-        public string GetDataType(ushort typeCode)
-        {
-            string t;
-            if (code2dataType.TryGetValue(typeCode, out t))
-            {
-                return t;
+                if (it.Current.Value == typeCode)
+                {
+                    return it.Current.Key;
+                }
             }
             return null;
         }
 
         public ushort GetTypeCode(string dataType)
         {
-            ushort ret;
-            if (dataType2code.TryGetValue(dataType, out ret))
+            ushort c;
+            if (typesCode.TryGetValue(dataType, out c))
             {
-                return ret;
+                return c;
             }
             return 0;
         }
 
-        private bool AddDataType(ushort typeCode, string dataType)
+        internal bool AddTypeCode(string dataType, ushort typeCode)
         {
-            string existed = null;
-            if (code2dataType.TryGetValue(typeCode, out existed))
+            if (typeCode == 0)
             {
-                if (existed != dataType)
+                Logger.Error("typeCode must not be zero!");
+                return false;
+            }
+            ushort existed;
+            if (typesCode.TryGetValue(dataType, out existed))
+            {
+                if (existed != typeCode)
                 {
-                    Logger.Error("type code[0x{0:X4}] conflict! {1}->{2}", typeCode, dataType, existed);
+                    Logger.Error("typeCode[0x{0:X4}] conflict! {1}->{2}", typeCode, dataType, existed);
                     return false;
                 }
                 return true;
             }
-            code2dataType.Add(typeCode, dataType);
-            dataType2code.Add(dataType, typeCode);
+            typesCode.Add(dataType, typeCode);
             return true;
         }
 
-        public bool AddDataTypeByAutoGenCode<T>() where T : DataObject
+        #endregion
+
+        #region <<Push Protocol>>
+        public void Push(Protocol other)
         {
-            var type = typeof(T);
-            var typeName = type.FullName;
-
-            var cfg = type.TryGetAttribute<DataObjectConfigAttribute>();
-            if (cfg != null)
+            for (var iter = other.protosDic.GetEnumerator(); iter.MoveNext();)
             {
-                return AddDataType(cfg.TypeCode, typeName);
+                this.AddProto(iter.Current.Key, iter.Current.Value);
             }
-            if (dataType2code.ContainsKey(typeName))
+            for (var iter = other.typesCode.GetEnumerator(); iter.MoveNext();)
             {
-                return true;
+                this.AddTypeCode(iter.Current.Key, iter.Current.Value);
             }
-            return AddDataType(GenDataTypeCode(), typeName);
         }
-
         #endregion
 
         #region <<implement ISerializable>>
@@ -208,18 +162,18 @@ namespace mana.Foundation
         public void Encode(IWritableBuffer bw)
         {
             // -- protos
-            bw.WriteUnsignedShort(protoMap.Count);
-            for (var iter = protoMap.GetEnumerator(); iter.MoveNext();)
+            bw.WriteUnsignedShort(protosDic.Count);
+            for (var iter = protosDic.GetEnumerator(); iter.MoveNext();)
             {
                 bw.WriteShort(iter.Current.Key);
                 iter.Current.Value.EncodeTo(bw);
             }
             // -- types
-            bw.WriteUnsignedShort(code2dataType.Count);
-            for (var iter = code2dataType.GetEnumerator(); iter.MoveNext();)
+            bw.WriteUnsignedShort(typesCode.Count);
+            for (var iter = typesCode.GetEnumerator(); iter.MoveNext();)
             {
-                bw.WriteShort(iter.Current.Key);
-                bw.WriteUTF8(iter.Current.Value);
+                bw.WriteUTF8(iter.Current.Key);
+                bw.WriteShort(iter.Current.Value);
             }
         }
 
@@ -235,7 +189,7 @@ namespace mana.Foundation
             count = br.ReadUnsignedShort();
             for (int i = 0; i < count; i++)
             {
-                this.AddDataType(br.ReadUnsignedShort(), br.ReadUTF8());
+                this.AddTypeCode(br.ReadUTF8(), br.ReadUnsignedShort());
             }
         }
 
@@ -252,7 +206,7 @@ namespace mana.Foundation
             var indent1 = curIndent + '\t';
             // -- protos
             sb.Append(curIndent).Append("protoMap = {\r\n");
-            foreach (var kv in protoMap)
+            foreach (var kv in protosDic)
             {
                 sb.Append(indent1);
                 sb.Append("0x").Append(kv.Key.ToString("X4")).Append(" : ").Append(kv.Value);
@@ -261,10 +215,10 @@ namespace mana.Foundation
             sb.Append(curIndent).Append("},\r\n");
             // -- types
             sb.Append(curIndent).Append("typeMap = {\r\n");
-            foreach (var kv in code2dataType)
+            foreach (var kv in typesCode)
             {
                 sb.Append(indent1);
-                sb.Append("0x").Append(kv.Key.ToString("X4")).Append(" : ").Append(kv.Value);
+                sb.Append("0x").Append(kv.Value.ToString("X4")).Append(" : ").Append(kv.Key);
                 sb.Append(",\r\n");
             }
             sb.Append(curIndent).Append('}');
@@ -284,5 +238,6 @@ namespace mana.Foundation
         }
 
         #endregion
+
     }
 }

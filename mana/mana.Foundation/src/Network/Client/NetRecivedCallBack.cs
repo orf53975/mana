@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Client
 {
     public interface INetRecivedCallBack
     {

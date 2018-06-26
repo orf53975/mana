@@ -1,6 +1,6 @@
-﻿namespace mana.Foundation
+﻿namespace mana.Foundation.Network.Sever
 {
-    public interface IMessageHandler
+    public interface IMessageHandler : ITypeInitializable
     {
         void Process(UserToken token, Packet msg);
     }

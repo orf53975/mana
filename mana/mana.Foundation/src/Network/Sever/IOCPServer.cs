@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Sever
 {
     public class IOCPServer
     {
@@ -16,6 +17,8 @@ namespace mana.Foundation
         private readonly UserTokenPool mTokenPool;
 
         private Socket mListenSocket;
+
+        private Packet mProtocolPacket = null;
 
         private int m_numConnectedSockets;
         public int ConnectionNum
@@ -32,19 +35,40 @@ namespace mana.Foundation
             this.m_numConnectedSockets = 0;
             this.tokenUnbindTimeOut = tokenUnbindTimeOut;
             this.tokenWorkTimeOut = tokenWorkTimeOut;
-            this.InitProtocol();
+            this.DoInitTypes();
         }
 
-        private Packet ProtocolPacket = null;
-        private void InitProtocol()
+        private void DoInitTypes()
         {
-            var protocol = Protocol.Instance;
-            MessageDispatcher.Instance.ApplyProtocol(protocol);
-            //TODO Apply Push Protocol 
-            //TODO Apply Type Protocol 
-            ProtocolPacket = Packet.CreatPush("Connector.Protocol", protocol);
+            var sw = Stopwatch.StartNew();
+            // -- init DataObject
+            var doTypes = AppDomain.CurrentDomain.GetClassTypes<DataObject>();
+            foreach (var type in doTypes)
+            {
+                ProtocolManager.AddTypeCode(type);
+            }
+            // -- init ITypeInitializable
+            var types = AppDomain.CurrentDomain.GetClassTypes<ITypeInitializable>();
+            foreach(var type in types)
+            {
+                if (typeof(IMessageHandler).IsAssignableFrom(type))
+                {
+                    MessageDispatcher.Instance.RegistHandler(type);
+                }
+                if (typeof(IPushRegister).IsAssignableFrom(type))
+                {
+                    var pr = Activator.CreateInstance(type) as IPushRegister;
+                    pr.RegistPushProto();
+                }
+            }
+            this.OnInitTypes(types);
+            Trace.TraceInformation("DoInitTypes:{0}", sw.ElapsedMilliseconds);
+            Trace.TraceInformation(Protocol.Instance.ToFormatString(""));
         }
 
+        protected virtual void OnInitTypes(List<Type> types)
+        {
+        }
 
         // Starts the server such that it is listening for 
         // incoming connection requests.    
@@ -112,7 +136,11 @@ namespace mana.Foundation
                     OnSocketConnected(e.AcceptSocket.RemoteEndPoint.ToString());
                     var token = mTokenPool.Get();
                     token.Init(e.AcceptSocket);
-                    token.Send(ProtocolPacket);
+                    if (mProtocolPacket == null)
+                    {
+                        mProtocolPacket = Packet.CreatPush("Connector.Protocol", Protocol.Instance);
+                    }
+                    token.Send(mProtocolPacket);
                 }
             }
             catch (Exception ex)

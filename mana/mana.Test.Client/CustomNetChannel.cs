@@ -1,4 +1,5 @@
 ﻿using mana.Foundation;
+using mana.Foundation.Network.Client;
 using System;
 using System.Diagnostics;
 using System.Net;

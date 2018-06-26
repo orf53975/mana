@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-namespace mana.Foundation
+namespace mana.Foundation.Network.Sever
 {
     internal sealed class UserTokenPool
     {
