@@ -53,6 +53,11 @@ namespace mana.Foundation
 
         public bool Put(T item)
         {
+            if (item == null)
+            {
+                Logger.Error("ObjectPool<{0}> put null!", typeof(T).FullName);
+                return false;
+            }
             if (_objects.Count > mCapacity)
             {
                 Logger.Error("ObjectPool<{0}> is full!! capacity = {1}", typeof(T).FullName, mCapacity);

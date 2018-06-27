@@ -46,9 +46,9 @@ namespace mana.Foundation
 
         #endregion
 
-        #region <<Static Cache>>
+        #region <<Static Pool>>
 
-        private static readonly ObjectPool<Packet> Cache = new ObjectPool<Packet>(
+        private static readonly ObjectPool<Packet> Pool = new ObjectPool<Packet>(
             () => new Packet(), null, (e) => e.Clear());
 
         #endregion
@@ -57,7 +57,7 @@ namespace mana.Foundation
 
         public static Packet CreatRequest(string msgRoute, int requestId, ISerializable msgObject)
         {
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             p.msgType = MessageType.REQUEST;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -71,7 +71,7 @@ namespace mana.Foundation
         public static Packet CreatRequest<T>(string msgRoute, int requestId, Action<T> reqSetter) 
             where T : class, ISerializable, ICacheable, new()
         {
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             p.msgType = MessageType.REQUEST;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -88,7 +88,7 @@ namespace mana.Foundation
 
         public static Packet CreatResponse(string msgRoute, int requestId, ISerializable msgObject)
         {
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             p.msgType = MessageType.RESPONSE;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -103,7 +103,7 @@ namespace mana.Foundation
         public static Packet CreatResponse<T>(string msgRoute, int requestId, Action<T> rspSetter)
             where T : class, ISerializable, ICacheable, new()
         {
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             p.msgType = MessageType.RESPONSE;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -119,7 +119,7 @@ namespace mana.Foundation
 
         public static Packet CreatNotify(string msgRoute, ISerializable msgObject)
         {
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             p.msgType = MessageType.NOTIFY;
             p.msgRoute = msgRoute;
             if (msgObject != null)
@@ -132,7 +132,7 @@ namespace mana.Foundation
         public static Packet CreatNotify<T>(string msgRoute, Action<T> notifySetter) 
             where T : class, ISerializable, ICacheable, new()
         {
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             p.msgType = MessageType.NOTIFY;
             p.msgRoute = msgRoute;
             if (notifySetter != null)
@@ -147,7 +147,7 @@ namespace mana.Foundation
 
         public static Packet CreatPush(string msgRoute, ISerializable msgObject)
         {
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             p.msgType = MessageType.PUSH;
             p.msgRoute = msgRoute;
             if (msgObject != null)
@@ -160,7 +160,7 @@ namespace mana.Foundation
         public static Packet CreatPush<T>(string msgRoute, Action<T> pushSetter)
             where T : class, ISerializable, ICacheable, new()
         {
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             p.msgType = MessageType.PUSH;
             p.msgRoute = msgRoute;
             if (pushSetter != null)
@@ -190,7 +190,7 @@ namespace mana.Foundation
             var msgFlag = (Flag)((packetHead >> 4) & 0xF);
 
             var endPositon = br.Position + packetSize;
-            var p = Packet.Cache.Get();
+            var p = Packet.Pool.Get();
             // -- 2. message type
             p.msgType = msgType;
             // -- 3. message route
@@ -405,6 +405,11 @@ namespace mana.Foundation
             this.msgRoute = null;
             this.msgRequestId = 0;
             this.msgData.Clear();
+        }
+
+        public void ReleaseToPool()
+        {
+            Packet.Pool.Put(this);
         }
     }
 }
