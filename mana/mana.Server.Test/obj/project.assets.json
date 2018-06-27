@@ -1441,23 +1441,26 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Niku\\.nuget\\packages\\": {},
+    "C:\\Users\\c\\.nuget\\packages\\": {},
     "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
   },
   "project": {
     "version": "1.0.0",
+    "restoreSettings": {
+      "hideWarningsAndErrors": true
+    },
     "restore": {
       "projectUniqueName": "E:\\GitHub\\mana\\mana\\mana.Server.Test\\mana.Server.Test.csproj",
       "projectName": "mana.Server.Test",
       "projectPath": "E:\\GitHub\\mana\\mana\\mana.Server.Test\\mana.Server.Test.csproj",
-      "packagesPath": "C:\\Users\\Niku\\.nuget\\packages\\",
+      "packagesPath": "C:\\Users\\c\\.nuget\\packages\\",
       "outputPath": "E:\\GitHub\\mana\\mana\\mana.Server.Test\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
       ],
       "configFilePaths": [
-        "C:\\Users\\Niku\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\c\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -1487,12 +1490,12 @@
         "dependencies": {
           "Microsoft.NETCore.App": {
             "target": "Package",
-            "version": "[2.0.0, )",
+            "version": "2.0.0",
             "autoReferenced": true
           },
           "Newtonsoft.Json": {
             "target": "Package",
-            "version": "[11.0.2, )"
+            "version": "11.0.2"
           }
         },
         "imports": [

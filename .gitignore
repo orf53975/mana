@@ -7,3 +7,5 @@
 /mana/mana.ScriptExport
 /mana/mana.Test.Client/bin
 /mana/mana.Test.Client/obj
+/mana/mana.Server.Test/obj
+/mana/mana.Server.Test/bin
