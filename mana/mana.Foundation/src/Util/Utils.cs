@@ -7,7 +7,6 @@ namespace mana.Foundation
 {
     public static class Utils
     {
-
         public static List<K> GetKeys<K, V>(this Dictionary<K, V> dic, List<K> toList = null)
         {
             var count = dic.Count;

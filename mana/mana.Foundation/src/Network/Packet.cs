@@ -49,15 +49,20 @@ namespace mana.Foundation
         #region <<Static Pool>>
 
         private static readonly ObjectPool<Packet> Pool = new ObjectPool<Packet>(
-            () => new Packet(), null, (e) => e.Clear());
+            () => new Packet(true), null, (e) => e.Clear());
+
+        public static void ChangePoolCapacity(int newCapacity)
+        {
+            Pool.ChangeCapacity(newCapacity);
+        }
 
         #endregion
 
         #region <<Static Functions>>
 
-        public static Packet CreatRequest(string msgRoute, int requestId, ISerializable msgObject)
+        public static Packet CreatRequest(string msgRoute, int requestId, ISerializable msgObject , bool bPoolManaged = true)
         {
-            var p = Packet.Pool.Get();
+            var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.REQUEST;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -68,10 +73,10 @@ namespace mana.Foundation
             return p;
         }
 
-        public static Packet CreatRequest<T>(string msgRoute, int requestId, Action<T> reqSetter) 
+        public static Packet CreatRequest<T>(string msgRoute, int requestId, Action<T> reqSetter, bool bPoolManaged = true) 
             where T : class, ISerializable, ICacheable, new()
         {
-            var p = Packet.Pool.Get();
+            var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.REQUEST;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -84,11 +89,9 @@ namespace mana.Foundation
             return p;
         }
 
-
-
-        public static Packet CreatResponse(string msgRoute, int requestId, ISerializable msgObject)
+        public static Packet CreatResponse(string msgRoute, int requestId, ISerializable msgObject, bool bPoolManaged = true)
         {
-            var p = Packet.Pool.Get();
+            var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.RESPONSE;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -100,10 +103,10 @@ namespace mana.Foundation
         }
 
 
-        public static Packet CreatResponse<T>(string msgRoute, int requestId, Action<T> rspSetter)
+        public static Packet CreatResponse<T>(string msgRoute, int requestId, Action<T> rspSetter, bool bPoolManaged = true)
             where T : class, ISerializable, ICacheable, new()
         {
-            var p = Packet.Pool.Get();
+            var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.RESPONSE;
             p.msgRequestId = requestId;
             p.msgRoute = msgRoute;
@@ -117,9 +120,9 @@ namespace mana.Foundation
         }
 
 
-        public static Packet CreatNotify(string msgRoute, ISerializable msgObject)
+        public static Packet CreatNotify(string msgRoute, ISerializable msgObject, bool bPoolManaged = true)
         {
-            var p = Packet.Pool.Get();
+            var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.NOTIFY;
             p.msgRoute = msgRoute;
             if (msgObject != null)
@@ -129,10 +132,10 @@ namespace mana.Foundation
             return p;
         }
 
-        public static Packet CreatNotify<T>(string msgRoute, Action<T> notifySetter) 
+        public static Packet CreatNotify<T>(string msgRoute, Action<T> notifySetter, bool bPoolManaged = true) 
             where T : class, ISerializable, ICacheable, new()
         {
-            var p = Packet.Pool.Get();
+            var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.NOTIFY;
             p.msgRoute = msgRoute;
             if (notifySetter != null)
@@ -145,9 +148,9 @@ namespace mana.Foundation
         }
 
 
-        public static Packet CreatPush(string msgRoute, ISerializable msgObject)
+        public static Packet CreatPush(string msgRoute, ISerializable msgObject, bool bPoolManaged = true)
         {
-            var p = Packet.Pool.Get();
+            var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.PUSH;
             p.msgRoute = msgRoute;
             if (msgObject != null)
@@ -157,10 +160,10 @@ namespace mana.Foundation
             return p;
         }
 
-        public static Packet CreatPush<T>(string msgRoute, Action<T> pushSetter)
+        public static Packet CreatPush<T>(string msgRoute, Action<T> pushSetter, bool bPoolManaged = true)
             where T : class, ISerializable, ICacheable, new()
         {
-            var p = Packet.Pool.Get();
+            var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.PUSH;
             p.msgRoute = msgRoute;
             if (pushSetter != null)
@@ -328,9 +331,12 @@ namespace mana.Foundation
 
         readonly ByteBuffer msgData;
 
-        private Packet()
+        readonly bool isPoolManaged;
+
+        private Packet(bool bPoolManaged)
         {
             msgData = new ByteBuffer(64);
+            isPoolManaged = bPoolManaged;
         }
 
         public bool TryGet(ISerializable obj)
@@ -407,9 +413,12 @@ namespace mana.Foundation
             this.msgData.Clear();
         }
 
-        public void ReleaseToPool()
+        internal void ReleaseToPool()
         {
-            Packet.Pool.Put(this);
+            if (isPoolManaged)
+            {
+                Packet.Pool.Put(this);
+            }
         }
     }
 }

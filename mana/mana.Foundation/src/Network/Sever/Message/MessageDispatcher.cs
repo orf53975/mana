@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace mana.Foundation.Network.Sever
 {
@@ -20,7 +19,7 @@ namespace mana.Foundation.Network.Sever
             var mca = msgHandlerType.TryGetAttribute<MessageConfigAttribute>();
             if (mca == null)
             {
-                Trace.TraceError("Regist falied! {0} require MessageRequestAttribute or MessageNotifyAttribute", msgHandlerType.FullName);
+                Logger.Error("Regist falied! {0} require MessageRequestAttribute or MessageNotifyAttribute", msgHandlerType.FullName);
                 return false;
             }
             IMessageHandler existed;
@@ -31,11 +30,11 @@ namespace mana.Foundation.Network.Sever
                 {
                     if (mca.overrideable)
                     {
-                        Trace.TraceError("MessageHandler[{0}] can't override by[{1}]! ->{1}", existed.GetType(), msgHandlerType);
+                        Logger.Error("MessageHandler[{0}] can't override by[{1}]! ->{1}", existed.GetType(), msgHandlerType);
                     }
                     else
                     {
-                        Trace.TraceError("MessageHandler conflict! {0}->{1}", existed.GetType(), msgHandlerType);
+                        Logger.Error("MessageHandler conflict! {0}->{1}", existed.GetType(), msgHandlerType);
                     }
                     return false;
                 }

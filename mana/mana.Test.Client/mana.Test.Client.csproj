@@ -42,7 +42,7 @@
     <Compile Include="CustomTrace.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CustomNetChannel.cs" />
+    <Compile Include="CustomNetClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\mana.Foundation\mana.Foundation.csproj">

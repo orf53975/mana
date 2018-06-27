@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 
 namespace mana.Foundation.Network.Sever
 {
@@ -11,7 +10,7 @@ namespace mana.Foundation.Network.Sever
             var error = token.TryBind(Guid.NewGuid().ToString());
             if (error != null)
             {
-                Trace.TraceError(error);
+                Logger.Error(error);
             }
         }
     }

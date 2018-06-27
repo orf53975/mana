@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -36,11 +35,12 @@ namespace mana.Foundation.Network.Sever
             this.tokenUnbindTimeOut = tokenUnbindTimeOut;
             this.tokenWorkTimeOut = tokenWorkTimeOut;
             this.DoInitTypes();
+            Packet.ChangePoolCapacity(8192);
         }
 
         private void DoInitTypes()
         {
-            var sw = Stopwatch.StartNew();
+            var sw = System.Diagnostics.Stopwatch.StartNew();
             // -- init DataObject
             var doTypes = AppDomain.CurrentDomain.GetClassTypes<DataObject>();
             foreach (var type in doTypes)
@@ -62,8 +62,8 @@ namespace mana.Foundation.Network.Sever
                 }
             }
             this.OnInitTypes(types);
-            Trace.TraceInformation("DoInitTypes:{0}", sw.ElapsedMilliseconds);
-            Trace.TraceInformation(Protocol.Instance.ToFormatString(""));
+            Logger.Print("DoInitTypes:{0}", sw.ElapsedMilliseconds);
+            Logger.Print(Protocol.Instance.ToFormatString(""));
         }
 
         protected virtual void OnInitTypes(List<Type> types)
@@ -79,10 +79,10 @@ namespace mana.Foundation.Network.Sever
         {
             if (mListenSocket != null)
             {
-                Trace.TraceError("Server is had start!");
+                Logger.Error("Server is had start!");
                 return;
             }
-            Trace.TraceInformation(localEndPoint.ToString());
+            Logger.Print(localEndPoint.ToString());
             // create the socket which listens for incoming connections
             mListenSocket = new Socket(localEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             mListenSocket.Bind(localEndPoint);
@@ -138,14 +138,14 @@ namespace mana.Foundation.Network.Sever
                     token.Init(e.AcceptSocket);
                     if (mProtocolPacket == null)
                     {
-                        mProtocolPacket = Packet.CreatPush("Connector.Protocol", Protocol.Instance);
+                        mProtocolPacket = Packet.CreatPush("Connector.Protocol", Protocol.Instance, false);
                     }
                     token.Send(mProtocolPacket);
                 }
             }
             catch (Exception ex)
             {
-                Trace.TraceError(ex.ToString());
+                Logger.Exception(ex);
             }
             finally
             {
@@ -157,13 +157,13 @@ namespace mana.Foundation.Network.Sever
         void OnSocketConnected(string ipInfo)
         {
             Interlocked.Increment(ref m_numConnectedSockets);
-            Trace.TraceInformation("socket connected[{0}] ,conn = {1}", ipInfo, m_numConnectedSockets);
+            Logger.Print("socket connected[{0}] ,conn = {1}", ipInfo, m_numConnectedSockets);
         }
 
         internal void OnSocketClosed(string ipInfo)
         {
             Interlocked.Decrement(ref m_numConnectedSockets);
-            Trace.TraceInformation("socket disconnected[{0}] ,conn = {1}", ipInfo, m_numConnectedSockets);
+            Logger.Print("socket disconnected[{0}] ,conn = {1}", ipInfo, m_numConnectedSockets);
         }
 
         public void ForEachWorking(Action<UserToken> action)

@@ -5,10 +5,17 @@
     {
         public void Process(UserToken token, Packet msg)
         {
-            token.SendPush<Heartbeat>("Connector.Pong", (hb) =>
+            for(int i = 0; i < 1000; i ++)
             {
-                hb.timestamp = TimeUtil.GetCurrentTime();
-            });
+                token.SendPush<Heartbeat>("Connector.Pong", (hb) =>
+                {
+                    hb.timestamp = i;
+                });
+            }
+            //token.SendPush<Heartbeat>("Connector.Pong", (hb) =>
+            //{
+            //    hb.timestamp = TimeUtil.GetCurrentTime();
+            //});
         }
     }
 }

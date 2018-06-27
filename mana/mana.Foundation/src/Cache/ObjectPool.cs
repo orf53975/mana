@@ -20,14 +20,19 @@ namespace mana.Foundation
         private readonly Action<T>  _objectOnGet;
         private readonly Action<T>  _objectOnRelease;
 
-        private readonly int mCapacity; 
+        private int mCapacity; 
 
         public ObjectPool(Func<T> objectGenerator, Action<T> objectOnGet = null, Action<T> objectOnRelease = null , int capacity = 16)
         {
             _objectGenerator = objectGenerator;
             _objectOnGet = objectOnGet;
             _objectOnRelease = objectOnRelease;
-            this.mCapacity = capacity;
+            this.ChangeCapacity(capacity);
+        }
+
+        public void ChangeCapacity(int newCapacity)
+        {
+            this.mCapacity = MathTools.Clamp(newCapacity, 2, 8192);
         }
 
         public T Get()

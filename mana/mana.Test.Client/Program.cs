@@ -11,9 +11,11 @@ namespace mana.Test.Client
         static void Main(string[] args)
         {
             Trace.Listeners.Add(new CustomTrace());
+            Packet.ChangePoolCapacity(1024);
             Program.InitLogger();
             Program.StartCommandConsoleThread();
         }
+
 
         #region InitLogger
 
@@ -21,35 +23,22 @@ namespace mana.Test.Client
         {
             Logger.SetPrintHandler((str) =>
             {
-                var saveColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(str);
-                Console.ForegroundColor = saveColor;
+                Trace.TraceInformation(str);
             });
 
             Logger.SetWarningHandler((str) =>
             {
-                var saveColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(str);
-                Console.ForegroundColor = saveColor;
+                Trace.TraceWarning(str);
             });
 
             Logger.SetErrorHandler((str) =>
             {
-                var saveColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(str);
-                Console.ForegroundColor = saveColor;
+                Trace.TraceError(str);
             });
 
             Logger.SetExceptionHandler((e) =>
             {
-                var saveColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
-                Console.ForegroundColor = saveColor;
+                Trace.TraceError(e.ToString());
             });
 
         }
@@ -120,11 +109,7 @@ namespace mana.Test.Client
             {
                 if (mTestClient != null)
                 {
-                    mTestClient.Notify<Heartbeat>("Connector.Ping", (hb) =>
-                    {
-                        TimeSpan ts = DateTime.Now.ToUniversalTime() - new DateTime(1970, 1, 1);
-                        hb.timestamp = (int)ts.TotalSeconds;
-                    });
+                    mTestClient.SendPingPacket();
                 }
                 return;
             }
@@ -133,13 +118,13 @@ namespace mana.Test.Client
 
         #endregion
 
-        private static NetClient mTestClient = null;
-        public static NetClient StartNetClient()
-        {
-            var channel = new CustomNetChannel();
-            channel.StartThread();
-            return new NetClient(channel);
-        }
+        private static AbstractNetClient mTestClient = null;
 
+        public static AbstractNetClient StartNetClient()
+        {
+            var channel = new CustomNetClient();
+            channel.StartThread();
+            return channel;
+        }
     }
 }

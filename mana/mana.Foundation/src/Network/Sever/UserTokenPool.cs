@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 
 namespace mana.Foundation.Network.Sever
@@ -55,29 +54,37 @@ namespace mana.Foundation.Network.Sever
         void Bind(int tokenIndex)
         {
             var token = m_pool[tokenIndex];
-            Trace.TraceInformation("BindClient: {0}->{1}", token.uid, token.socket.RemoteEndPoint.ToString());
+            Logger.Print("BindClient: {0}->{1}", token.uid, token.socket.RemoteEndPoint.ToString());
             try
             {
-                m_indexMap.Add(token.uid, tokenIndex);
+                lock (m_indexMap)
+                {
+                    m_indexMap.Add(token.uid, tokenIndex);
+                }
                 token.OnBinded();
             }
             catch (Exception e)
             {
-                Trace.TraceError(e.ToString());
+                Logger.Exception(e);
             }
         }
 
         void Unbind(int tokenIndex)
         {
             var token = m_pool[tokenIndex];
-            if (m_indexMap.Remove(token.uid))
+            bool removed;
+            lock (m_indexMap)
             {
-                Trace.TraceInformation("unbind token! uid = {0}", token.uid);
+                removed = m_indexMap.Remove(token.uid);
+            }
+            if (removed)
+            {
+                Logger.Print("unbind token! uid = {0}", token.uid);
                 acceptedClientsSemaphore.Release();
             }
             else
             {
-                Trace.TraceError("unbind token error! uid = {0}", token.uid);
+                Logger.Print("unbind token error! uid = {0}", token.uid);
             }
             token.Reset();
         }
@@ -122,7 +129,7 @@ namespace mana.Foundation.Network.Sever
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.ToString());
+                    Logger.Exception(e);
                 }
             }
         }
@@ -146,7 +153,7 @@ namespace mana.Foundation.Network.Sever
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.ToString());
+                    Logger.Exception(e);
                 }
             }
         }
@@ -165,7 +172,7 @@ namespace mana.Foundation.Network.Sever
                 }
                 catch (Exception e)
                 {
-                    Trace.TraceError(e.ToString());
+                    Logger.Exception(e);
                 }
             }
         }

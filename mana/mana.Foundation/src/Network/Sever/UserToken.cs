@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.Sockets;
 using System.Threading;
 
@@ -28,6 +27,8 @@ namespace mana.Foundation.Network.Sever
         readonly PacketSnder packetSnder;
 
         readonly IOCPServer server;
+
+        public bool EnablePrintPacketInfo = true;
 
         public int startTime
         {
@@ -146,7 +147,7 @@ namespace mana.Foundation.Network.Sever
             }
             else
             {
-                Trace.TraceError("The last operation completed on the socket was not a rcv.");
+                Logger.Error("The last operation completed on the socket was not a rcv.");
                 this.Release();
             }
         }
@@ -159,7 +160,7 @@ namespace mana.Foundation.Network.Sever
             }
             else
             {
-                Trace.TraceError("The last operation completed on the socket was not a snd.");
+                Logger.Error("The last operation completed on the socket was not a snd.");
                 this.Release();
             }
         }
@@ -168,26 +169,35 @@ namespace mana.Foundation.Network.Sever
         {
             if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
             {
-                this.OnRcv(e.Buffer, e.Offset, e.BytesTransferred);
-                if (!socket.ReceiveAsync(e))
+                try
                 {
-                    this.ProcessRcved(e);
+                    this.OnRcv(e.Buffer, e.Offset, e.BytesTransferred);
+                    if (!socket.ReceiveAsync(e))
+                    {
+                        this.ProcessRcved(e);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                    this.Release();
                 }
             }
             else
             {
                 this.Release();
             }
+
         }
 
         void OnRcv(byte[] buffer, int offset, int count)
         {
             packetRcver.PushData(buffer, offset, count);
-
             var p = packetRcver.Build();
-            if (p != null)
+            while (p != null)
             {
                 this.OnRecived(p);
+                p = packetRcver.Build();
             }
             lastActiveTime = Environment.TickCount;
         }
@@ -196,7 +206,15 @@ namespace mana.Foundation.Network.Sever
         {
             if (e.SocketError == SocketError.Success)
             {
-                this.DoSending(e);
+                try
+                {
+                    this.DoSending(e);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                    this.Release();
+                }
             }
             else
             {
@@ -246,14 +264,18 @@ namespace mana.Foundation.Network.Sever
         {
             try
             {
+                if (EnablePrintPacketInfo)
+                {
+                    Logger.Print("UserToken[{0}] recived Packet[{1}]", uid, p.msgRoute);
+                }
                 if (!MessageDispatcher.Instance.Dispatch(this, p))
                 {
-                    Trace.TraceWarning("unhandled : " + p.ToString());
+                    Logger.Warning("unhandled : {0}", p.ToString());
                 }
             }
             catch (Exception e)
             {
-                Trace.TraceError(e.ToString());
+                Logger.Exception(e);
             }
         }
 
@@ -261,7 +283,7 @@ namespace mana.Foundation.Network.Sever
         {
             if (state != kStateLink)
             {
-                Trace.TraceWarning("UserToken.Send Failed! state = {0} error!", state);
+                Logger.Warning("UserToken.Send Failed! state = {0} error!", state);
                 return;
             }
             var bInSending = packetSnder.HasSendingData;
@@ -296,7 +318,7 @@ namespace mana.Foundation.Network.Sever
             }
             catch (Exception e)
             {
-                Trace.TraceError(e.ToString());
+                Logger.Exception(e);
             }
             finally
             {
@@ -322,7 +344,7 @@ namespace mana.Foundation.Network.Sever
         {
             if (Interlocked.Exchange(ref state, kStateIdle) != kStateFree)
             {
-                Trace.TraceError("UserToken.Reset: state error!");
+                Logger.Error("UserToken.Reset: state error!");
             }
             uid = null;
         }

@@ -2,28 +2,40 @@
 
 namespace mana.Foundation.Network.Client
 {
-    public sealed class NetClient
+    public abstract class AbstractNetClient
     {
         private readonly NetResponseDispatcher responseDispatcher = new NetResponseDispatcher();
 
         private readonly NetPushDispatcher pushDispatcher = new NetPushDispatcher();
 
-        private NetChannel channel = null;
+        readonly PacketRcver packetRcver = new PacketRcver();
 
-        public bool EnableCheckError = false;
+        readonly PacketSnder packetSnder = new PacketSnder();
 
-        public NetClient(NetChannel c)
+        public AbstractNetClient() { }
+
+        public abstract void Connect(string ip, ushort port, Action<bool, Exception> callback);
+
+        public abstract void Disconnect();
+
+        protected abstract int ChannelPush(byte[] buffer, int offset, int size);
+
+        protected abstract int ChannelPull(byte[] buffer, int offset, int size);
+
+        public void SendPacket(Packet p)
         {
-            this.channel = c;
-            this.channel.AddListener(OnRecived);
+            packetSnder.Push(p);
         }
 
-        public void Connect(string ip, ushort port, Action<bool, Exception> callback)
+        public void SendPingPacket()
         {
-            this.channel.StartConnect(ip, port, callback);
+            this.Notify<Heartbeat>("Connector.Ping", (hb) =>
+            {
+                hb.timestamp = TimeUtil.GetCurrentTime();
+            });
         }
 
-        private void OnRecived(Packet p)
+        private void DispatchRecivedPacket(Packet p)
         {
             if (p.msgType == Packet.MessageType.RESPONSE)
             {
@@ -42,6 +54,41 @@ namespace mana.Foundation.Network.Client
                 return;
             }
             Logger.Error("error type! [{0}]", p.msgType);
+            p.ReleaseToPool();
+        }
+
+        static int __ChannelPush(AbstractNetClient nc, byte[] data, int offset, int count)
+        {
+            return nc.ChannelPush(data, offset, count);
+        }
+
+        public void DoSnding()
+        {
+            var count = packetSnder.WriteTo(this, __ChannelPush);
+            while (count > 0)
+            {
+                count = packetSnder.WriteTo(this, __ChannelPush);
+            }
+        }
+
+        static int __ChannelPull(AbstractNetClient nc, byte[] data, int offset, int count)
+        {
+            return nc.ChannelPull(data, offset, count);
+        }
+
+        public void DoRcving()
+        {
+            var count = packetRcver.PushData(this, __ChannelPull);
+            while (count > 0)
+            {
+                var p = packetRcver.Build();
+                while (p != null)
+                {
+                    this.DispatchRecivedPacket(p);
+                    p = packetRcver.Build();
+                }
+                count = packetRcver.PushData(this, __ChannelPull);
+            }
         }
 
         #region <<About Request>>
@@ -81,7 +128,7 @@ namespace mana.Foundation.Network.Client
             }
             var requestId = this.GenRequestId();
             var p = Packet.CreatRequest(route, requestId, reqSetter);
-            this.channel.Send(p);
+            this.SendPacket(p);
             this.responseDispatcher.Register(requestId, rspHandler);
             return true;
         }
@@ -113,7 +160,7 @@ namespace mana.Foundation.Network.Client
             }
             var requestId = this.GenRequestId();
             var p = Packet.CreatRequest(route, requestId, null);
-            this.channel.Send(p);
+            this.SendPacket(p);
             this.responseDispatcher.Register(requestId, rspHandler);
             return true;
         }
@@ -139,7 +186,7 @@ namespace mana.Foundation.Network.Client
             }
             var requestId = this.GenRequestId();
             var p = Packet.CreatRequest(route, requestId, d);
-            this.channel.Send(p);
+            this.SendPacket(p);
             this.responseDispatcher.Register(requestId, proto, rspHandler);
             return true;
         }
@@ -164,7 +211,7 @@ namespace mana.Foundation.Network.Client
             }
             var requestId = this.GenRequestId();
             var p = Packet.CreatRequest(route, requestId, null);
-            this.channel.Send(p);
+            this.SendPacket(p);
             this.responseDispatcher.Register(requestId, proto, rspHandler);
             return true;
         }
@@ -194,7 +241,7 @@ namespace mana.Foundation.Network.Client
                 return false;
             }
             var p = Packet.CreatNotify(route, notifySetter);
-            this.channel.Send(p);
+            this.SendPacket(p);
             return true;
         }
 
@@ -218,7 +265,7 @@ namespace mana.Foundation.Network.Client
                 return false;
             }
             var p = Packet.CreatNotify(route, d);
-            this.channel.Send(p);
+            this.SendPacket(p);
             return true;
         }
 
@@ -236,7 +283,7 @@ namespace mana.Foundation.Network.Client
                 return false;
             }
             var p = Packet.CreatNotify(route, null);
-            this.channel.Send(p);
+            this.SendPacket(p);
             return true;
         }
 

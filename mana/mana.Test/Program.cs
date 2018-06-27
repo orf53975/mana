@@ -66,11 +66,6 @@ namespace mana.Test
 
         public static void DoTestNetClient()
         {
-
-            var nc = new NetClient(new TestNetChannel());
-            //Profiler.BeginSample("-------------------------");
-            nc.AddPushListener("battle.sync", (dn) => { });
-            //Profiler.EndSample();
         }
 
         #endregion

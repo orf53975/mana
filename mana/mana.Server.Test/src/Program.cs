@@ -48,35 +48,22 @@ namespace mana.Server.Test
         {
             Logger.SetPrintHandler((str) =>
             {
-                var saveColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(str);
-                Console.ForegroundColor = saveColor;
+                Trace.TraceInformation(str);
             });
 
             Logger.SetWarningHandler((str) =>
             {
-                var saveColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(str);
-                Console.ForegroundColor = saveColor;
+                Trace.TraceWarning(str);
             });
 
             Logger.SetErrorHandler((str) =>
             {
-                var saveColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(str);
-                Console.ForegroundColor = saveColor;
+                Trace.TraceError(str);
             });
 
             Logger.SetExceptionHandler((e) =>
             {
-                var saveColor = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
-                Console.ForegroundColor = saveColor;
+                Trace.TraceError(e.ToString());
             });
 
         }
