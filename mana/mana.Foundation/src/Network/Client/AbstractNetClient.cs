@@ -8,23 +8,17 @@ namespace mana.Foundation.Network.Client
 
         private readonly NetPushDispatcher pushDispatcher = new NetPushDispatcher();
 
-        readonly PacketRcver packetRcver = new PacketRcver();
-
-        readonly PacketSnder packetSnder = new PacketSnder();
-
         public AbstractNetClient() { }
 
         public abstract void Connect(string ip, ushort port, Action<bool, Exception> callback);
 
         public abstract void Disconnect();
 
-        protected abstract int ChannelPush(byte[] buffer, int offset, int size);
+        public abstract void SendPacket(Packet p);
 
-        protected abstract int ChannelPull(byte[] buffer, int offset, int size);
-
-        public void SendPacket(Packet p)
+        protected virtual void OnNetError()
         {
-            packetSnder.Push(p);
+            //TODO
         }
 
         public void SendPingPacket()
@@ -35,61 +29,29 @@ namespace mana.Foundation.Network.Client
             });
         }
 
-        private void DispatchRecivedPacket(Packet p)
+        protected void OnRecivedPacket(Packet p)
         {
-            if (p.msgType == Packet.MessageType.RESPONSE)
+            switch(p.msgType)
             {
-                if (!responseDispatcher.Dispatch(p))
-                {
-                    Logger.Warning("no handler! [{0}]", p.msgRoute);
-                }
-                return;
+                case Packet.MessageType.RESPONSE:
+                    if (!responseDispatcher.Dispatch(p))
+                    {
+                        Logger.Warning("no handler! [{0}]", p.msgRoute);
+                    }
+                    break;
+                case Packet.MessageType.PUSH:
+                    if (!pushDispatcher.Dispatch(p))
+                    {
+                        Logger.Warning("no handler! [{0}]", p.msgRoute);
+                    }
+                    break;
+                default:
+                    Logger.Error("error type! [{0}]", p.msgType);
+                    break;
             }
-            if (p.msgType == Packet.MessageType.PUSH)
-            {
-                if (!pushDispatcher.Dispatch(p))
-                {
-                    Logger.Warning("no handler! [{0}]", p.msgRoute);
-                }
-                return;
-            }
-            Logger.Error("error type! [{0}]", p.msgType);
             p.ReleaseToPool();
         }
 
-        static int __ChannelPush(AbstractNetClient nc, byte[] data, int offset, int count)
-        {
-            return nc.ChannelPush(data, offset, count);
-        }
-
-        public void DoSnding()
-        {
-            var count = packetSnder.WriteTo(this, __ChannelPush);
-            while (count > 0)
-            {
-                count = packetSnder.WriteTo(this, __ChannelPush);
-            }
-        }
-
-        static int __ChannelPull(AbstractNetClient nc, byte[] data, int offset, int count)
-        {
-            return nc.ChannelPull(data, offset, count);
-        }
-
-        public void DoRcving()
-        {
-            var count = packetRcver.PushData(this, __ChannelPull);
-            while (count > 0)
-            {
-                var p = packetRcver.Build();
-                while (p != null)
-                {
-                    this.DispatchRecivedPacket(p);
-                    p = packetRcver.Build();
-                }
-                count = packetRcver.PushData(this, __ChannelPull);
-            }
-        }
 
         #region <<About Request>>
 

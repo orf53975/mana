@@ -54,8 +54,8 @@
     <Compile Include="src\Data\Dynamic\DDTmpl.cs" />
     <Compile Include="src\Data\IFormatString.cs" />
     <Compile Include="src\Data\ISerializable.cs" />
-    <Compile Include="src\Network\Client\DefalutNetClient.cs" />
-    <Compile Include="src\Network\Client\DefalutTcpNetClient.cs" />
+    <Compile Include="src\Network\Client\IOCPNetClient.cs" />
+    <Compile Include="src\Network\Client\DefaultNetClient.cs" />
     <Compile Include="src\Network\Heartbeat.cs" />
     <Compile Include="src\Data\Static\DataObject.cs" />
     <Compile Include="src\Data\Static\DataObjectConfigAttribute.cs" />

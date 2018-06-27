@@ -47,10 +47,7 @@ namespace mana.Test.Client
             {
                 return _client.GetStream().Read(buffer, offset, size);
             }
-            else
-            {
-                return 0;
-            }
+            return 0;
         }
 
         protected override int ChannelPush(byte[] buffer, int offset, int size)
@@ -61,10 +58,7 @@ namespace mana.Test.Client
                 _client.GetStream().Write(buffer, offset, size);
                 return size;
             }
-            else
-            {
-                return 0;
-            }
+            return 0;
         }
 
         public void StartThread()

@@ -187,7 +187,6 @@ namespace mana.Foundation.Network.Sever
             {
                 this.Release();
             }
-
         }
 
         void OnRcv(byte[] buffer, int offset, int count)
