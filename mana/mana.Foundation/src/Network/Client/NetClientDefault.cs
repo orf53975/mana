@@ -67,17 +67,25 @@ namespace mana.Foundation.Network.Client
 
         public void DoRcving()
         {
-            var count = packetRcver.PushData(_socket);   // packetRcver.PushData(this, __ChannelPull);
-            while (count > 0)
+            try
             {
-                var p = packetRcver.Build();
-                while (p != null)
+                var count = packetRcver.PushData(_socket);   // packetRcver.PushData(this, __ChannelPull);
+                while (count > 0)
                 {
-                    this.OnPacketRecived(p);
-                    p = packetRcver.Build();
-                    lastRcvTime = curTime;
+                    var p = packetRcver.Build();
+                    while (p != null)
+                    {
+                        this.OnPacketRecived(p);
+                        p = packetRcver.Build();
+                        lastRcvTime = curTime;
+                    }
+                    count = packetRcver.PushData(_socket);
                 }
-                count = packetRcver.PushData(_socket);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                this.OnNetError();
             }
         }
 
@@ -86,10 +94,18 @@ namespace mana.Foundation.Network.Client
         #region <<about rcv>>
         public void DoSnding()
         {
-            var count = packetSnder.WriteTo(_socket);
-            while (count > 0)
+            try
             {
-                count = packetSnder.WriteTo(_socket);
+                var count = packetSnder.WriteTo(_socket);
+                while (count > 0)
+                {
+                    count = packetSnder.WriteTo(_socket);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                this.OnNetError();
             }
         }
 
