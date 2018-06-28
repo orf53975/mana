@@ -9,3 +9,7 @@
 /mana/mana.Test.Client/obj
 /mana/mana.Server.Test/obj
 /mana/mana.Server.Test/bin
+/mana/mana.Game.BattleSystem/obj
+/mana/mana.Game.BattleSystem/bin
+/mana/mana.Game.BattleServer/obj
+/mana/mana.Game.BattleServer/bin

@@ -13,6 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Server.Test", "mana.Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Test.Client", "mana.Test.Client\mana.Test.Client.csproj", "{6B1A43AC-5C63-41B7-AC5F-7611E893499F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Game.BattleSystem", "mana.Game.BattleSystem\mana.Game.BattleSystem.csproj", "{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Game.BattleServer", "mana.Game.BattleServer\mana.Game.BattleServer.csproj", "{5D08716A-6175-4126-A657-F4BB6C90C180}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +64,22 @@ Global
 		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|x86.ActiveCfg = Release|Any CPU
 		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|x86.Build.0 = Release|Any CPU
+		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Debug|x86.Build.0 = Debug|Any CPU
+		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|x86.ActiveCfg = Release|Any CPU
+		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|x86.Build.0 = Release|Any CPU
+		{5D08716A-6175-4126-A657-F4BB6C90C180}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D08716A-6175-4126-A657-F4BB6C90C180}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D08716A-6175-4126-A657-F4BB6C90C180}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5D08716A-6175-4126-A657-F4BB6C90C180}.Debug|x86.Build.0 = Debug|Any CPU
+		{5D08716A-6175-4126-A657-F4BB6C90C180}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D08716A-6175-4126-A657-F4BB6C90C180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D08716A-6175-4126-A657-F4BB6C90C180}.Release|x86.ActiveCfg = Release|Any CPU
+		{5D08716A-6175-4126-A657-F4BB6C90C180}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -89,6 +89,7 @@
     <Compile Include="src\Network\Sever\IOCPServer.cs" />
     <Compile Include="src\Network\Sever\UserToken.cs" />
     <Compile Include="src\Network\Sever\UserTokenPool.cs" />
+    <Compile Include="src\Util\BitFlag.cs" />
     <Compile Include="src\Util\CodingUtil.cs" />
     <Compile Include="src\Cache\ListCache.cs" />
     <Compile Include="src\Util\MathTools.cs" />
