@@ -2,7 +2,9 @@
 
 namespace mana.Foundation.Network.Sever
 {
-    public abstract class MessageConfigAttribute : Attribute
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class MessageConfigAttribute : Attribute
     {
         public readonly ProtoType protoType;
 
@@ -12,32 +14,32 @@ namespace mana.Foundation.Network.Sever
 
         public readonly Type outType;
 
-        public readonly bool overrideable;
+        public readonly int overridePriority;
 
-        protected MessageConfigAttribute(ProtoType protoType, string route, Type inType, Type outType, bool overrideable = false)
+        public MessageConfigAttribute(ProtoType protoType, string route, Type inType, Type outType, int overridePriority = 1)
         {
             this.protoType = protoType;
             this.route = route;
             this.inType = inType;
             this.outType = outType;
-            this.overrideable = overrideable;
-        }
-    }
-
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-    public class MessageNotifyAttribute : MessageConfigAttribute
-    {
-        public MessageNotifyAttribute(string route, Type inType, bool overrideable = false)
-            : base(ProtoType.Notify, route, inType, null, overrideable)
-        {
+            this.overridePriority = overridePriority;
         }
     }
 
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
     public class MessageRequestAttribute : MessageConfigAttribute
     {
-        public MessageRequestAttribute(string route, Type inType, Type outType, bool overrideable = false)
-            : base(ProtoType.Request, route, inType, outType, overrideable)
+        public MessageRequestAttribute(string route, Type inType, Type outType, int overridePriority = 1)
+            : base(ProtoType.Request, route, inType, outType, overridePriority)
+        {
+        }
+    }
+
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class MessageNotifyAttribute : MessageConfigAttribute
+    {
+        public MessageNotifyAttribute(string route, Type inType, int overridePriority = 1)
+            : base(ProtoType.Notify, route, inType, null, overridePriority)
         {
         }
     }

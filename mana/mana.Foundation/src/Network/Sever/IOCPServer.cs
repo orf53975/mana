@@ -157,13 +157,13 @@ namespace mana.Foundation.Network.Sever
         void OnSocketConnected(string ipInfo)
         {
             Interlocked.Increment(ref m_numConnectedSockets);
-            Logger.Print("socket connected[{0}] ,conn = {1}", ipInfo, m_numConnectedSockets);
+            Logger.Print("socket[{0}] connected ,conn = {1}", ipInfo, m_numConnectedSockets);
         }
 
         internal void OnSocketClosed(string ipInfo)
         {
             Interlocked.Decrement(ref m_numConnectedSockets);
-            Logger.Print("socket disconnected[{0}] ,conn = {1}", ipInfo, m_numConnectedSockets);
+            Logger.Print("socket[{0}] disconnected ,conn = {1}", ipInfo, m_numConnectedSockets);
         }
 
         public void ForEachWorking(Action<UserToken> action)

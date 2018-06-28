@@ -16,7 +16,6 @@ namespace mana.Test.Client
             Program.StartCommandConsoleThread();
         }
 
-
         #region InitLogger
 
         static void InitLogger()
@@ -44,9 +43,6 @@ namespace mana.Test.Client
         }
 
         #endregion
-
-
-        #region <<CommandConsole>>
 
         #region <<CommandConsoleThread>>
         static bool isCommandConsoleRunning = false;
@@ -76,55 +72,33 @@ namespace mana.Test.Client
         }
         #endregion
 
+        #region <<OnCommond>>
+
+        static TestClient mTestClient = null;
         static void OnCommond(string cmd)
         {
-            if (cmd == "exit" || cmd == "quit")
+            switch (cmd)
             {
-                isCommandConsoleRunning = false;
-                return;
-            }
-            if (cmd == "nc")
-            {
-                if (mTestClient == null)
-                {
-                    mTestClient = StartNetClient();
-                    mTestClient.AddPushListener<Protocol>("Connector.Protocol", (protocol) =>
+                case "nc":
+                    if (mTestClient == null)
                     {
-                        Protocol.Instance.Push(protocol);
-                        Logger.Print(Protocol.Instance.ToFormatString(""));
-                    });
-                    mTestClient.AddPushListener<Heartbeat>("Connector.Pong", (protocol) =>
+                        mTestClient = new TestClient(Environment.TickCount , "127.0.0.1", 8088);
+                    }
+                    else
                     {
-                        Logger.Print(protocol.ToFormatString(""));
-                    });
-                    mTestClient.Connect("127.0.0.1", 8088, null);
-                }
-                else
-                {
-                    Console.WriteLine("TestClient had already existed!");
-                }
-                return;
-            }
-            if (cmd == "ping")
-            {
-                if (mTestClient != null)
-                {
-                    mTestClient.SendPingPacket();
-                }
-                return;
+                        Console.WriteLine("TestClient had already existed!");
+                    }
+                    return;
+                case "ping":
+                    if(mTestClient != null)
+                    {
+                        mTestClient.mNetChannel.SendPingPacket();
+                        return;
+                    }
+                    break;
             }
             Console.WriteLine("invalid command:{0}", cmd);
         }
-
         #endregion
-
-        private static AbstractNetClient mTestClient = null;
-
-        public static AbstractNetClient StartNetClient()
-        {
-            var channel = new CustomNetClient();
-            channel.StartThread();
-            return channel;
-        }
     }
 }

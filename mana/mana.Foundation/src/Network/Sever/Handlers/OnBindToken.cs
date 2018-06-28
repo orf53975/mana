@@ -2,7 +2,7 @@
 
 namespace mana.Foundation.Network.Sever
 {
-    [MessageRequest("Connector.BindToken", typeof(Heartbeat), typeof(Heartbeat), true)]
+    [MessageRequest("Connector.BindToken", typeof(Heartbeat), typeof(Heartbeat), 0)]
     public sealed class OnBindToken : IMessageHandler
     {
         public void Process(UserToken token, Packet msg)

@@ -19,23 +19,20 @@ namespace mana.Foundation.Network.Sever
             var mca = msgHandlerType.TryGetAttribute<MessageConfigAttribute>();
             if (mca == null)
             {
-                Logger.Error("Regist falied! {0} require MessageRequestAttribute or MessageNotifyAttribute", msgHandlerType.FullName);
+                Logger.Error("Regist falied! {0} require MessageConfigAttribute", msgHandlerType.FullName);
                 return false;
             }
             IMessageHandler existed;
             if (handlers.TryGetValue(mca.route, out existed))
             {
                 var existed_mca = existed.GetType().TryGetAttribute<MessageConfigAttribute>();
-                if (!existed_mca.overrideable)
+                if (existed_mca.overridePriority == mca.overridePriority)
                 {
-                    if (mca.overrideable)
-                    {
-                        Logger.Error("MessageHandler[{0}] can't override by[{1}]! ->{1}", existed.GetType(), msgHandlerType);
-                    }
-                    else
-                    {
-                        Logger.Error("MessageHandler conflict! {0}->{1}", existed.GetType(), msgHandlerType);
-                    }
+                    Logger.Error("MessageHandler conflict! {0}->{1}", existed.GetType(), msgHandlerType);
+                    return false;
+                }
+                if (existed_mca.overridePriority > mca.overridePriority)
+                {
                     return false;
                 }
             }

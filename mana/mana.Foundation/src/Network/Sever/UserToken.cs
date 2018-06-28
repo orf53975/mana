@@ -285,12 +285,29 @@ namespace mana.Foundation.Network.Sever
                 Logger.Warning("UserToken.Send Failed! state = {0} error!", state);
                 return;
             }
-            var bInSending = packetSnder.HasSendingData;
-            packetSnder.Push(p);
-            if (!bInSending)
+            if (Monitor.TryEnter(sndEventArg))
             {
-                DoSending(sndEventArg);
+                try
+                {
+                    packetSnder.Push(p);
+                    DoSending(sndEventArg);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                }
+                finally
+                {
+                    Monitor.Exit(sndEventArg);
+                }
             }
+            //TODO old
+            //var bInSending = packetSnder.HasSendingData;
+            //packetSnder.Push(p);
+            //if (!bInSending)
+            //{
+            //    DoSending(sndEventArg);
+            //}
         }
 
         public void SendResponse<T>(string route, int responseId, Action<T> rspSetter)

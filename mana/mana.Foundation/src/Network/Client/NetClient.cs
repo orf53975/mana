@@ -1,35 +1,34 @@
 ﻿using System;
+using System.Net;
 
 namespace mana.Foundation.Network.Client
 {
-    public abstract class AbstractNetClient
+    public abstract class NetClient :  IDisposable
     {
         private readonly NetResponseDispatcher responseDispatcher = new NetResponseDispatcher();
 
         private readonly NetPushDispatcher pushDispatcher = new NetPushDispatcher();
 
-        public AbstractNetClient() { }
+        public NetClient()
+        {
+            this.AddPushListener<Protocol>("Connector.Protocol", (protocol) =>
+            {
+                Protocol.Instance.Push(protocol);
+            });
+        }
 
-        public abstract void Connect(string ip, ushort port, Action<bool, Exception> callback);
+        public abstract EndPoint RemoteEndPoint { get; }
+
+        public abstract bool Connected { get; }
+
+        public abstract void Connect(string ip, ushort port, Action<bool> callback);
 
         public abstract void Disconnect();
 
         public abstract void SendPacket(Packet p);
 
-        public abstract void DoUpdate();
+        public abstract void Update(int deltaTimeMs);
 
-        protected virtual void OnNetError()
-        {
-            //TODO
-        }
-
-        public void SendPingPacket()
-        {
-            this.Notify<Heartbeat>("Connector.Ping", (hb) =>
-            {
-                hb.timestamp = TimeUtil.GetCurrentTime();
-            });
-        }
 
         protected void OnPacketRecived(Packet p)
         {
@@ -51,7 +50,26 @@ namespace mana.Foundation.Network.Client
                     Logger.Error("error type! [{0}]", p.msgType);
                     break;
             }
-            p.ReleaseToPool();
+        }
+
+        public void SendPingPacket()
+        {
+            this.Notify<Heartbeat>("Connector.Ping", (hb) =>
+            {
+                hb.timestamp = TimeUtil.GetCurrentTime();
+            });
+        }
+
+        public void OnNetError()
+        {
+            Logger.Error("OnNetError");
+            this.Disconnect();
+        }
+
+        public void OnHeartbeatTimeout()
+        {
+            Logger.Error("OnHeartbeatTimeout");
+            this.Disconnect();
         }
 
 
@@ -330,7 +348,50 @@ namespace mana.Foundation.Network.Client
             pushDispatcher.Unregister(proto, handler);
             return true;
         }
+        #endregion
 
+        #region IDisposable Support
+
+        private bool disposedValue = false; // 要检测冗余调用
+
+        protected bool IsDisposed
+        {
+            get
+            {
+                return disposedValue;
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: 释放托管状态(托管对象)。
+                }
+
+                // TODO: 释放未托管的资源(未托管的对象)并在以下内容中替代终结器。
+                // TODO: 将大型字段设置为 null。
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: 仅当以上 Dispose(bool disposing) 拥有用于释放未托管资源的代码时才替代终结器。
+        // ~NetClient() {
+        //   // 请勿更改此代码。将清理代码放入以上 Dispose(bool disposing) 中。
+        //   Dispose(false);
+        // }
+
+        // 添加此代码以正确实现可处置模式。
+        public void Dispose()
+        {
+            // 请勿更改此代码。将清理代码放入以上 Dispose(bool disposing) 中。
+            Dispose(true);
+            // TODO: 如果在以上内容中替代了终结器，则取消注释以下行。
+            // GC.SuppressFinalize(this);
+        }
         #endregion
 
     }

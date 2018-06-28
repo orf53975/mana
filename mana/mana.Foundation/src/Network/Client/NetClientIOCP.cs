@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace mana.Foundation.Network.Client
 {
-    public class IOCPNetClient : AbstractNetClient
+    public class NetClientIOCP : NetClient
     {
         readonly PacketRcver packetRcver = new PacketRcver();
 
@@ -22,25 +22,17 @@ namespace mana.Foundation.Network.Client
 
         readonly Queue<Packet> rcvQue = new Queue<Packet>();
 
+        readonly int mPingPongTimeout;
+
+        readonly int mPingTimeSpan;
+
         Socket _socket = null;
 
-        float lastRcvTime = 0.0f;
+        int lastRcvTime = 0;
 
-        float lastSndTime = 0.0f;
+        int lastSndTime = 0;
 
-        public int port
-        {
-            get;
-            private set;
-        }
-
-        public IPAddress remote
-        {
-            get;
-            private set;
-        }
-
-        public bool isConnected
+        public override bool Connected
         {
             get
             {
@@ -48,8 +40,19 @@ namespace mana.Foundation.Network.Client
             }
         }
 
-        public IOCPNetClient(int rcvBuffSize = 2048, int sndBuffSize = 1024)
+        public override EndPoint RemoteEndPoint
         {
+            get
+            {
+                return _socket.RemoteEndPoint;
+            }
+        }
+
+        public NetClientIOCP(int pingPongTimeout = 30 * 1000, int rcvBuffSize = 2048, int sndBuffSize = 1024)
+        {
+            this.mPingPongTimeout = pingPongTimeout;
+            this.mPingTimeSpan = pingPongTimeout >> 1;
+
             rcvEventArg = new SocketAsyncEventArgs();
             rcvEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(RcvCompleted);
             rcvEventArg.UserToken = this;
@@ -64,6 +67,15 @@ namespace mana.Foundation.Network.Client
         }
 
         #region <<about rcv>>
+
+        void StartRcv()
+        {
+            var willRaiseEvent = this._socket.ReceiveAsync(rcvEventArg);
+            if (!willRaiseEvent)
+            {
+                ProcessRcved(rcvEventArg);
+            }
+        }
 
         void RcvCompleted(object sender, SocketAsyncEventArgs e)
         {
@@ -114,7 +126,6 @@ namespace mana.Foundation.Network.Client
                 }
                 p = packetRcver.Build();
             }
-            lastRcvTime = Environment.TickCount;
         }
 
         #endregion
@@ -133,7 +144,6 @@ namespace mana.Foundation.Network.Client
                 this.OnNetError();
             }
         }
-
 
         void ProcessSnded(SocketAsyncEventArgs e)
         {
@@ -176,7 +186,7 @@ namespace mana.Foundation.Network.Client
 
         #endregion
 
-        public override void Connect(string ip, ushort port, Action<bool, Exception> callback)
+        public override void Connect(string ip, ushort port, Action<bool> callback)
         {
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _socket.SendTimeout = 3000;
@@ -184,17 +194,34 @@ namespace mana.Foundation.Network.Client
             var saea = new SocketAsyncEventArgs();
             saea.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
             saea.Completed += new EventHandler<SocketAsyncEventArgs>(AsyncConnected);
-            saea.UserToken = this;
-            _socket.ConnectAsync(saea);
+            saea.UserToken = new KeyValuePair<NetClientIOCP, Action<bool>>(this, callback);
+            var willRaiseEvent = _socket.ConnectAsync(saea);
+            if (!willRaiseEvent)
+            {
+                callback(true);
+            }
         }
 
         static void AsyncConnected(object sender, SocketAsyncEventArgs e)
         {
-            if(e.SocketError == SocketError.Success)
-            {
+            var ut = (KeyValuePair<NetClientIOCP, Action<bool>>)e.UserToken;
 
+            if (e.SocketError == SocketError.Success)
+            {
+                if (ut.Value != null)
+                {
+                    ut.Value.Invoke(true);
+                }
+                ut.Key.StartRcv();
             }
-            throw new NotImplementedException();
+            else
+            {
+                Logger.Error("connect failed! {0}", e.SocketError);
+                if (ut.Value != null)
+                {
+                    ut.Value.Invoke(false);
+                }
+            }
         }
 
         public override void Disconnect()
@@ -204,6 +231,12 @@ namespace mana.Foundation.Network.Client
                 if (_socket != null && _socket.Connected)
                 {
                     _socket.Close();
+                }
+                packetRcver.Clear();
+                packetSnder.Clear();
+                lock(rcvQue)
+                {
+                    rcvQue.Clear();
                 }
             }
             catch (Exception e)
@@ -219,31 +252,58 @@ namespace mana.Foundation.Network.Client
         public override void SendPacket(Packet p)
         {
             packetSnder.Push(p);
-            //TPDO
-            DoSending(sndEventArg);
-        }
-
-        public override void DoUpdate()
-        {
-            try
+            if (Monitor.TryEnter(sndEventArg))
             {
-                Monitor.TryEnter(rcvQue);
-                while (rcvQue.Count > 0)
+                try
                 {
-                    var p = rcvQue.Dequeue();
-                    this.OnPacketRecived(p);
-                    p.ReleaseToPool();
+                    DoSending(sndEventArg);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                }
+                finally
+                {
+                    Monitor.Exit(sndEventArg);
                 }
             }
-            catch (Exception ex)
-            {
-
-            }
-            finally
-            {
-                Monitor.Exit(rcvQue);
-            }
+            lastSndTime = curTime;
         }
 
+        private int curTime;
+        public override void Update(int deltaTimeMs)
+        {
+            if (!Connected) { return; }
+            curTime = curTime + deltaTimeMs;
+            if (Monitor.TryEnter(rcvQue))
+            {
+                try
+                {
+                    while (rcvQue.Count > 0)
+                    {
+                        var p = rcvQue.Dequeue();
+                        OnPacketRecived(p);
+                        p.ReleaseToPool();
+                        lastRcvTime = curTime;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                }
+                finally
+                {
+                    Monitor.Exit(rcvQue);
+                }
+            }
+            if (curTime - lastRcvTime > mPingPongTimeout)
+            {
+                this.OnHeartbeatTimeout();
+            }
+            else if (curTime - lastSndTime > mPingTimeSpan)
+            {
+                this.SendPingPacket();
+            }
+        }
     }
 }

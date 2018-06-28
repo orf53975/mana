@@ -35,15 +35,20 @@ namespace mana.Foundation
                 return null;
             }
 
-            internal ObjectPool<T> AddPool<T>()
+            internal ObjectPool<T> GetOrAddPool<T>()
                 where T : class, new()
             {
-                var pool = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
+                var poolType = typeof(T);
+                IObjectPool ret = null;
                 lock (_objectPools)
                 {
-                    _objectPools.Add(typeof(T), pool);
+                    if (!_objectPools.TryGetValue(poolType, out ret))
+                    {
+                        ret = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
+                        _objectPools.Add(poolType, ret);
+                    }
                 }
-                return pool;
+                return (ObjectPool<T>)ret;
             }
 
             internal void ClearAll()
@@ -97,12 +102,7 @@ namespace mana.Foundation
         public static bool Put<T>(T obj) 
             where T : class, ICacheable, new()
         {
-            var pool = _instance.GetPool<T>();
-            if (pool == null)
-            {
-                pool = _instance.AddPool<T>();
-            }
-            return pool.Put(obj);
+            return _instance.GetOrAddPool<T>().Put(obj);
         }
 
         public static void Clear<T>()
