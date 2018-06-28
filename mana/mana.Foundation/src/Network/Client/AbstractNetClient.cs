@@ -16,6 +16,8 @@ namespace mana.Foundation.Network.Client
 
         public abstract void SendPacket(Packet p);
 
+        public abstract void DoUpdate();
+
         protected virtual void OnNetError()
         {
             //TODO
@@ -29,7 +31,7 @@ namespace mana.Foundation.Network.Client
             });
         }
 
-        protected void OnRecivedPacket(Packet p)
+        protected void OnPacketRecived(Packet p)
         {
             switch(p.msgType)
             {

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace mana.Foundation.Network.Client
 {
@@ -17,6 +19,8 @@ namespace mana.Foundation.Network.Client
         readonly int SendBufferOffset;
 
         readonly int SendBufferLimit;
+
+        readonly Queue<Packet> rcvQue = new Queue<Packet>();
 
         Socket _socket = null;
 
@@ -104,7 +108,10 @@ namespace mana.Foundation.Network.Client
             var p = packetRcver.Build();
             while (p != null)
             {
-                this.OnRecivedPacket(p);
+                lock (rcvQue)
+                {
+                    rcvQue.Enqueue(p);
+                }
                 p = packetRcver.Build();
             }
             lastRcvTime = Environment.TickCount;
@@ -211,18 +218,32 @@ namespace mana.Foundation.Network.Client
 
         public override void SendPacket(Packet p)
         {
-            //if (state != kStateLink)
-            //{
-            //    Logger.Warning("UserToken.Send Failed! state = {0} error!", state);
-            //    return;
-            //}
-            //var bInSending = packetSnder.HasSendingData;
-            //packetSnder.Push(p);
-            //if (!bInSending)
-            //{
-            //    DoSending(sndEventArg);
-            //}
-            throw new NotImplementedException();
+            packetSnder.Push(p);
+            //TPDO
+            DoSending(sndEventArg);
         }
+
+        public override void DoUpdate()
+        {
+            try
+            {
+                Monitor.TryEnter(rcvQue);
+                while (rcvQue.Count > 0)
+                {
+                    var p = rcvQue.Dequeue();
+                    this.OnPacketRecived(p);
+                    p.ReleaseToPool();
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                Monitor.Exit(rcvQue);
+            }
+        }
+
     }
 }
