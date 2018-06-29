@@ -13,7 +13,7 @@ namespace BattleSystem.Units
 
         public const float kDestoryDelay = 5.0f;
 
-        public readonly Battle battle;
+        public readonly BattleScene battle;
 
         readonly ExtendProperty<int> extProp;
 
@@ -213,7 +213,7 @@ namespace BattleSystem.Units
             }
         }
 
-        public Unit(Battle battle, UnitCreateData data)
+        public Unit(BattleScene battle, UnitCreateData data)
         {
             this.battle = battle;
             this.baseInfo = data.info;

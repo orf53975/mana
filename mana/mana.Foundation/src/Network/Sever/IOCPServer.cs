@@ -58,7 +58,7 @@ namespace mana.Foundation.Network.Sever
                 if (typeof(IPushRegister).IsAssignableFrom(type))
                 {
                     var pr = Activator.CreateInstance(type) as IPushRegister;
-                    pr.RegistPushProto();
+                    pr.DoRegist();
                 }
             }
             this.OnInitTypes(types);

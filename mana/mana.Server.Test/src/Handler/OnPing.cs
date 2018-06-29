@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace mana.Server.Test.Handler
 {
-    [MessageNotify("Connector.Ping", typeof(Heartbeat) , 1)]
+    [MessageNotify("Connector.Ping", typeof(Heartbeat) , -1)]
     public sealed class OnPing : IMessageHandler
     {
         public void Process(UserToken token, Packet msg)

@@ -1,11 +1,11 @@
 ﻿using mana.Foundation;
 using mana.Foundation.Test;
-using mana.Server.Test.Config;
+using mana.Server.Battle.Config;
 using System;
 using System.Diagnostics;
 using System.Net;
 
-namespace mana.Server.Test
+namespace mana.Server.Battle
 {
     class Program : ConsoleProgram
     {
@@ -16,7 +16,7 @@ namespace mana.Server.Test
 
         public static readonly Program Instance = new Program();
 
-        public MainServer Server { get; private set; }
+        public BattleServer Server { get; private set; }
 
         void LoadPlugins(string[] plugins)
         {
@@ -40,7 +40,7 @@ namespace mana.Server.Test
             var setting = ConfigMgr.AppSetting;
             this.LoadPlugins(setting.plugins);
 
-            Server = new MainServer(setting.connMax, setting.connBuffSize);
+            Server = new BattleServer(setting.connMax, setting.connBuffSize);
             var ipAddr = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
             Server.Start(new IPEndPoint(ipAddr, setting.port));
         }

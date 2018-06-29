@@ -48,6 +48,8 @@
     <Compile Include="src\Buffer\ByteReader.cs" />
     <Compile Include="src\Buffer\IReadableBuffer.cs" />
     <Compile Include="src\Buffer\IWritableBuffer.cs" />
+    <Compile Include="src\Test\ConsoleProgram.cs" />
+    <Compile Include="src\Test\ConsoleTrace.cs" />
     <Compile Include="src\Data\DataExtension.cs" />
     <Compile Include="src\Data\Dynamic\DDFieldTmpl.cs" />
     <Compile Include="src\Data\Dynamic\DDNodeTmpl.cs" />

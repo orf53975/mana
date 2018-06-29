@@ -5,8 +5,6 @@ VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Foundation", "mana.Foundation\mana.Foundation.csproj", "{58D5FD90-F169-4363-B5A5-D633E2F69158}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Test", "mana.Test\mana.Test.csproj", "{99E6267E-FDBD-4008-B499-FC368210D159}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.ClassGen", "mana.ClassGen\mana.ClassGen.csproj", "{357761D7-9D8C-42AE-BF30-0E2AE614DEFA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Server.Test", "mana.Server.Test\mana.Server.Test.csproj", "{53720AA4-8638-4593-9C19-E4ADE9E1813B}"
@@ -14,6 +12,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Test.Client", "mana.Test.Client\mana.Test.Client.csproj", "{6B1A43AC-5C63-41B7-AC5F-7611E893499F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Game.BattleSystem", "mana.Game.BattleSystem\mana.Game.BattleSystem.csproj", "{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Server.Battle", "mana.Server.Battle\mana.Server.Battle.csproj", "{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,14 +31,6 @@ Global
 		{58D5FD90-F169-4363-B5A5-D633E2F69158}.Release|Any CPU.Build.0 = Release|Any CPU
 		{58D5FD90-F169-4363-B5A5-D633E2F69158}.Release|x86.ActiveCfg = Release|Any CPU
 		{58D5FD90-F169-4363-B5A5-D633E2F69158}.Release|x86.Build.0 = Release|Any CPU
-		{99E6267E-FDBD-4008-B499-FC368210D159}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{99E6267E-FDBD-4008-B499-FC368210D159}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{99E6267E-FDBD-4008-B499-FC368210D159}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{99E6267E-FDBD-4008-B499-FC368210D159}.Debug|x86.Build.0 = Debug|Any CPU
-		{99E6267E-FDBD-4008-B499-FC368210D159}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{99E6267E-FDBD-4008-B499-FC368210D159}.Release|Any CPU.Build.0 = Release|Any CPU
-		{99E6267E-FDBD-4008-B499-FC368210D159}.Release|x86.ActiveCfg = Release|Any CPU
-		{99E6267E-FDBD-4008-B499-FC368210D159}.Release|x86.Build.0 = Release|Any CPU
 		{357761D7-9D8C-42AE-BF30-0E2AE614DEFA}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{357761D7-9D8C-42AE-BF30-0E2AE614DEFA}.Debug|Any CPU.Build.0 = Debug|x86
 		{357761D7-9D8C-42AE-BF30-0E2AE614DEFA}.Debug|x86.ActiveCfg = Debug|x86
@@ -70,6 +62,14 @@ Global
 		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|x86.ActiveCfg = Release|Any CPU
 		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|x86.Build.0 = Release|Any CPU
+		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Debug|x86.Build.0 = Debug|Any CPU
+		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Release|x86.ActiveCfg = Release|Any CPU
+		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

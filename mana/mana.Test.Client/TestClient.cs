@@ -39,7 +39,7 @@ namespace mana.Test.Client
             });
             mNetChannel.Connect(ip, port, (sucess) =>
             {
-                Logger.Print("connected {0}", sucess);
+                Logger.Print("connected {0}!", sucess ? "sucessed" : "failed");
             });
         }
 
