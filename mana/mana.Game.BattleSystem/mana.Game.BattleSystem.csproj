@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="src\BattleSystem\Math\" />
+    <ProjectReference Include="..\mana.Foundation\mana.Foundation.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\mana.Foundation\mana.Foundation.csproj" />
+    <Folder Include="src\BattleSystem\Math\" />
   </ItemGroup>
 
 </Project>

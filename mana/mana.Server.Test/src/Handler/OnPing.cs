@@ -11,7 +11,7 @@ namespace mana.Server.Test.Handler
         {
             Logger.Warning(msg.TryGet<Heartbeat>().ToFormatString(""));
 
-            //TODO test
+            //---- test
             var p = Packet.CreatPush("Connector.Protocol", Protocol.Instance, false);
             token.Send(p);
         }

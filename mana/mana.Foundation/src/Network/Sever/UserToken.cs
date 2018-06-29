@@ -301,7 +301,7 @@ namespace mana.Foundation.Network.Sever
                     Monitor.Exit(sndEventArg);
                 }
             }
-            //TODO old
+            //--- old
             //var bInSending = packetSnder.HasSendingData;
             //packetSnder.Push(p);
             //if (!bInSending)
