@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>xxd.sync</Name>
+  <Classes>
+    <CClass nameSpace="xxd.sync" name="AbilityData" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="int" name="tmplId" />
+        <CField const="false" type="int" name="lev" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="AddUnit" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="UnitInfo" name="data" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="BattleCreateData" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="byte" name="type" />
+        <CField const="false" type="long" name="uuid" />
+        <CField const="false" type="UnitCreateData[]" name="units" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="BattleSnapData" note="当前场景快照数据&#xD;" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="byte" name="type" />
+        <CField const="false" type="long" name="uuid" />
+        <CField const="false" type="UnitInfo[]" name="units" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="BattleSync" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="DataObject[]" name="actions" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="BuffData" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="int" name="tmplId" />
+        <CField const="false" type="int" name="lev" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="Damage" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="true" type="byte" name="dtype_pure" value="0" />
+        <CField const="true" type="byte" name="dtype_physical" value="1" />
+        <CField const="true" type="byte" name="dtype_magic" value="2" />
+        <CField const="false" type="int" name="unitId" />
+        <CField const="false" type="int" name="baseValue" />
+        <CField const="false" type="int" name="value" />
+        <CField const="false" type="int" name="damageType" />
+        <CField const="false" type="int" name="damageFlag" />
+        <CField const="false" type="byte" name="killedParam" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="Healing" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="int" name="unitId" />
+        <CField const="false" type="int" name="baseValue" />
+        <CField const="false" type="int" name="value" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="RemoveUnit" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="int" name="unitId" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="UnitCreateData" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="UnitInfo" name="info" />
+        <CField const="false" type="UnitProp" name="prop" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="UnitExtProp" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="string" name="key" />
+        <CField const="false" type="int" name="value" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="UnitInfo" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="int" name="playerId" />
+        <CField const="false" type="int" name="uid" />
+        <CField const="false" type="string" name="name" />
+        <CField const="false" type="string" name="appearance" />
+        <CField const="false" type="byte" name="category" />
+        <CField const="false" type="byte" name="type" />
+        <CField const="false" type="byte" name="camp" />
+        <CField const="false" type="short" name="lev" />
+        <CField const="false" type="float" name="x" />
+        <CField const="false" type="float" name="y" />
+        <CField const="false" type="float" name="z" />
+        <CField const="false" type="float" name="faceTo" />
+        <CField const="false" type="float" name="hpPercent" />
+        <CField const="false" type="float" name="mpPercent" />
+        <CField const="false" type="short" name="moveSpeed" />
+        <CField const="false" type="byte" name="actionState" />
+        <CField const="false" type="int" name="currentAnim" />
+        <CField const="false" type="int" name="effectShow" />
+        <CField const="false" type="int" name="controlFlag" />
+        <CField const="false" type="BuffData[]" name="buffsData" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="UnitProp" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="short" name="aiTmplId" />
+        <CField const="false" type="int" name="hpMax" />
+        <CField const="false" type="int" name="mpMax" />
+        <CField const="false" type="int" name="phyAtk" />
+        <CField const="false" type="int" name="phyDef" />
+        <CField const="false" type="int" name="magAtk" />
+        <CField const="false" type="int" name="magDef" />
+        <CField const="false" type="float" name="atkTimeLength" note="攻击总时间" />
+        <CField const="false" type="float" name="atkKeyFrameTime" note="攻击前摇时间" />
+        <CField const="false" type="float" name="stiffTime" note="僵直时间" />
+        <CField const="false" type="float" name="fov" />
+        <CField const="false" type="float" name="atkRange" />
+        <CField const="false" type="float" name="bodySize" />
+        <CField const="false" type="int" name="hit" />
+        <CField const="false" type="int" name="dodge" />
+        <CField const="false" type="int" name="crit" />
+        <CField const="false" type="int" name="toughness" />
+        <CField const="false" type="short" name="moveSpeed" />
+        <CField const="false" type="AbilityData[]" name="abilitiesData" />
+        <CField const="false" type="UnitExtProp[]" name="extProps" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync" name="UnitSync" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="true" type="int" name="CF_STUN" value="0" />
+        <CField const="true" type="int" name="CF_SILENT" value="1" />
+        <CField const="true" type="int" name="CF_ENTANGLE" value="2" />
+        <CField const="true" type="int" name="CF_SNARED" value="3" />
+        <CField const="false" type="int" name="unitId" />
+        <CField const="false" type="float" name="faceTo" />
+        <CField const="false" type="float" name="x" />
+        <CField const="false" type="float" name="y" />
+        <CField const="false" type="float" name="z" />
+        <CField const="false" type="float" name="hpPercent" />
+        <CField const="false" type="float" name="mpPercent" />
+        <CField const="false" type="byte" name="actionState" />
+        <CField const="false" type="int" name="AnimPlayCode" />
+        <CField const="false" type="float" name="AnimPlayTime" />
+        <CField const="false" type="int" name="effectShow" />
+        <CField const="false" type="int" name="controlFlag" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync.opration" name="CastRequest" TypeCode="0x1001" pool="false">
+      <Fields>
+        <CField const="false" type="int" name="unitId" />
+        <CField const="false" type="int" name="targetId" />
+        <CField const="false" type="int" name="abilityId" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.sync.opration" name="MoveRequest" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="true" type="byte" name="type_start" value="1" />
+        <CField const="true" type="byte" name="type_moving" value="2" />
+        <CField const="true" type="byte" name="type_end" value="3" />
+        <CField const="true" type="byte" name="type_other" value="4" />
+        <CField const="false" type="int" name="unitId" />
+        <CField const="false" type="byte" name="type" />
+        <CField const="false" type="float" name="x" />
+        <CField const="false" type="float" name="y" />
+        <CField const="false" type="float" name="z" />
+        <CField const="false" type="float" name="faceTo" />
+      </Fields>
+    </CClass>
+  </Classes>
+</Project>

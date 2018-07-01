@@ -1,11 +1,9 @@
 ﻿{
   "host": "127.0.0.1",
-
   "port": 8088,
-
   "connBuffSize": 1024,
-
   "connMax": 255,
-
+  "tokenUnbindTimeOut": 10000,
+  "tokenWorkTimeOut": 30000,
   "plugins": []
 }

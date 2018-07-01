@@ -12,9 +12,15 @@ namespace mana.Foundation
 
         private Protocol(bool bInstance)
         {
+            // -- defult protos
             AddProto(0x0001, new Proto("Connector.Protocol", ProtoType.Push, null, typeof(Protocol).FullName));
             AddProto(0x0002, new Proto("Connector.Ping", ProtoType.Notify, typeof(Heartbeat).FullName, null));
             AddProto(0x0003, new Proto("Connector.Pong", ProtoType.Push, null, typeof(Heartbeat).FullName));
+
+            // -- default types
+            AddTypeCode(typeof(Protocol).FullName, 0x0001);
+            AddTypeCode(typeof(Response).FullName, 0x0002);
+            AddTypeCode(typeof(Heartbeat).FullName, 0x0003);
         }
 
         #endregion
@@ -127,16 +133,28 @@ namespace mana.Foundation
                 Logger.Error("typeCode must not be zero!");
                 return false;
             }
-            ushort existed;
-            if (typesCode.TryGetValue(dataType, out existed))
+            // -- 1 check dataType
+            var existTypeCode = GetTypeCode(dataType);
+            if (existTypeCode != 0)
             {
-                if (existed != typeCode)
+                if (existTypeCode != typeCode)
                 {
-                    Logger.Error("typeCode[0x{0:X4}] conflict! {1}->{2}", typeCode, dataType, existed);
+                    Logger.Error("[{0}]duplicate add![{1},{2}]", dataType, typeCode, existTypeCode);
                     return false;
                 }
                 return true;
             }
+            // -- 2 check typeCode
+            var existTypeName = GetTypeName(typeCode);
+            if (existTypeName != null)
+            {
+                if(existTypeName != dataType)
+                {
+                    Logger.Error("[{0},{1}] typeCode conflit!", dataType, existTypeName);
+                    return false;
+                }
+            }
+
             typesCode.Add(dataType, typeCode);
             return true;
         }

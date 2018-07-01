@@ -22,13 +22,6 @@ namespace BattleSystem
 
         public readonly long UUID;
 
-        //TODO
-        public string uid
-        {
-            get;
-            private set;
-        }
-
         internal float frameTime
         {
             get;

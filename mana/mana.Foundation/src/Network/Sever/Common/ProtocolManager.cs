@@ -8,7 +8,6 @@ namespace mana.Foundation.Network.Sever
         {
             protoCodeGenIndexer = protoCodeGen != 0 ? protoCodeGen : protoCodeGenIndexer;
             typesCodeGenIndexer = typesCodeGen != 0 ? typesCodeGen : typesCodeGenIndexer;
-
         }
 
         public static bool AddProto(string route, ProtoType type, Type uldt, Type dldt)
@@ -83,7 +82,7 @@ namespace mana.Foundation.Network.Sever
         static ushort GenDataTypeCode(string typeName)
         {
             var ret = typesCodeGenIndexer++;
-            while (Protocol.Instance.GetTypeCode(typeName) != 0)
+            while (Protocol.Instance.GetTypeName(ret) != null)
             {
                 ret++;
             }

@@ -4,31 +4,31 @@ using mana.Foundation.Network.Sever;
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using xxd.sync;
 
 namespace mana.Server.Battle
 {
     class BattleServer : IOCPServer
     {
-        internal BattleServer(int numConnections, int bufferSize, int tokenUnbindTimeOut = 10000, int tokenWorkTimeOut = 30000)
-             : base(numConnections, bufferSize, tokenUnbindTimeOut, tokenWorkTimeOut)
+        internal BattleServer(ServerSetting setting)
+             : base(setting)
         {
             StartUpdateThread();
         }
 
-        readonly Dictionary<string, BattleScene> battles = new Dictionary<string, BattleScene>();
+        readonly Dictionary<long, BattleScene> battles = new Dictionary<long, BattleScene>();
 
-        public BattleScene CreateBattle(Packet packet)
+        public BattleScene CreateBattle(BattleCreateData bcd)
         {
-            //var battle = new BattleScene(bcd);
-            //lock(battles)
-            //{
-            //    battles.Add(battle.uid , battle);
-            //}
-            //return battle;
-            throw new NotImplementedException();
+            var battle = new BattleScene(bcd);
+            lock (battles)
+            {
+                battles.Add(battle.UUID, battle);
+            }
+            return battle;
         }
 
-        public BattleScene GetBattle(string battleId)
+        public BattleScene GetBattle(long battleId)
         {
             lock(battles)
             {
@@ -67,7 +67,7 @@ namespace mana.Server.Battle
         {
             lock (battles)
             {
-                using (var rmvs = ListCache<string>.Get())
+                using (var rmvs = ListCache<long>.Get())
                 {
                     for (var it = battles.GetEnumerator(); it.MoveNext();)
                     {

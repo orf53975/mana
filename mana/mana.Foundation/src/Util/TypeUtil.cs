@@ -89,6 +89,7 @@ namespace mana.Foundation
         {
             try
             {
+                filePath = Utils.AdjustFilePath(filePath);
                 var asm = Assembly.LoadFrom(filePath);
                 if (ExistAssembly(appDomain, asm.FullName))
                 {

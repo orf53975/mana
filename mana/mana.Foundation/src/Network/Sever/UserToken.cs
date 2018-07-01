@@ -77,6 +77,12 @@ namespace mana.Foundation.Network.Sever
             }
         }
 
+        public object UserData
+        {
+            get;
+            set;
+        }
+
         internal UserToken(BufferManager bufferManager, IOCPServer server)
         {
             rcvEventArg = new SocketAsyncEventArgs();

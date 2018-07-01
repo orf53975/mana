@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="gb2312"?>
+<Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Name>xxd.func</Name>
+  <Classes>
+    <CClass nameSpace="xxd.func.chat" name="ChannelConfig" TypeID="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="short" name="channelId" />
+        <CField const="false" type="string" name="channelName" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.func.chat" name="ChatConfig" TypeID="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="ChannelConfig[]" name="channels" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.func.chat" name="ChatData" TypeID="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="string" name="sender" note="发送者" />
+        <CField const="false" type="byte" name="channel" note="频道" />
+        <CField const="false" type="string" name="content" note="内容" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.func.chat" name="ChatMsg" note="私聊数据&#xD;" TypeID="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="string" name="sender" note="发送方" />
+        <CField const="false" type="string" name="recipient" note="接收方" />
+        <CField const="false" type="string" name="content" note="内容" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.func.item" name="ItemData" TypeID="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="string" name="tmplId" note="道具模板ID" />
+        <CField const="false" type="int[]" name="props" note="道具属性" />
+      </Fields>
+    </CClass>
+  </Classes>
+</Project>

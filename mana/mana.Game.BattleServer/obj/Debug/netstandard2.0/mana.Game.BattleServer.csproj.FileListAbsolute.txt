@@ -1,0 +1,8 @@
+E:\GitHub\mana\mana\mana.Game.BattleServer\bin\Debug\netstandard2.0\mana.Game.BattleServer.deps.json
+E:\GitHub\mana\mana\mana.Game.BattleServer\bin\Debug\netstandard2.0\mana.Game.BattleServer.dll
+E:\GitHub\mana\mana\mana.Game.BattleServer\bin\Debug\netstandard2.0\mana.Game.BattleServer.pdb
+E:\GitHub\mana\mana\mana.Game.BattleServer\obj\Debug\netstandard2.0\mana.Game.BattleServer.csproj.CoreCompileInputs.cache
+E:\GitHub\mana\mana\mana.Game.BattleServer\obj\Debug\netstandard2.0\mana.Game.BattleServer.AssemblyInfoInputs.cache
+E:\GitHub\mana\mana\mana.Game.BattleServer\obj\Debug\netstandard2.0\mana.Game.BattleServer.AssemblyInfo.cs
+E:\GitHub\mana\mana\mana.Game.BattleServer\obj\Debug\netstandard2.0\mana.Game.BattleServer.dll
+E:\GitHub\mana\mana\mana.Game.BattleServer\obj\Debug\netstandard2.0\mana.Game.BattleServer.pdb

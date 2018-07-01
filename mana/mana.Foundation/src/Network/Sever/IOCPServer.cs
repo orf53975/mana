@@ -34,40 +34,53 @@ namespace mana.Foundation.Network.Sever
             this.m_numConnectedSockets = 0;
             this.tokenUnbindTimeOut = tokenUnbindTimeOut;
             this.tokenWorkTimeOut = tokenWorkTimeOut;
-            this.DoInitTypes();
+            this.InitialTypes();
             Packet.ChangePoolCapacity(8192);
         }
 
-        private void DoInitTypes()
+        public IOCPServer(ServerSetting setting):
+            this(setting.connMax , setting.connBuffSize , setting.tokenUnbindTimeOut , setting.tokenWorkTimeOut)
+        {
+            LoadPlugins(setting.plugins);
+        }
+
+        private void LoadPlugins(string[] plugins)
+        {
+            foreach (var fp in plugins)
+            {
+                var er = TypeUtil.LoadDll(AppDomain.CurrentDomain, fp);
+                if (er == null)
+                {
+                    Logger.Print("dll loaded > {0}", fp);
+                }
+                else
+                {
+                    Logger.Error(er);
+                }
+            }
+        }
+
+        private void InitialTypes()
         {
             var sw = System.Diagnostics.Stopwatch.StartNew();
-            // -- init DataObject
-            var doTypes = AppDomain.CurrentDomain.GetClassTypes<DataObject>();
-            foreach (var type in doTypes)
-            {
-                ProtocolManager.AddTypeCode(type);
-            }
-            // -- init ITypeInitializable
             var types = AppDomain.CurrentDomain.GetClassTypes<ITypeInitializable>();
-            foreach(var type in types)
+            foreach (var type in types)
             {
+                if (typeof(IDataTypeRegister).IsAssignableFrom(type))
+                {
+                    (Activator.CreateInstance(type) as IDataTypeRegister).RegistDataType();
+                }
                 if (typeof(IMessageHandler).IsAssignableFrom(type))
                 {
                     MessageDispatcher.Instance.RegistHandler(type);
                 }
                 if (typeof(IPushRegister).IsAssignableFrom(type))
                 {
-                    var pr = Activator.CreateInstance(type) as IPushRegister;
-                    pr.DoRegist();
+                    (Activator.CreateInstance(type) as IPushRegister).RegistPushMessage();
                 }
             }
-            this.OnInitTypes(types);
-            Logger.Print("DoInitTypes:{0}", sw.ElapsedMilliseconds);
+            Logger.Print("InitialTypes:{0}", sw.ElapsedMilliseconds);
             Logger.Print(Protocol.Instance.ToFormatString(""));
-        }
-
-        protected virtual void OnInitTypes(List<Type> types)
-        {
         }
 
         // Starts the server such that it is listening for 

@@ -7,6 +7,32 @@ namespace mana.Foundation
 {
     public static class Utils
     {
+        private static string _currentDirectory = null;
+        public static string CurrentDirectory
+        {
+            get
+            {
+                if (_currentDirectory == null)
+                {
+                    //_currentDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+                    _currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                }
+                return _currentDirectory;
+            }
+        }
+
+        public static string AdjustFilePath(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                filePath = Path.Combine(CurrentDirectory, filePath);
+            }
+            return filePath;
+        }
+
+
+
+
         public static List<K> GetKeys<K, V>(this Dictionary<K, V> dic, List<K> toList = null)
         {
             var count = dic.Count;
