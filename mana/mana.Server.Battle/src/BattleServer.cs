@@ -13,6 +13,7 @@ namespace mana.Server.Battle
     {
         public static BattleServer StartNew(ServerSetting setting)
         {
+            ProtocolManager.InitCodeGenerator(0xB001, 0xB001);
             var sev = new BattleServer(setting);
             var ipa = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
             sev.Start(new IPEndPoint(ipa, setting.port));

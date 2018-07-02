@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 
 namespace mana.Foundation
@@ -30,8 +31,27 @@ namespace mana.Foundation
             return filePath;
         }
 
-
-
+        /// <summary>
+        /// 解析地址格式
+        ///     127.0.0.1:8082
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        public static IPEndPoint GetIPEndPoint(string address)
+        {
+            try
+            {
+                var strs = address.Split(':');
+                var ipad = IPAddress.Parse(strs[0]);
+                var port = int.Parse(strs[1]);
+                return new IPEndPoint(ipad, port);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return null;
+            }
+        }
 
         public static List<K> GetKeys<K, V>(this Dictionary<K, V> dic, List<K> toList = null)
         {

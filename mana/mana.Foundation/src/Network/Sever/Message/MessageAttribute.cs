@@ -16,13 +16,16 @@ namespace mana.Foundation.Network.Sever
 
         public readonly int overridePriority;
 
-        public MessageConfigAttribute(ProtoType protoType, string route, Type inType, Type outType, int overridePriority = 1)
+        public readonly bool genProto;
+
+        public MessageConfigAttribute(ProtoType protoType, string route, Type inType, Type outType, int overridePriority = 1 , bool bGenProto = true)
         {
             this.protoType = protoType;
             this.route = route;
             this.inType = inType;
             this.outType = outType;
             this.overridePriority = overridePriority;
+            this.genProto = bGenProto;
         }
     }
 
@@ -30,7 +33,7 @@ namespace mana.Foundation.Network.Sever
     public class MessageRequestAttribute : MessageConfigAttribute
     {
         public MessageRequestAttribute(string route, Type inType, Type outType, int overridePriority = 1)
-            : base(ProtoType.Request, route, inType, outType, overridePriority)
+            : base(ProtoType.Request, route, inType, outType, overridePriority , true)
         {
         }
     }
@@ -39,7 +42,7 @@ namespace mana.Foundation.Network.Sever
     public class MessageNotifyAttribute : MessageConfigAttribute
     {
         public MessageNotifyAttribute(string route, Type inType, int overridePriority = 1)
-            : base(ProtoType.Notify, route, inType, null, overridePriority)
+            : base(ProtoType.Notify, route, inType, null, overridePriority, true)
         {
         }
     }

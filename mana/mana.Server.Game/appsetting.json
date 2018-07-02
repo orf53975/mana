@@ -1,0 +1,13 @@
+﻿{
+  "host": "127.0.0.1",
+  "port": 8081,
+  "connBuffSize": 1024,
+  "connMax": 255,
+  "tokenUnbindTimeOut": 10000,
+  "tokenWorkTimeOut": 30000,
+  "plugins": [],
+  "battleServers": [
+    "127.0.0.1:8182",
+    "127.0.0.1:8183"
+  ]
+}

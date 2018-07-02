@@ -137,13 +137,19 @@ namespace mana.Foundation.Network.Client
         }
 
 
-        public override void Connect(string ip, ushort port, Action<bool> callback)
+        public override void Connect(IPEndPoint ipep, Action<bool> callback)
         {
+            if (ipep == null)
+            {
+                Logger.Error("IPEndPoint is null!");
+                callback(false);
+                return;
+            }
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _socket.SendTimeout = 3000;
 
             var saea = new SocketAsyncEventArgs();
-            saea.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            saea.RemoteEndPoint = ipep;
             saea.Completed += new EventHandler<SocketAsyncEventArgs>(AsyncConnected);
             saea.UserToken = callback;
             _socket.ConnectAsync(saea);
@@ -161,7 +167,7 @@ namespace mana.Foundation.Network.Client
             }
             else
             {
-                Logger.Error("connect failed! {0}", e.SocketError);
+                Logger.Error("connect[{0}] failed! {1}", e.RemoteEndPoint, e.SocketError);
                 if (e.UserToken != null)
                 {
                     var callback = (Action<bool>)e.UserToken;
@@ -206,6 +212,10 @@ namespace mana.Foundation.Network.Client
             if (_socket != null && _socket.Connected)
             {
                 DoRcving();
+                if (mSendThread == null)
+                {
+                    DoSnding();
+                }
             }
             if (curTime - lastRcvTime > mPingPongTimeout)
             {

@@ -37,7 +37,10 @@ namespace mana.Foundation.Network.Sever
                 }
             }
             handlers[mca.route] = Activator.CreateInstance(msgHandlerType) as IMessageHandler;
-            ProtocolManager.AddProto(mca.route, mca.protoType, mca.inType, mca.outType);
+            if (mca.genProto)
+            {
+                ProtocolManager.AddProto(mca.route, mca.protoType, mca.inType, mca.outType);
+            }
             return true;
         }
 

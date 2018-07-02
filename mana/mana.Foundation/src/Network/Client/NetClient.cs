@@ -21,7 +21,7 @@ namespace mana.Foundation.Network.Client
 
         public abstract bool Connected { get; }
 
-        public abstract void Connect(string ip, ushort port, Action<bool> callback);
+        public abstract void Connect(IPEndPoint ipep, Action<bool> callback);
 
         public abstract void Disconnect();
 
@@ -29,6 +29,10 @@ namespace mana.Foundation.Network.Client
 
         public abstract void Update(int deltaTimeMs);
 
+        public void Connect(string ip, ushort port, Action<bool> callback)
+        {
+            this.Connect(new IPEndPoint(IPAddress.Parse(ip), port), callback);
+        }
 
         protected void OnPacketRecived(Packet p)
         {

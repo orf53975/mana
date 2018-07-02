@@ -26,6 +26,8 @@ namespace mana.Foundation.Network.Client
 
         readonly int mPingTimeSpan;
 
+        readonly bool isImmediateMode;
+
         Socket _socket = null;
 
         int lastRcvTime = 0;
@@ -36,7 +38,11 @@ namespace mana.Foundation.Network.Client
         {
             get
             {
-                return _socket != null && _socket.Connected;
+                if (_socket != null)
+                {
+                    return _socket.Connected;
+                }
+                return false;
             }
         }
 
@@ -44,14 +50,19 @@ namespace mana.Foundation.Network.Client
         {
             get
             {
-                return _socket.RemoteEndPoint;
+                if (_socket != null)
+                {
+                    return _socket.RemoteEndPoint;
+                }
+                return null;
             }
         }
 
-        public NetClientIOCP(int pingPongTimeout = 30 * 1000, int rcvBuffSize = 2048, int sndBuffSize = 1024)
+        public NetClientIOCP(int pingPongTimeout = 30 * 1000, int rcvBuffSize = 2048, int sndBuffSize = 1024 , bool immediateMode = false)
         {
             this.mPingPongTimeout = pingPongTimeout;
             this.mPingTimeSpan = pingPongTimeout >> 1;
+            this.isImmediateMode = immediateMode;
 
             rcvEventArg = new SocketAsyncEventArgs();
             rcvEventArg.Completed += new EventHandler<SocketAsyncEventArgs>(RcvCompleted);
@@ -120,9 +131,17 @@ namespace mana.Foundation.Network.Client
             var p = packetRcver.Build();
             while (p != null)
             {
-                lock (rcvQue)
+                if(!isImmediateMode)
                 {
-                    rcvQue.Enqueue(p);
+                    lock (rcvQue)
+                    {
+                        rcvQue.Enqueue(p);
+                    }
+                }
+                else
+                {
+                    OnPacketRecived(p);
+                    p.ReleaseToPool();
                 }
                 p = packetRcver.Build();
             }
@@ -186,13 +205,19 @@ namespace mana.Foundation.Network.Client
 
         #endregion
 
-        public override void Connect(string ip, ushort port, Action<bool> callback)
+        public override void Connect(IPEndPoint ipep, Action<bool> callback)
         {
+            if (ipep == null)
+            {
+                Logger.Error("IPEndPoint is null!");
+                callback(false);
+                return;
+            }
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _socket.SendTimeout = 3000;
 
             var saea = new SocketAsyncEventArgs();
-            saea.RemoteEndPoint = new IPEndPoint(IPAddress.Parse(ip), port);
+            saea.RemoteEndPoint = ipep;
             saea.Completed += new EventHandler<SocketAsyncEventArgs>(AsyncConnected);
             saea.UserToken = new KeyValuePair<NetClientIOCP, Action<bool>>(this, callback);
             var willRaiseEvent = _socket.ConnectAsync(saea);
@@ -216,7 +241,7 @@ namespace mana.Foundation.Network.Client
             }
             else
             {
-                Logger.Error("connect failed! {0}", e.SocketError);
+                Logger.Error("connect[{0}] failed! {1}", e.RemoteEndPoint, e.SocketError);
                 if (ut.Value != null)
                 {
                     ut.Value.Invoke(false);
@@ -275,7 +300,7 @@ namespace mana.Foundation.Network.Client
         {
             if (!Connected) { return; }
             curTime = curTime + deltaTimeMs;
-            if (Monitor.TryEnter(rcvQue))
+            if (!isImmediateMode && Monitor.TryEnter(rcvQue))
             {
                 try
                 {

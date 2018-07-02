@@ -6,7 +6,7 @@ namespace mana.Foundation
 {
     public static class TypeUtil
     {
-
+ 
         public static void ForeachAllTypes(this AppDomain appDomain, Action<Type> action)
         {
             if (appDomain == null)
@@ -115,5 +115,44 @@ namespace mana.Foundation
             }
             return false;
         }
+
+        public static T ParseArgs<T>(string[] args, Action<T> action , Action<string> parseArgvFailed)
+        {
+            var obj = Activator.CreateInstance<T>();
+            var t = obj.GetType();
+            foreach (var argv in args)
+            {
+                try
+                {
+                    if (argv.StartsWith("--"))
+                    {
+                        var kv = argv.Substring(2).Split('=');
+                        if (kv.Length != 2)
+                        {
+                            continue;
+                        }
+                        var k = kv[0].Trim();
+                        var v = kv[1].Trim();
+                        var f = t.GetField(k);
+                        if (f != null)
+                        {
+                            f.SetValue(obj, Convert.ChangeType(v, f.FieldType));
+                        }
+                        continue;
+                    }
+                    parseArgvFailed(argv);
+                }
+                catch
+                {
+                    parseArgvFailed(argv);
+                }
+            }
+            if (action != null)
+            {
+                action.Invoke(obj);
+            }
+            return obj;
+        }
+
     }
 }

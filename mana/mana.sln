@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Game.BattleSystem", "m
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Server.Battle", "mana.Server.Battle\mana.Server.Battle.csproj", "{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Server.Game", "mana.Server.Game\mana.Server.Game.csproj", "{9DEF5289-99F9-4CFF-9036-4B80541672A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -70,6 +72,14 @@ Global
 		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Release|x86.ActiveCfg = Release|Any CPU
 		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Release|x86.Build.0 = Release|Any CPU
+		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Debug|x86.Build.0 = Debug|Any CPU
+		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Release|x86.ActiveCfg = Release|Any CPU
+		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

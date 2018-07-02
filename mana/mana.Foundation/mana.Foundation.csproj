@@ -48,6 +48,7 @@
     <Compile Include="src\Buffer\ByteReader.cs" />
     <Compile Include="src\Buffer\IReadableBuffer.cs" />
     <Compile Include="src\Buffer\IWritableBuffer.cs" />
+    <Compile Include="src\Network\AccountInfo.cs" />
     <Compile Include="src\Network\Response.cs" />
     <Compile Include="src\Network\Sever\Common\IDataTypeRegister.cs" />
     <Compile Include="src\Network\Sever\ServerSetting.cs" />

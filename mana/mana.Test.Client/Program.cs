@@ -4,25 +4,20 @@ using System.Collections.Generic;
 
 namespace mana.Test.Client
 {
-    class Program : ConsoleProgram
+    class Program
     {
-        #region <<STATIC MAIN>>
         static void Main(string[] args)
         {
-            new Program().Start();
+            var cr = new ConsoleRunning();
+            cr.StartUp(OnInputed);
         }
-        #endregion
 
-        private readonly Dictionary<int, TestClient> clients = new Dictionary<int, TestClient>();
+        static readonly Dictionary<int, TestClient> clients = new Dictionary<int, TestClient>();
 
-        private int uidGen = 0;
+        static int uidGen = 0;
 
-        protected override bool OnInputed(string cmd)
+        static bool OnInputed(string cmd)
         {
-            if (base.OnInputed(cmd))
-            {
-                return true;
-            }
             if(cmd.StartsWith("nc"))
             {
                 var uid = uidGen ++;
@@ -33,6 +28,5 @@ namespace mana.Test.Client
             }
             return false;
         }
-
     }
 }

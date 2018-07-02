@@ -27,7 +27,6 @@ namespace mana.Foundation.Network.Sever
             }
         }
 
-
         public IOCPServer(int numConnections, int bufferSize, int tokenUnbindTimeOut = 1000 * 10, int tokenWorkTimeOut = 3000 * 10)
         {
             this.mTokenPool = new UserTokenPool(this, numConnections, bufferSize);
@@ -95,7 +94,7 @@ namespace mana.Foundation.Network.Sever
                 Logger.Error("Server is had start!");
                 return;
             }
-            Logger.Print(localEndPoint.ToString());
+            Logger.Print("{0} start:{1}", this.GetType().Name, localEndPoint.ToString());
             // create the socket which listens for incoming connections
             mListenSocket = new Socket(localEndPoint.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             mListenSocket.Bind(localEndPoint);
