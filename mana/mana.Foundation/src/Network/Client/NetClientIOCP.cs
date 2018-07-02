@@ -233,6 +233,7 @@ namespace mana.Foundation.Network.Client
 
             if (e.SocketError == SocketError.Success)
             {
+                Logger.Print("connect[{0}] successed!", e.RemoteEndPoint);
                 if (ut.Value != null)
                 {
                     ut.Value.Invoke(true);

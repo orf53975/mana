@@ -72,7 +72,7 @@ namespace mana.Foundation.Network.Sever
             var typeCode = GenDataTypeCode(typeName);
             return Protocol.Instance.AddTypeCode(typeName, typeCode);
         }
-
+         
         public static bool AddTypeCode<T>() where T : DataObject
         {
             return AddTypeCode(typeof(T));

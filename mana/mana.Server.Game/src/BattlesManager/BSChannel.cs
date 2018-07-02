@@ -19,7 +19,7 @@ namespace mana.Server.Game
         {
             Channel.Connect(Utils.GetIPEndPoint(Addr), (sucess) =>
             {
-                Logger.Print("connected {0}!", sucess ? "sucessed" : "failed");
+   
             });
         }
     }

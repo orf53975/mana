@@ -159,6 +159,7 @@ namespace mana.Foundation.Network.Client
         {
             if (e.SocketError == SocketError.Success)
             {
+                Logger.Print("connect[{0}] successed!", e.RemoteEndPoint);
                 if (e.UserToken != null)
                 {
                     var callback = (Action<bool>)e.UserToken;

@@ -9,7 +9,7 @@ namespace mana.Server.Game
         {
             var sev = new GameServer(setting);
             var ipa = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
-            sev.Start(new IPEndPoint(ipa, setting.port));
+            //sev.Start(new IPEndPoint(ipa, setting.port));
             return sev;
         }
 

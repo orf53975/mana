@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace mana.Foundation
 {
@@ -23,38 +24,46 @@ namespace mana.Foundation
             AddTypeCode(typeof(AccountInfo).FullName, 0x0004);
         }
 
+        public static void UpdateInstace(Protocol other)
+        {
+            var sb = StringBuilderCache.Acquire(256);
+            lock (Protocol.Instance)
+            {
+                sb.Append("Protocol Update");
+                for (var iter = other.protosDict.GetEnumerator(); iter.MoveNext();)
+                {
+                    if (Instance.AddProto(iter.Current.Key, iter.Current.Value))
+                    {
+                        sb.AppendFormat("\n\tProto:0x{0:X} , {1}", iter.Current.Key, iter.Current.Value);
+                    }
+                }
+                for (var iter = other.typesCode.GetEnumerator(); iter.MoveNext();)
+                {
+                    if (Instance.AddTypeCode(iter.Current.Key, iter.Current.Value))
+                    {
+                        sb.AppendFormat("\n\tTypeCode:0x{0:X}, {1}", iter.Current.Value, iter.Current.Key);
+                    }
+                }
+            }
+            Logger.Print(sb.ToString());
+        }
+
         #endregion
 
         public Protocol() { }
 
         #region <<protosDic>>
 
-        readonly Dictionary<ushort, Proto> protosDic = new Dictionary<ushort, Proto>();
+        readonly Dictionary<ushort, Proto> protosDict = new Dictionary<ushort, Proto>();
 
-        public ushort GetRouteCode(string routePath)
-        {
-            lock (protosDic)
-            {
-                for (var it = protosDic.GetEnumerator(); it.MoveNext();)
-                {
-                    if (it.Current.Value.route == routePath)
-                    {
-                        return it.Current.Key;
-                    }
-                }
-            }
-            return 0;
-        }
+        readonly Dictionary<string, ushort> routesCode = new Dictionary<string, ushort>();
 
         public string GetRoutePath(ushort routeCode)
         {
             Proto ret;
-            lock (protosDic)
+            if (protosDict.TryGetValue(routeCode, out ret))
             {
-                if (protosDic.TryGetValue(routeCode, out ret))
-                {
-                    return ret.route;
-                }
+                return ret.route;
             }
             return null;
         }
@@ -62,15 +71,24 @@ namespace mana.Foundation
         public Proto GetProto(ushort routeCode)
         {
             Proto ret;
-            lock (protosDic)
+            if (protosDict.TryGetValue(routeCode, out ret))
             {
-                if (protosDic.TryGetValue(routeCode, out ret))
-                {
-                    return ret;
-                }
+                return ret;
             }
             return null;
         }
+
+
+        public ushort GetRouteCode(string routePath)
+        {
+            ushort ret;
+            if (routesCode.TryGetValue(routePath, out ret))
+            {
+                return ret;
+            }
+            return 0;
+        }
+
 
         public Proto GetProto(string routePath)
         {
@@ -89,9 +107,9 @@ namespace mana.Foundation
             var existed = GetProto(code);
             if (existed != null)
             {
-                if(!existed.Equals(proto))
+                if (!existed.Equals(proto))
                 {
-                    Logger.Error("proto code[0x{0:X4}] conflict! {1}->{2}", code, proto, existed);
+                    Logger.Error("proto code[0x{0:X4}] conflict! \n\t{1}\n\t{2}", code, proto, existed);
                 }
                 return false;
             }
@@ -101,7 +119,7 @@ namespace mana.Foundation
             {
                 if (!existed.Equals(proto))
                 {
-                    Logger.Error("proto route conflict!,{0}->{1}", proto, existed);
+                    Logger.Error("proto route conflict!,\n\t{0}\n\t{1}", proto, existed);
                 }
                 else
                 {
@@ -109,10 +127,8 @@ namespace mana.Foundation
                 }
                 return false;
             }
-            lock (protosDic)
-            {
-                protosDic.Add(code, proto);
-            }
+            protosDict.Add(code, proto);
+            routesCode.Add(proto.route, code);
             return true;
         }
 
@@ -124,14 +140,11 @@ namespace mana.Foundation
 
         public string GetTypeName(ushort typeCode)
         {
-            lock (typesCode)
+            for (var it = typesCode.GetEnumerator(); it.MoveNext();)
             {
-                for (var it = typesCode.GetEnumerator(); it.MoveNext();)
+                if (it.Current.Value == typeCode)
                 {
-                    if (it.Current.Value == typeCode)
-                    {
-                        return it.Current.Key;
-                    }
+                    return it.Current.Key;
                 }
             }
             return null;
@@ -140,12 +153,9 @@ namespace mana.Foundation
         public ushort GetTypeCode(string dataType)
         {
             ushort c;
-            lock (typesCode)
+            if (typesCode.TryGetValue(dataType, out c))
             {
-                if (typesCode.TryGetValue(dataType, out c))
-                {
-                    return c;
-                }
+                return c;
             }
             return 0;
         }
@@ -171,42 +181,16 @@ namespace mana.Foundation
             var existTypeName = GetTypeName(typeCode);
             if (existTypeName != null)
             {
-                if(existTypeName != dataType)
+                if (existTypeName != dataType)
                 {
                     Logger.Error("[{0},{1}] typeCode conflit!", dataType, existTypeName);
                 }
                 return false;
             }
-            lock (typesCode)
-            {
-                typesCode.Add(dataType, typeCode);
-            }
+            typesCode.Add(dataType, typeCode);
             return true;
         }
 
-        #endregion
-
-        #region <<Push Protocol>>
-        public void Push(Protocol other)
-        {
-            var sb = StringBuilderCache.Acquire(256);
-            sb.Append("Protocol Update");
-            for (var iter = other.protosDic.GetEnumerator(); iter.MoveNext();)
-            {
-                if (this.AddProto(iter.Current.Key, iter.Current.Value))
-                {
-                    sb.AppendFormat("\n\tProto:0x{0:X} , {1}", iter.Current.Key, iter.Current.Value);
-                }
-            }
-            for (var iter = other.typesCode.GetEnumerator(); iter.MoveNext();)
-            {
-                if (this.AddTypeCode(iter.Current.Key, iter.Current.Value))
-                {
-                    sb.AppendFormat("\n\tTypeCode:0x{0:X} , {1}", iter.Current.Value, iter.Current.Key);
-                }
-            }
-            Logger.Print(sb.ToString());
-        }
         #endregion
 
         #region <<implement ISerializable>>
@@ -214,8 +198,8 @@ namespace mana.Foundation
         public void Encode(IWritableBuffer bw)
         {
             // -- protos
-            bw.WriteUnsignedShort(protosDic.Count);
-            for (var iter = protosDic.GetEnumerator(); iter.MoveNext();)
+            bw.WriteUnsignedShort(protosDict.Count);
+            for (var iter = protosDict.GetEnumerator(); iter.MoveNext();)
             {
                 bw.WriteShort(iter.Current.Key);
                 iter.Current.Value.EncodeTo(bw);
@@ -258,26 +242,20 @@ namespace mana.Foundation
             var indent1 = curIndent + '\t';
             // -- protos
             sb.Append(curIndent).Append("protoMap = {\r\n");
-            lock (protosDic)
+            foreach (var kv in protosDict)
             {
-                foreach (var kv in protosDic)
-                {
-                    sb.Append(indent1);
-                    sb.Append("0x").Append(kv.Key.ToString("X4")).Append(" : ").Append(kv.Value);
-                    sb.Append(",\r\n");
-                }
+                sb.Append(indent1);
+                sb.Append("0x").Append(kv.Key.ToString("X4")).Append(" : ").Append(kv.Value);
+                sb.Append(",\r\n");
             }
             sb.Append(curIndent).Append("},\r\n");
             // -- types
             sb.Append(curIndent).Append("typeMap = {\r\n");
-            lock (typesCode)
+            foreach (var kv in typesCode)
             {
-                foreach (var kv in typesCode)
-                {
-                    sb.Append(indent1);
-                    sb.Append("0x").Append(kv.Value.ToString("X4")).Append(" : ").Append(kv.Key);
-                    sb.Append(",\r\n");
-                }
+                sb.Append(indent1);
+                sb.Append("0x").Append(kv.Value.ToString("X4")).Append(" : ").Append(kv.Key);
+                sb.Append(",\r\n");
             }
             sb.Append(curIndent).Append('}');
 

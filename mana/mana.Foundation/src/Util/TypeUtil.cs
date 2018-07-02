@@ -116,7 +116,7 @@ namespace mana.Foundation
             return false;
         }
 
-        public static T ParseArgs<T>(string[] args, Action<T> action , Action<string> parseArgvFailed)
+        public static T ParseArgs<T>(string[] args, Action<T> action , Action<string> parseArgvFailed = null)
         {
             var obj = Activator.CreateInstance<T>();
             var t = obj.GetType();
@@ -140,11 +140,17 @@ namespace mana.Foundation
                         }
                         continue;
                     }
-                    parseArgvFailed(argv);
+                    if(parseArgvFailed != null)
+                    {
+                        parseArgvFailed(argv);
+                    }
                 }
                 catch
                 {
-                    parseArgvFailed(argv);
+                    if (parseArgvFailed != null)
+                    {
+                        parseArgvFailed(argv);
+                    }
                 }
             }
             if (action != null)

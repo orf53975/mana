@@ -13,7 +13,7 @@ namespace mana.Foundation.Network.Client
         {
             this.AddPushListener<Protocol>("Connector.Protocol", (protocol) =>
             {
-                Protocol.Instance.Push(protocol);
+                Protocol.UpdateInstace(protocol);
             });
         }
 
