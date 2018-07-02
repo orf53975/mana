@@ -51,7 +51,7 @@
     <Compile Include="src\Network\Response.cs" />
     <Compile Include="src\Network\Sever\Common\IDataTypeRegister.cs" />
     <Compile Include="src\Network\Sever\ServerSetting.cs" />
-    <Compile Include="src\Test\ConsoleProgram.cs" />
+    <Compile Include="src\Test\ConsoleRunning.cs" />
     <Compile Include="src\Test\ConsoleTrace.cs" />
     <Compile Include="src\Data\DataExtension.cs" />
     <Compile Include="src\Data\Dynamic\DDFieldTmpl.cs" />

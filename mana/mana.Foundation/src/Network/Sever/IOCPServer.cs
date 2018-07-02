@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -27,6 +26,7 @@ namespace mana.Foundation.Network.Sever
                 return m_numConnectedSockets;
             }
         }
+
 
         public IOCPServer(int numConnections, int bufferSize, int tokenUnbindTimeOut = 1000 * 10, int tokenWorkTimeOut = 3000 * 10)
         {

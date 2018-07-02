@@ -1,33 +1,19 @@
 ﻿using mana.Foundation.Test;
-using System.Net;
 
 namespace mana.Server.Battle
 {
-    class Program : ConsoleProgram
+    class Program
     {
         static void Main(string[] args)
         {
-            Instance.Start(args);
+            var cr = new ConsoleRunning();
+            BattleServer.StartNew(Config.AppSetting);
+            cr.StartUp(OnInputed);
         }
 
-        public static readonly Program Instance = new Program();
-
-        public BattleServer Server { get; private set; }
-
-        protected override void OnStarted(params string[] args)
+        static bool OnInputed(string cmd)
         {
-            var setting = Config.AppSetting;
-
-            Server = new BattleServer(setting);
-
-            var ipAddr = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
-
-            Server.Start(new IPEndPoint(ipAddr, setting.port));
-        }
-
-        protected override bool OnInputed(string cmd)
-        {
-            return base.OnInputed(cmd);
+            return false;
         }
     }
 }

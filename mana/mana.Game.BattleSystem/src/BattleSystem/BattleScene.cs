@@ -139,7 +139,6 @@ namespace BattleSystem
         public void DoUpdate(float deltaTime)
         {
 
-
             //var ud = this.Update(deltaTime);
             //return new Packet(0x2001, ud);
 

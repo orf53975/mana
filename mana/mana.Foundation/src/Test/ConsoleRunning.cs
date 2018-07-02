@@ -4,24 +4,24 @@ using System.Threading;
 
 namespace mana.Foundation.Test
 {
-    public abstract class ConsoleProgram
+    public class ConsoleRunning
     {
         public bool IsRunning { get; private set; }
 
-        public ConsoleProgram()
+        public Func<string, bool> OnInputed;
+
+        public ConsoleRunning()
         {
             this.IsRunning = true;
             Trace.Listeners.Add(new ConsoleTrace());
             this.InitLogger();
         }
 
-        public void Start(params string[] args)
+        public void StartUp(Func<string, bool> inputCallback = null)
         {
+            this.OnInputed = inputCallback;
             this.StartInputThread();
-            this.OnStarted(args);
         }
-
-        protected virtual void OnStarted(params string[] args) { }
 
         public void Stop()
         {
@@ -43,10 +43,18 @@ namespace mana.Foundation.Test
             {
                 try
                 {
-                    var command = Console.ReadLine().Trim();
-                    if (!OnInputed(command))
+                    var cmd = Console.ReadLine().Trim();
+                    if (cmd == "exit" || cmd == "quit")
                     {
-                        Console.WriteLine("Unrecognized Command[{0}]!" , command);
+                        IsRunning = false;
+                    }
+                    else if (cmd == "clear")
+                    {
+                        Console.Clear();
+                    }
+                    else if (OnInputed != null && !OnInputed(cmd))
+                    {
+                        Console.WriteLine("Unrecognized Command[{0}]!", cmd);
                     }
                 }
                 catch (Exception ex)
@@ -55,20 +63,5 @@ namespace mana.Foundation.Test
                 }
             }
         }).Start();
-
-        protected virtual bool OnInputed(string cmd)
-        {
-            if (cmd == "exit" || cmd == "quit")
-            {
-                IsRunning = false;
-                return true;
-            }
-            if(cmd == "clear")
-            {
-                Console.Clear();
-                return true;
-            }
-            return false;
-        }
     }
 }

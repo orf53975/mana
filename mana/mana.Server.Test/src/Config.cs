@@ -1,28 +1,19 @@
-﻿using Newtonsoft.Json;
+﻿using mana.Foundation;
+using mana.Foundation.Network.Sever;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
 using System.Text;
 
-namespace mana.Server.Test.Config
+namespace mana.Server.Test
 {
-    internal static class ConfigMgr
+    internal static class Config
     {
-        internal static string CurrentDirectory
-        {
-            get { return Path.GetDirectoryName(Assembly.GetEntryAssembly().Location); }
-        }
-
-        internal static string GetFullPath(string relativeFilePath)
-        {
-            return Path.Combine(CurrentDirectory, relativeFilePath);
-        }
-
         #region <<AppSetting>>
-        internal const string appSettingFile = "appsetting.json";
-        private static AppSetting _appSetting = null;
-        internal static AppSetting AppSetting
+        private const string appSettingFile = "appsetting.json";
+        private static ServerSetting _appSetting = null;
+        internal static ServerSetting AppSetting
         {
             get
             {
@@ -30,10 +21,10 @@ namespace mana.Server.Test.Config
                 {
                     try
                     {
-                        var filePath = GetFullPath(appSettingFile);
+                        var filePath = Utils.AdjustFilePath(appSettingFile);
                         if (!File.Exists(filePath))
                         {
-                            var aps = new AppSetting();
+                            var aps = new ServerSetting();
                             var str = JsonConvert.SerializeObject(aps, Formatting.Indented);
                             File.WriteAllText(filePath, str, Encoding.UTF8);
                             _appSetting = aps;
@@ -41,7 +32,7 @@ namespace mana.Server.Test.Config
                         else
                         {
                             var str = File.ReadAllText(filePath);
-                            _appSetting = JsonConvert.DeserializeObject<AppSetting>(str);
+                            _appSetting = JsonConvert.DeserializeObject<ServerSetting>(str);
                         }
                     }
                     catch (Exception e)

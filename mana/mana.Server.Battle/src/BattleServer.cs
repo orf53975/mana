@@ -3,6 +3,7 @@ using mana.Foundation;
 using mana.Foundation.Network.Sever;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading;
 using xxd.sync;
 
@@ -10,8 +11,15 @@ namespace mana.Server.Battle
 {
     class BattleServer : IOCPServer
     {
-        internal BattleServer(ServerSetting setting)
-             : base(setting)
+        public static BattleServer StartNew(ServerSetting setting)
+        {
+            var sev = new BattleServer(setting);
+            var ipa = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
+            sev.Start(new IPEndPoint(ipa, setting.port));
+            return sev;
+        }
+
+        private BattleServer(ServerSetting setting) : base(setting)
         {
             StartUpdateThread();
         }
