@@ -23,7 +23,7 @@ namespace mana.Test.Client
             this.port = port;
             mThread = new Thread(UpdateProc);
             mThread.Start();
-            mNetChannel = new NetClientDefault(true, 2000);
+            mNetChannel = new NetClientDefault(true, 20000);
             this.InitChanne();
         }
 

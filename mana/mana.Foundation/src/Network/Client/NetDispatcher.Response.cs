@@ -27,12 +27,13 @@ namespace mana.Foundation.Network.Client
             {
                 nrcb.Invoke(p);
                 handlerDic.Remove(p.msgRequestId);
+                return true;
             }
             else
             {
                 Logger.Warning("process response failed! [{0}]", p);
+                return false;
             }
-            return false;
         }
     }
 }
