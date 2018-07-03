@@ -10,7 +10,7 @@ namespace mana.Server.Battle
         static void Main(string[] args)
         {
             TypeUtil.ParseArgs<ServerSetting>(args, opts => Config.AppSetting.UpdateWith(opts));
-            Console.Title = string.Format("BattleServer-{0}:{1}", Config.AppSetting.host, Config.AppSetting.port);
+            Console.Title = string.Format("BattleServer-{0}", Config.AppSetting.port);
             var cr = new ConsoleRunning();
             BattleServer.StartNew(Config.AppSetting);
             cr.StartUp(OnInputed);

@@ -7,7 +7,7 @@ namespace mana.Server.Battle.src.Handlers
     [MessageNotify("Battle.PlayerCast", typeof(xxd.sync.opration.CastRequest))]
     class PlayerCast : IMessageHandler
     {
-        public void Process(UserToken token, Packet msg)
+        public void Process(UserToken token, Packet packet)
         {
             throw new NotImplementedException();
         }

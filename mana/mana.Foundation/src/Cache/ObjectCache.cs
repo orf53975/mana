@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace mana.Foundation
 {
@@ -11,8 +12,35 @@ namespace mana.Foundation
         {
             private readonly Dictionary<Type, IObjectPool> _objectPools = new Dictionary<Type, IObjectPool>();
 
-            internal ObjectPool<T> GetPool<T>() 
-                where T : class, new()
+            private readonly ReaderWriterLockSlim _lockSlim = new ReaderWriterLockSlim();
+
+            internal IObjectPool GetPool(Type t)
+            {
+                try
+                {
+                    _lockSlim.EnterReadLock();
+                    IObjectPool pool;
+                    if (_objectPools.TryGetValue(t, out pool))
+                    {
+                        return pool;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                    return null;
+                }
+                finally
+                {
+                    _lockSlim.ExitReadLock();
+                }
+            }
+
+            internal ObjectPool<T> GetPool<T>() where T : class, new()
             {
                 var pool = GetPool(typeof(T));
                 if (pool != null)
@@ -22,43 +50,53 @@ namespace mana.Foundation
                 return null;
             }
 
-            internal IObjectPool GetPool(Type t)
+            private ObjectPool<T> AddPool<T>() where T : class, new()
             {
-                IObjectPool pool = null;
-                lock (_objectPools)
+                try
                 {
-                    if (_objectPools.TryGetValue(t, out pool))
-                    {
-                        return pool;
-                    }
+                    _lockSlim.EnterWriteLock();
+                    var ret = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
+                    _objectPools.Add(typeof(T), ret);
+                    return ret;
                 }
-                return null;
+                catch (Exception e)
+                {
+                    Logger.Exception(e);
+                    return null;
+                }
+                finally
+                {
+                    _lockSlim.ExitWriteLock();
+                }
             }
 
-            internal ObjectPool<T> GetOrAddPool<T>()
-                where T : class, new()
+            internal ObjectPool<T> GetOrAddPool<T>() where T : class, new()
             {
-                var poolType = typeof(T);
-                IObjectPool ret = null;
-                lock (_objectPools)
+                var ret = GetPool<T>();
+                if (ret == null)
                 {
-                    if (!_objectPools.TryGetValue(poolType, out ret))
-                    {
-                        ret = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
-                        _objectPools.Add(poolType, ret);
-                    }
+                    ret = AddPool<T>();
                 }
-                return (ObjectPool<T>)ret;
+                return ret;
             }
 
             internal void ClearAll()
             {
-                lock (_objectPools)
+                try
                 {
+                    _lockSlim.EnterWriteLock();
                     for (var iter = _objectPools.GetEnumerator(); iter.MoveNext();)
                     {
                         iter.Current.Value.Clear();
                     }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                }
+                finally
+                {
+                    _lockSlim.ExitWriteLock();
                 }
             }
         }

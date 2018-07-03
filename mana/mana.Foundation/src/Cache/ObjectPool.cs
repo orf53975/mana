@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace mana.Foundation
 {
@@ -15,6 +16,7 @@ namespace mana.Foundation
 
     public class ObjectPool<T> : IObjectPool where T : class
     {
+
         private readonly Stack<T>   _objects = new Stack<T>();
         private readonly Func<T>    _objectGenerator;
         private readonly Action<T>  _objectOnGet;
@@ -35,19 +37,24 @@ namespace mana.Foundation
             this.mCapacity = MathTools.Clamp(newCapacity, 2, 8192);
         }
 
-        public T Get()
+        private T TryPopStack()
         {
             lock (_objects)
             {
-                if (_objects.Count > 0)
+                return _objects.Count > 0 ? _objects.Pop() : null;
+            }
+        }
+
+        public T Get()
+        {
+            var ret = TryPopStack();
+            if (ret != null)
+            {
+                if (_objectOnGet != null)
                 {
-                    var obj = _objects.Pop();
-                    if (_objectOnGet != null)
-                    {
-                        _objectOnGet(obj);
-                    }
-                    return obj;
+                    _objectOnGet(ret);
                 }
+                return ret;
             }
             if (_objectGenerator != null)
             {

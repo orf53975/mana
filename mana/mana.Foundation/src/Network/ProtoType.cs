@@ -1,7 +1,9 @@
 ﻿namespace mana.Foundation
 {
-    public enum ProtoType : byte
+    public enum ProtoType : int
     {
+        Unknow = -1,
+
         /// <summary>
         /// 请求响应
         /// </summary>

@@ -138,6 +138,7 @@ namespace mana.Foundation
                         {
                             f.SetValue(obj, Convert.ChangeType(v, f.FieldType));
                         }
+
                         continue;
                     }
                     if(parseArgvFailed != null)

@@ -8,15 +8,18 @@ namespace mana.Foundation
 
         #region <<utf - 8>>
 
-        private static readonly Encoding utf8 = new UTF8Encoding(false);
+        [ThreadStatic]
+        private static UTF8Encoding utf8;
 
         public static byte[] DecodeUTF8(string str)
         {
+            if (utf8 == null) { utf8 = new UTF8Encoding(false); }
             return utf8.GetBytes(str);
         }
 
         public static void DecodeUTF8(string str, ByteBuffer ret)
         {
+            if (utf8 == null) { utf8 = new UTF8Encoding(false); }
             int count = utf8.GetByteCount(str);
             ret.Write(count, str, (data, offset, len, param) =>
             {
@@ -26,16 +29,19 @@ namespace mana.Foundation
 
         public static int GetByteCountUTF8(string str)
         {
+            if (utf8 == null) { utf8 = new UTF8Encoding(false); }
             return utf8.GetByteCount(str);
         }
 
         public static string EncodeUTF8(byte[] bytes)
         {
+            if (utf8 == null) { utf8 = new UTF8Encoding(false); }
             return utf8.GetString(bytes);
         }
 
         public static string EncodeUTF8(byte[] bytes, int index, int count)
         {
+            if (utf8 == null) { utf8 = new UTF8Encoding(false); }
             return utf8.GetString(bytes, index, count);
         }
 

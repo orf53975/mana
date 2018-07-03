@@ -46,4 +46,17 @@ namespace mana.Foundation.Network.Sever
         {
         }
     }
+
+
+    /// <summary>
+    /// 消息转发
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class MessageForwardingAttribute : MessageConfigAttribute
+    {
+        public MessageForwardingAttribute(string route, int overridePriority = 1)
+            : base(ProtoType.Unknow, route, null, null, overridePriority, false)
+        {
+        }
+    }
 }

@@ -23,6 +23,7 @@ namespace mana.Foundation
             NONE            = 0,
             ENCODE_ROUTE    = 1 << 0,
             COMPRESS        = 1 << 1,
+            TOKEN           = 1 << 2
         }
 
         static bool CheckFlag(Flag value, Flag flag)
@@ -84,7 +85,7 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(reqSetter);
                 d.Encode(p.msgData);
-                ObjectCache.Put(d);
+                d.ReleaseToCache();
             }
             return p;
         }
@@ -114,7 +115,7 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(rspSetter);
                 d.Encode(p.msgData);
-                ObjectCache.Put(d);
+                d.ReleaseToCache();
             }
             return p;
         }
@@ -142,7 +143,7 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(notifySetter);
                 d.Encode(p.msgData);
-                ObjectCache.Put(d);
+                d.ReleaseToCache();
             }
             return p;
         }
@@ -170,7 +171,7 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(pushSetter);
                 d.Encode(p.msgData);
-                ObjectCache.Put(d);
+                d.ReleaseToCache();
             }
             return p;
         }
@@ -196,7 +197,12 @@ namespace mana.Foundation
             var p = Packet.Pool.Get();
             // -- 2. message type
             p.msgType = msgType;
-            // -- 3. message route
+            // -- 3. message token
+            if (CheckFlag(msgFlag, Flag.TOKEN))
+            {
+                p.msgToken = br.ReadUTF8();
+            }
+            // -- 4. message route
             if (CheckFlag(msgFlag, Flag.ENCODE_ROUTE))
             {
                 var routeCode = br.ReadUnsignedShort();
@@ -206,13 +212,13 @@ namespace mana.Foundation
             {
                 p.msgRoute = br.ReadUTF8();
             }
-            // -- 4. message id
+            // -- 5. message request id
             if (msgType == MessageType.REQUEST ||
                 msgType == MessageType.RESPONSE)
             {
                 p.msgRequestId = br.ReadInt();
             }
-            // -- 5. message body
+            // -- 6. message body
             var msgDataLength = endPositon - br.Position;
             if (CheckFlag(msgFlag, Flag.COMPRESS))
             {
@@ -238,9 +244,14 @@ namespace mana.Foundation
             var msgData = p.msgData;
 
             ByteBuffer msgCompressData = null;
-
-
             var packetSize = 0;
+            // -- 3. message token
+            if (p.msgToken != null)
+            {
+                msgFlag |= Flag.TOKEN;
+                packetSize += CodingUtil.GetByteCountUTF8(p.msgToken);
+            }
+            // -- 4. message route
             var msgRouteCode = Protocol.Instance.GetRouteCode(msgRoute);
             if (msgRouteCode != 0)
             {
@@ -251,15 +262,18 @@ namespace mana.Foundation
             {
                 packetSize += CodingUtil.GetByteCountUTF8(msgRoute);
             }
+            // -- 5. message request id
+            if (msgType == MessageType.REQUEST ||
+                msgType == MessageType.RESPONSE)
+            {
+                packetSize += 4;
+            }
+            // -- 6. message body
             if (compressor != null && msgData.Length > 256)
             {
                 msgFlag |= Flag.COMPRESS;
-
                 msgCompressData = ByteBuffer.Pool.Get();
-
                 //TODO 处理压缩数据
- 
-
                 //TODO END
                 packetSize += msgCompressData.Length;
             }
@@ -267,21 +281,24 @@ namespace mana.Foundation
             {
                 packetSize += msgData.Length;
             }
-            // -- 
-            if (msgType == MessageType.REQUEST || 
-                msgType == MessageType.RESPONSE)
-            {
-                packetSize += 4;
-            }
-
+            // -- END
+           
             var packetHead = (byte)(
                 ((byte)msgType) |
                 ((byte)msgFlag << 4)
                 );
 
             // -- 
+            // -- 1. packet head
             bw.WriteByte(packetHead);
+            // -- 2. packet size
             bw.WriteInt24(packetSize);
+            // -- 3. message token
+            if (p.msgToken != null)
+            {
+                bw.WriteUTF8(p.msgToken);
+            }
+            // -- 4. message route
             if (msgRouteCode != 0)
             {
                 bw.WriteUnsignedShort(msgRouteCode);
@@ -290,11 +307,13 @@ namespace mana.Foundation
             {
                 bw.WriteUTF8(msgRoute);
             }
+            // -- 5. message request id
             if (msgType == MessageType.REQUEST || 
                 msgType == MessageType.RESPONSE)
             {
                 bw.WriteInt(p.msgRequestId);
             }
+            // -- 6. message body
             if (msgCompressData != null)
             {
                 bw.Write(msgCompressData.data, 0, msgCompressData.Length);
@@ -312,6 +331,12 @@ namespace mana.Foundation
         public const int HEAD_SIZE = 4;
 
         public MessageType msgType
+        {
+            get;
+            private set;
+        }
+
+        public string msgToken
         {
             get;
             private set;
@@ -337,6 +362,11 @@ namespace mana.Foundation
         {
             msgData = new ByteBuffer(64);
             isPoolManaged = bPoolManaged;
+        }
+
+        public void SetToken(string token)
+        {
+            this.msgToken = token;
         }
 
         public bool TryGet(ISerializable obj)

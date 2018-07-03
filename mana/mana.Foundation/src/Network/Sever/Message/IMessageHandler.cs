@@ -2,6 +2,6 @@
 {
     public interface IMessageHandler : ITypeInitializable
     {
-        void Process(UserToken token, Packet msg);
+        void Process(UserToken token, Packet packet);
     }
 }

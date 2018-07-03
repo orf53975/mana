@@ -1,4 +1,6 @@
-﻿using mana.Foundation.Network.Sever;
+﻿using mana.Foundation;
+using mana.Foundation.Network.Sever;
+using mana.Server.Game.BattleLink;
 using System.Net;
 
 namespace mana.Server.Game
@@ -9,16 +11,28 @@ namespace mana.Server.Game
         {
             var sev = new GameServer(setting);
             var ipa = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
-            //sev.Start(new IPEndPoint(ipa, setting.port));
+            sev.Start(new IPEndPoint(ipa, setting.port));
+            sev.battleManager.StartConnect();
             return sev;
         }
 
-        public readonly BSManager battleSevsChannel;
+        private readonly BSCMgr battleManager;
 
         private GameServer(AppSetting setting) : base(setting)
         {
-            battleSevsChannel = new BSManager(setting.battleServers);
-            battleSevsChannel.StartConnect();
+            battleManager = new BSCMgr(setting.battleServers);
         }
+
+        /// <summary>
+        /// 转发消息至战斗服
+        /// </summary>
+        /// <param name="gamePlayer"></param>
+        /// <param name="packet"></param>
+        internal void ForwardingToBattleServer(GamePlayer gamePlayer, Packet packet)
+        {
+            packet.SetToken(gamePlayer.uid);
+            battleManager.Send(gamePlayer.bscId, packet);
+        }
+
     }
 }

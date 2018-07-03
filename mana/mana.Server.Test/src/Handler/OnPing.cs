@@ -7,9 +7,9 @@ namespace mana.Server.Test.Handler
     [MessageNotify("Connector.Ping", typeof(Heartbeat) , -1)]
     public sealed class OnPing : IMessageHandler
     {
-        public void Process(UserToken token, Packet msg)
+        public void Process(UserToken token, Packet packet)
         {
-            Logger.Warning(msg.TryGet<Heartbeat>().ToFormatString(""));
+            Logger.Warning(packet.TryGet<Heartbeat>().ToFormatString(""));
 
             //---- test
             var p = Packet.CreatPush("Connector.Protocol", Protocol.Instance, false);

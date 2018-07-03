@@ -7,7 +7,7 @@ namespace mana.Server.Battle.src.Handlers
     [MessageNotify("Battle.PlayerMove", typeof(xxd.sync.opration.MoveRequest))]
     class PlayerMove : IMessageHandler
     {
-        public void Process(UserToken token, Packet msg)
+        public void Process(UserToken token, Packet packet)
         {
             throw new NotImplementedException();
         }
