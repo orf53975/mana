@@ -1,11 +1,12 @@
 ﻿namespace mana.Foundation
 {
-    public sealed class Response : DataObject
+    public sealed class Result : DataObject
     {
         public enum Code : int
         {
-            sucess = 0,
-            falied = 1
+            unknow = 0,
+            sucess = 1,
+            falied = 2
         }
 
         public Code code = 0;

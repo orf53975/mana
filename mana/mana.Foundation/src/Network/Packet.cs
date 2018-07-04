@@ -238,6 +238,11 @@ namespace mana.Foundation
 
         public static void Encode(Packet p, ByteBuffer bw)
         {
+            if (p.msgType == MessageType.UNKNOW)
+            {
+                Logger.Error("Packet is not initialized or has been recycled!");
+                return;
+            }
             var msgType = p.msgType;
             var msgFlag = Flag.NONE;
             var msgRoute = p.msgRoute;
@@ -249,7 +254,7 @@ namespace mana.Foundation
             if (p.msgToken != null)
             {
                 msgFlag |= Flag.TOKEN;
-                packetSize += CodingUtil.GetByteCountUTF8(p.msgToken);
+                packetSize += CodingUtil.GetByteCountUTF8(p.msgToken) + 2;
             }
             // -- 4. message route
             var msgRouteCode = Protocol.Instance.GetRouteCode(msgRoute);
@@ -260,7 +265,7 @@ namespace mana.Foundation
             }
             else
             {
-                packetSize += CodingUtil.GetByteCountUTF8(msgRoute);
+                packetSize += CodingUtil.GetByteCountUTF8(msgRoute) + 2;
             }
             // -- 5. message request id
             if (msgType == MessageType.REQUEST ||
@@ -364,7 +369,7 @@ namespace mana.Foundation
             isPoolManaged = bPoolManaged;
         }
 
-        public void SetToken(string token)
+        public void SetMsgToken(string token)
         {
             this.msgToken = token;
         }
@@ -440,6 +445,7 @@ namespace mana.Foundation
             this.msgType = MessageType.UNKNOW;
             this.msgRoute = null;
             this.msgRequestId = 0;
+            this.msgToken = null;
             this.msgData.Clear();
         }
 

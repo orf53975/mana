@@ -131,7 +131,8 @@ namespace mana.Foundation.Network.Client
             var p = packetRcver.Build();
             while (p != null)
             {
-                if(!isImmediateMode)
+                lastRcvTime = curTime;
+                if (!isImmediateMode)
                 {
                     lock (rcvQue)
                     {
@@ -238,6 +239,7 @@ namespace mana.Foundation.Network.Client
                 {
                     ut.Value.Invoke(true);
                 }
+                ut.Key.ResetCheckTime();
                 ut.Key.StartRcv();
             }
             else
@@ -296,6 +298,13 @@ namespace mana.Foundation.Network.Client
             lastSndTime = curTime;
         }
 
+        public void ResetCheckTime()
+        {
+            curTime = 0;
+            lastSndTime = 0;
+            lastRcvTime = 0;
+        }
+
         private int curTime;
         public override void Update(int deltaTimeMs)
         {
@@ -310,7 +319,6 @@ namespace mana.Foundation.Network.Client
                         var p = rcvQue.Dequeue();
                         OnPacketRecived(p);
                         p.ReleaseToPool();
-                        lastRcvTime = curTime;
                     }
                 }
                 catch (Exception ex)

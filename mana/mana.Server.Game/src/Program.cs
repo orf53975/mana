@@ -7,7 +7,7 @@ namespace mana.Server.Game
         static void Main(string[] args)
         {
             var cr = new ConsoleRunning();
-            GameServer.StartNew(Config.AppSetting);
+            GameServer.StartNew(Config.ServerSetting);
             cr.StartUp(OnInputed);
         }
 

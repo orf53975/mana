@@ -1,11 +1,9 @@
 ﻿{
   "host": "127.0.0.1",
-
   "port": 8088,
-
   "connBuffSize": 1024,
-
   "connMax": 255,
-
+  "bindTimeOut": 10000,
+  "pingTimeOut": 30000,
   "plugins": []
 }

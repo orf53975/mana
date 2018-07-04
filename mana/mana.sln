@@ -11,11 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Server.Test", "mana.Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Test.Client", "mana.Test.Client\mana.Test.Client.csproj", "{6B1A43AC-5C63-41B7-AC5F-7611E893499F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Game.BattleSystem", "mana.Game.BattleSystem\mana.Game.BattleSystem.csproj", "{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Server.Battle", "mana.Server.Battle\mana.Server.Battle.csproj", "{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Server.Game", "mana.Server.Game\mana.Server.Game.csproj", "{9DEF5289-99F9-4CFF-9036-4B80541672A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "mana.Server.Game", "mana.Server.Game\mana.Server.Game.csproj", "{9DEF5289-99F9-4CFF-9036-4B80541672A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Game.BattleSystem", "mana.Game.BattleSystem\mana.Game.BattleSystem.csproj", "{C063A433-472F-40C2-B01B-C698911A3C77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,14 +56,6 @@ Global
 		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|x86.ActiveCfg = Release|Any CPU
 		{6B1A43AC-5C63-41B7-AC5F-7611E893499F}.Release|x86.Build.0 = Release|Any CPU
-		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Debug|x86.Build.0 = Debug|Any CPU
-		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|x86.ActiveCfg = Release|Any CPU
-		{7B21C90F-9FF9-4F9A-99FE-363C7BE8736F}.Release|x86.Build.0 = Release|Any CPU
 		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DEFBE91-03E5-4824-A8A2-AF89EE37C196}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -80,6 +72,14 @@ Global
 		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Release|x86.ActiveCfg = Release|Any CPU
 		{9DEF5289-99F9-4CFF-9036-4B80541672A3}.Release|x86.Build.0 = Release|Any CPU
+		{C063A433-472F-40C2-B01B-C698911A3C77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C063A433-472F-40C2-B01B-C698911A3C77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C063A433-472F-40C2-B01B-C698911A3C77}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C063A433-472F-40C2-B01B-C698911A3C77}.Debug|x86.Build.0 = Debug|Any CPU
+		{C063A433-472F-40C2-B01B-C698911A3C77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C063A433-472F-40C2-B01B-C698911A3C77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C063A433-472F-40C2-B01B-C698911A3C77}.Release|x86.ActiveCfg = Release|Any CPU
+		{C063A433-472F-40C2-B01B-C698911A3C77}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

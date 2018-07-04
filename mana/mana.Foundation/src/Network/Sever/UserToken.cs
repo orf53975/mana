@@ -316,16 +316,20 @@ namespace mana.Foundation.Network.Sever
             //}
         }
 
-        public void SendResponse<T>(string route, int responseId, Action<T> rspSetter)
+        public void SendResponse<T>(string route, int responseId, Action<T> rspSetter, string msgToken = null)
             where T : class, DataObject, new()
         {
-            this.Send(Packet.CreatResponse(route, responseId, rspSetter));
+            var p = Packet.CreatResponse(route, responseId, rspSetter);
+            p.SetMsgToken(msgToken);
+            this.Send(p);
         }
 
-        public void SendPush<T>(string route, Action<T> setter)
+        public void SendPush<T>(string route, Action<T> setter, string msgToken = null)
             where T : class, DataObject, new()
         {
-            this.Send(Packet.CreatPush(route, setter));
+            var p = Packet.CreatPush(route, setter);
+            p.SetMsgToken(msgToken);
+            this.Send(p);
         }
 
         void CloseSocket()
@@ -350,17 +354,21 @@ namespace mana.Foundation.Network.Sever
             }
         }
 
-        void Release()
+        internal void Release()
         {
             if (Interlocked.CompareExchange(ref state, kStateFree, kStateLink) != kStateLink)
             {
                 return;
             }
-            CloseSocket();
-            this.server.WakeUpDeamon();
+            if(socket != null)
+            {
+                CloseSocket();
+            }
+            server.WakeUpDeamon();
             packetRcver.Clear();
             packetSnder.Clear();
         }
+
 
         internal void Reset()
         {
@@ -373,16 +381,18 @@ namespace mana.Foundation.Network.Sever
 
         internal void CheckLinkStateTimeOut(int curTime)
         {
-            if (TimeUtil.GetTimeSpan(curTime, startTime) > server.tokenUnbindTimeOut)
+            if (server.tokenUnbindTimeOut > 0 && TimeUtil.GetTimeSpan(curTime, startTime) > server.tokenUnbindTimeOut)
             {
+                Logger.Error("UserToken Kick! [CheckLinkStateTimeOut]");
                 Release();
             }
         }
 
         internal void CheckWorkStateTimeOut(int curTime)
         {
-            if (TimeUtil.GetTimeSpan(curTime, lastActiveTime) > server.tokenWorkTimeOut)
+            if (server.tokenWorkTimeOut > 0 && TimeUtil.GetTimeSpan(curTime, lastActiveTime) > server.tokenWorkTimeOut)
             {
+                Logger.Error("UserToken Kick! [CheckWorkStateTimeOut]");
                 Release();
             }
         }

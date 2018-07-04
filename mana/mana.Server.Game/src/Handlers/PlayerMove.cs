@@ -9,10 +9,12 @@ namespace mana.Server.Game.Handler
     {
         public void Process(UserToken token, Packet packet)
         {
-            if (token.UserData is GamePlayer gamePlayer)
-            {
-                token.GetServer<GameServer>().ForwardingToBattleServer(gamePlayer, packet);
-            }
+            //if (token.UserData is GamePlayer gamePlayer)
+            //{
+            //    token.GetServer<GameServer>().ForwardingToBattleServer(gamePlayer, packet);
+            //}
+            packet.SetMsgToken(token.uid);
+            token.GetServer<GameServer>().ForwardingToBattleServer(0, packet);
         }
     }
 }

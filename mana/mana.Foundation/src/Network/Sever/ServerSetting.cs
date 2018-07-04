@@ -8,6 +8,9 @@
 
         public int port = 8088;
 
+        /// <summary>
+        /// 单个链接的缓存大小
+        /// </summary>
         public int connBuffSize = 1024;
 
         /// <summary>
@@ -15,9 +18,9 @@
         /// </summary>
         public int connMax = 0xFF;
 
-        public int tokenUnbindTimeOut = 1000 * 10;
+        public int bindTimeOut = 1000 * 10;
 
-        public int tokenWorkTimeOut = 3000 * 10;
+        public int pingTimeOut = 3000 * 10;
 
         public string[] plugins = { };
 
@@ -39,13 +42,13 @@
             {
                 this.connMax = other.connMax;
             }
-            if (other.tokenUnbindTimeOut != Default.tokenUnbindTimeOut)
+            if (other.bindTimeOut != Default.bindTimeOut)
             {
-                this.tokenUnbindTimeOut = other.tokenUnbindTimeOut;
+                this.bindTimeOut = other.bindTimeOut;
             }
-            if (other.tokenWorkTimeOut != Default.tokenWorkTimeOut)
+            if (other.pingTimeOut != Default.pingTimeOut)
             {
-                this.tokenWorkTimeOut = other.tokenWorkTimeOut;
+                this.pingTimeOut = other.pingTimeOut;
             }
             if (other.plugins != Default.plugins)
             {

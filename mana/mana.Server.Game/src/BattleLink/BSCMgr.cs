@@ -5,15 +5,18 @@ namespace mana.Server.Game.BattleLink
 {
     class BSCMgr
     {
-        private readonly BSClient[] clients;
+        internal readonly BSClient[] clients;
 
-        public BSCMgr(string[] battleServerAddrs)
+        internal readonly GameServer server;
+
+        public BSCMgr(GameServer gameServer, string[] bsAddrs)
         {
-            var num = battleServerAddrs != null ? battleServerAddrs.Length : 0;
+            this.server = gameServer;
+            var num = bsAddrs != null ? bsAddrs.Length : 0;
             clients = new BSClient[num];
             for (int i = 0; i < num; i++)
             {
-                clients[i] = new BSClient(battleServerAddrs[i]);
+                clients[i] = new BSClient(this, bsAddrs[i]);
             }
         }
 
@@ -27,7 +30,15 @@ namespace mana.Server.Game.BattleLink
 
         internal void Send(int clientId, Packet msg)
         {
-            clients[clientId].Channel.SendPacket(msg);
+            clients[clientId].SendPacket(msg);
+        }
+
+        internal void Update(int deltaTime)
+        {
+            for (int i = 0; i < clients.Length; i++)
+            {
+                clients[i].Update(deltaTime);
+            }
         }
     }
 }

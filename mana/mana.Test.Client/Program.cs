@@ -25,31 +25,27 @@ namespace mana.Test.Client
                 var ntc = new TestClient(uid, "127.0.0.1", 8081);
                 clients.Add(uid, ntc);
                 Console.WriteLine("new TestClient [{0}]!", uid);
+                ntc.StartConnect();
                 return true;
             }
-            if (cmd.StartsWith("bindToken"))
+            if (cmd.StartsWith("ping"))
             {
                 var uid = uidGen++;
-                foreach(var kv in clients)
+                foreach (var kv in clients)
                 {
-                    var id = kv.Key;
-                    var _c = kv.Value;
-
-                    _c.mNetChannel.Request<AccountInfo, Response>("Connector.BindToken",
-                        (acc) =>
-                        {
-                            acc.username = "testUser";
-                            acc.password = "12345678";
-                        },
-                        (res) =>
-                        {
-                            Logger.Print(res.ToFormatString(""));
-                        });
-
+                    kv.Value.Channel.SendPingPacket();
                 }
                 return true;
             }
-
+            if (cmd.StartsWith("test"))
+            {
+                var uid = uidGen++;
+                foreach (var kv in clients)
+                {
+                    kv.Value.DoTest();
+                }
+                return true;
+            }
             return false;
         }
     }

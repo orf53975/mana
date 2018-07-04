@@ -40,15 +40,18 @@ namespace mana.Foundation.Network.Sever
 
         internal UserToken Find(string uid)
         {
-            lock (m_indexMap)
+            if (uid != null)
             {
-                int idx = -1;
-                if (m_indexMap.TryGetValue(uid, out idx))
+                lock (m_indexMap)
                 {
-                    return m_pool[idx];
+                    int idx;
+                    if (m_indexMap.TryGetValue(uid, out idx))
+                    {
+                        return m_pool[idx];
+                    }
                 }
-                return null;
             }
+            return null;
         }
 
         void Bind(int tokenIndex)
@@ -97,7 +100,7 @@ namespace mana.Foundation.Network.Sever
                 ut = m_pool[i];
                 if (ut == null)
                 {
-                    break;
+                    continue;
                 }
                 try
                 {
@@ -127,9 +130,9 @@ namespace mana.Foundation.Network.Sever
                             break;
                     }
                 }
-                catch (Exception e)
+                catch (Exception ex)
                 {
-                    Logger.Exception(e);
+                    Logger.Exception(ex);
                 }
             }
         }

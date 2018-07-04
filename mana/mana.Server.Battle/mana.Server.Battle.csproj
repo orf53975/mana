@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="appsetting.json" />
+    <None Remove="sev.setting.json" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="appsetting.json">
+    <Content Include="sev.setting.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

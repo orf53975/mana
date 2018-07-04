@@ -5,6 +5,8 @@ namespace mana.Foundation.Network.Client
 {
     public abstract class NetClient :  IDisposable
     {
+        private readonly NetPacketDispatcher packetDispatcher = new NetPacketDispatcher();
+
         private readonly NetResponseDispatcher responseDispatcher = new NetResponseDispatcher();
 
         private readonly NetPushDispatcher pushDispatcher = new NetPushDispatcher();
@@ -36,7 +38,11 @@ namespace mana.Foundation.Network.Client
 
         protected void OnPacketRecived(Packet p)
         {
-            switch(p.msgType)
+            if (packetDispatcher.Dispatch(p))
+            {
+                return;
+            }
+            switch (p.msgType)
             {
                 case Packet.MessageType.RESPONSE:
                     if (!responseDispatcher.Dispatch(p))
@@ -76,6 +82,14 @@ namespace mana.Foundation.Network.Client
             this.Disconnect();
         }
 
+        #region <<About Packet Listener>>
+
+        public void AddPacketListener(string route, Action<Packet> handler)
+        {
+            packetDispatcher.Register(route , handler);
+        }
+
+        #endregion
 
         #region <<About Request>>
 

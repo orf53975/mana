@@ -77,6 +77,11 @@ namespace mana.Foundation
             }
             lock (_objects)
             {
+                if(_objects.Contains(item))
+                {
+                    Logger.Error("item had already add to pool!", item);
+                    return false;
+                }
                 _objects.Push(item);
             }
             if (_objectOnRelease != null)

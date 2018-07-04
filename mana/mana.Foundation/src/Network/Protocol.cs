@@ -16,11 +16,12 @@ namespace mana.Foundation
             AddProto(0x0001, new Proto("Connector.Protocol", ProtoType.Push, null, typeof(Protocol).FullName));
             AddProto(0x0002, new Proto("Connector.Ping", ProtoType.Notify, typeof(Heartbeat).FullName, null));
             AddProto(0x0003, new Proto("Connector.Pong", ProtoType.Push, null, typeof(Heartbeat).FullName));
-            AddProto(0x0004, new Proto("Connector.BindToken", ProtoType.Request, typeof(AccountInfo).FullName, typeof(Response).FullName));
+            AddProto(0x0004, new Proto("Connector.BindToken", ProtoType.Request, typeof(AccountInfo).FullName, typeof(Result).FullName));
+            AddProto(0x0005, new Proto("Connector.Kick", ProtoType.Push, null, typeof(Result).FullName));
             // -- default types
             AddTypeCode(typeof(Protocol).FullName, 0x0001);
             AddTypeCode(typeof(Heartbeat).FullName, 0x0003);
-            AddTypeCode(typeof(Response).FullName, 0x0002);
+            AddTypeCode(typeof(Result).FullName, 0x0002);
             AddTypeCode(typeof(AccountInfo).FullName, 0x0004);
         }
 

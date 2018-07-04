@@ -47,13 +47,17 @@
     <Compile Include="TestClient.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\mana.Foundation\mana.Foundation.csproj">
       <Project>{58d5fd90-f169-4363-b5a5-d633e2f69158}</Project>
       <Name>mana.Foundation</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
+    <ProjectReference Include="..\mana.Game.BattleSystem\mana.Game.BattleSystem.csproj">
+      <Project>{c063a433-472f-40c2-b01b-c698911a3c77}</Project>
+      <Name>mana.Game.BattleSystem</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

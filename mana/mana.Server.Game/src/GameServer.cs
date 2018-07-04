@@ -1,7 +1,9 @@
 ﻿using mana.Foundation;
 using mana.Foundation.Network.Sever;
 using mana.Server.Game.BattleLink;
+using System;
 using System.Net;
+using System.Threading;
 
 namespace mana.Server.Game
 {
@@ -18,21 +20,59 @@ namespace mana.Server.Game
 
         private readonly BSCMgr battleManager;
 
-        private GameServer(AppSetting setting) : base(setting)
+        private GameServer(AppSetting setting)
+            : base(setting)
         {
-            battleManager = new BSCMgr(setting.battleServers);
+            this.battleManager = new BSCMgr(this , setting.battleServers);
+            this.StartUpdateThread();
         }
 
-        /// <summary>
-        /// 转发消息至战斗服
-        /// </summary>
-        /// <param name="gamePlayer"></param>
-        /// <param name="packet"></param>
         internal void ForwardingToBattleServer(GamePlayer gamePlayer, Packet packet)
         {
-            packet.SetToken(gamePlayer.uid);
+            packet.SetMsgToken(gamePlayer.token);
             battleManager.Send(gamePlayer.bscId, packet);
         }
 
+        internal void ForwardingToBattleServer(int bscId, Packet packet)
+        {
+            battleManager.Send(bscId, packet);
+        }
+
+        #region <<UpdateThread>>
+
+        const int kUpdateInterval = 500;
+        private Thread mUpdateThread;
+
+        void StartUpdateThread()
+        {
+            mUpdateThread = new Thread(UpdateProc);
+            mUpdateThread.IsBackground = true;
+            mUpdateThread.Start();
+        }
+
+        void StopUpdateThread()
+        {
+            if (mUpdateThread == null)
+            {
+                return;
+            }
+            mUpdateThread.Abort();
+            mUpdateThread.Join();
+        }
+
+        void UpdateProc()
+        {
+            var curTime = Environment.TickCount;
+            var preTime = curTime;
+            while (mUpdateThread.IsAlive)
+            {
+                curTime = Environment.TickCount;
+                battleManager.Update(TimeUtil.GetTimeSpan(curTime, preTime));
+                preTime = curTime;
+                Thread.Sleep(kUpdateInterval);
+            }
+        }
+
+        #endregion
     }
 }

@@ -3,12 +3,11 @@
   "port": 8081,
   "connBuffSize": 1024,
   "connMax": 255,
-  "tokenUnbindTimeOut": 10000,
-  "tokenWorkTimeOut": 30000,
+  "bindTimeOut": 10000,
+  "pingTimeOut": 30000,
   "plugins": [],
+  "name": "测试服-1",
   "battleServers": [
-    "127.0.0.1:8181",
-    "127.0.0.1:8182",
-    "127.0.0.1:8183"
+    "127.0.0.1:8181"
   ]
 }

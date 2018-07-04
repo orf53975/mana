@@ -2,9 +2,9 @@
 {
     public class GamePlayer
     {
-        public int bscId;
+        public string token;
 
-        public string uid;
+        public int bscId;
 
     }
 }

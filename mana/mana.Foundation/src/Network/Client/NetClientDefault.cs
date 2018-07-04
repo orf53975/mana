@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -151,20 +152,21 @@ namespace mana.Foundation.Network.Client
             var saea = new SocketAsyncEventArgs();
             saea.RemoteEndPoint = ipep;
             saea.Completed += new EventHandler<SocketAsyncEventArgs>(AsyncConnected);
-            saea.UserToken = callback;
+            saea.UserToken = new KeyValuePair<NetClientDefault, Action<bool>>(this, callback);
             _socket.ConnectAsync(saea);
         }
 
         static void AsyncConnected(object sender, SocketAsyncEventArgs e)
         {
+            var ut = (KeyValuePair<NetClientDefault, Action<bool>>)e.UserToken;
             if (e.SocketError == SocketError.Success)
             {
                 Logger.Print("connect[{0}] successed!", e.RemoteEndPoint);
-                if (e.UserToken != null)
+                if (ut.Value != null)
                 {
-                    var callback = (Action<bool>)e.UserToken;
-                    callback.Invoke(true);
+                    ut.Value.Invoke(true);
                 }
+                ut.Key.ResetCheckTime();
             }
             else
             {
@@ -205,18 +207,26 @@ namespace mana.Foundation.Network.Client
             lastSndTime = curTime;
         }
 
+        private void ResetCheckTime()
+        {
+            curTime = 0;
+            lastSndTime = 0;
+            lastRcvTime = 0;
+        }
+
         private int curTime;
+
         public override void Update(int deltaTimeMs)
         {
-            if (!Connected) { return; }
-            curTime = curTime + deltaTimeMs;
-            if (_socket != null && _socket.Connected)
+            if (!Connected)
             {
-                DoRcving();
-                if (mSendThread == null)
-                {
-                    DoSnding();
-                }
+                return;
+            }
+            curTime = curTime + deltaTimeMs;
+            this.DoRcving();
+            if (mSendThread == null)
+            {
+                DoSnding();
             }
             if (curTime - lastRcvTime > mPingPongTimeout)
             {

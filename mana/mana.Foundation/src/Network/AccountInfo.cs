@@ -1,4 +1,6 @@
-﻿namespace mana.Foundation
+﻿using System;
+
+namespace mana.Foundation
 {
     public sealed class AccountInfo : DataObject
     {

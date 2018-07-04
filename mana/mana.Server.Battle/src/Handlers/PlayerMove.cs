@@ -1,6 +1,7 @@
 ﻿using mana.Foundation;
 using mana.Foundation.Network.Sever;
 using System;
+using xxd.sync;
 
 namespace mana.Server.Battle.src.Handlers
 {
@@ -9,7 +10,15 @@ namespace mana.Server.Battle.src.Handlers
     {
         public void Process(UserToken token, Packet packet)
         {
-            throw new NotImplementedException();
+            //TODO test
+            token.SendPush<BattleSync>("Battle.Sync", (bs) =>
+            {
+                bs.actions = new DataObject[3];
+                bs.actions[0] = ObjectCache.Get<AddUnit>();
+                bs.actions[1] = ObjectCache.Get<RemoveUnit>();
+                bs.actions[2] = ObjectCache.Get<BuffData>();
+            } , packet.msgToken);
+            //throw new NotImplementedException();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 
 namespace mana.Foundation
 {
@@ -22,13 +23,10 @@ namespace mana.Foundation
             }
         }
 
-        public static string AdjustFilePath(string filePath)
+
+        public static string GetAbsolutePath(string relativePath)
         {
-            if (!File.Exists(filePath))
-            {
-                filePath = Path.Combine(CurrentDirectory, filePath);
-            }
-            return filePath;
+            return Path.Combine(CurrentDirectory, relativePath);
         }
 
         /// <summary>

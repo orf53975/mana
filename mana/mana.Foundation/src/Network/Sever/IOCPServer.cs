@@ -27,7 +27,7 @@ namespace mana.Foundation.Network.Sever
             }
         }
 
-        public IOCPServer(int numConnections, int bufferSize, int tokenUnbindTimeOut = 1000 * 10, int tokenWorkTimeOut = 3000 * 10)
+        public IOCPServer(int numConnections, int bufferSize, int tokenUnbindTimeOut = 2000 * 10, int tokenWorkTimeOut = 3000 * 10)
         {
             this.mTokenPool = new UserTokenPool(this, numConnections, bufferSize);
             this.m_numConnectedSockets = 0;
@@ -38,7 +38,7 @@ namespace mana.Foundation.Network.Sever
         }
 
         public IOCPServer(ServerSetting setting):
-            this(setting.connMax , setting.connBuffSize , setting.tokenUnbindTimeOut , setting.tokenWorkTimeOut)
+            this(setting.connMax , setting.connBuffSize , setting.bindTimeOut , setting.pingTimeOut)
         {
             LoadPlugins(setting.plugins);
         }
@@ -183,6 +183,21 @@ namespace mana.Foundation.Network.Sever
             mTokenPool.ForEachWorking(action);
         }
 
+        public void TryKick(string uid)
+        {
+            var token = mTokenPool.Find(uid);
+            if (token != null)
+            {
+                token.SendPush<Result>("Connector.Kick", (ret) =>
+                {
+                    ret.code = Result.Code.unknow;
+                    ret.info = "----------------";
+                });
+                Thread.Sleep(200);
+                token.Release();
+            }
+        }
+
         public void Send(string uid, Packet p)
         {
             var token = mTokenPool.Find(uid);
@@ -192,6 +207,11 @@ namespace mana.Foundation.Network.Sever
             }
         }
 
+        public virtual string GenUID(AccountInfo accountInfo)
+        {
+            return Guid.NewGuid().ToString();
+        }
+
         public void BroadcastMessage(Packet p)
         {
             mTokenPool.ForEachWorking((u) => u.Send(p));
@@ -199,7 +219,7 @@ namespace mana.Foundation.Network.Sever
 
         #region <<Deamon Thread>>
 
-        const int kDeamonInterval = 100;
+        const int kDeamonInterval = 2000;
 
         readonly AutoResetEvent deamonSignal = new AutoResetEvent(false);
 
@@ -216,10 +236,10 @@ namespace mana.Foundation.Network.Sever
         {
             while (mDeamonThread.IsAlive)
             {
-                this.deamonSignal.WaitOne();
+                deamonSignal.WaitOne(kDeamonInterval);
                 var curTime = Environment.TickCount;
                 mTokenPool.Update(curTime);
-                Thread.Sleep(kDeamonInterval);
+                //Thread.Sleep(kDeamonInterval);
             }
         }
 
