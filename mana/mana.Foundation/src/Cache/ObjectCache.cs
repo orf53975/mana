@@ -51,13 +51,21 @@ namespace mana.Foundation
                 return null;
             }
 
-            internal ObjectPool<T> AddPool<T>() where T : class, new()
+            internal ObjectPool<T> TryAddPool<T>() where T : class, new()
             {
                 try
                 {
                     _lockSlim.EnterWriteLock();
+                    var type = typeof(T);
+                    // -- 1
+                    IObjectPool existed;
+                    if (_objectPools.TryGetValue(type, out existed))
+                    {
+                        return (ObjectPool<T>)existed;
+                    }
+                    // -- 2
                     var pool = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
-                    _objectPools.Add(typeof(T), pool);
+                    _objectPools.Add(type, pool);
                     return pool;
                 }
                 catch (Exception e)
@@ -73,12 +81,12 @@ namespace mana.Foundation
 
             internal ObjectPool<T> GetOrAddPool<T>() where T : class, new()
             {
-                var pool = GetPool<T>();
-                if (pool == null)
+                var existed = GetPool(typeof(T));
+                if (existed != null)
                 {
-                    pool = AddPool<T>();
+                    return (ObjectPool<T>)existed;
                 }
-                return pool;
+                return TryAddPool<T>();
             }
 
             internal void ClearAllPool()
