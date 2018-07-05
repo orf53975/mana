@@ -134,15 +134,12 @@ namespace mana.Foundation.Network.Client
                 lastRcvTime = curTime;
                 if (!isImmediateMode)
                 {
-                    lock (rcvQue)
-                    {
-                        rcvQue.Enqueue(p);
-                    }
+                    lock (rcvQue) { rcvQue.Enqueue(p); }
                 }
                 else
                 {
                     OnPacketRecived(p);
-                    p.ReleaseToPool();
+                    p.Release();
                 }
                 p = packetRcver.Build();
             }
@@ -279,6 +276,11 @@ namespace mana.Foundation.Network.Client
 
         public override void SendPacket(Packet p)
         {
+            if (!Connected)
+            {
+                Logger.Error("SendPacket failed! Client is not Connected");
+                return;
+            }
             packetSnder.Push(p);
             if (Monitor.TryEnter(sndEventArg))
             {
@@ -318,7 +320,7 @@ namespace mana.Foundation.Network.Client
                     {
                         var p = rcvQue.Dequeue();
                         OnPacketRecived(p);
-                        p.ReleaseToPool();
+                        p.Release();
                     }
                 }
                 catch (Exception ex)

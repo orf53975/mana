@@ -77,10 +77,11 @@ namespace mana.Foundation.Network.Client
                     while (p != null)
                     {
                         this.OnPacketRecived(p);
+                        p.Release();
                         p = packetRcver.Build();
-                        lastRcvTime = curTime;
                     }
                     count = packetRcver.PushData(_socket);
+                    lastRcvTime = curTime;
                 }
             }
             catch (Exception ex)

@@ -129,6 +129,7 @@ namespace mana.Foundation.Network.Client
             var requestId = this.GenRequestId();
             var p = Packet.CreatRequest(route, requestId, reqSetter);
             this.SendPacket(p);
+            p.Release();
             this.responseDispatcher.Register(requestId, rspHandler);
             return true;
         }
@@ -161,6 +162,7 @@ namespace mana.Foundation.Network.Client
             var requestId = this.GenRequestId();
             var p = Packet.CreatRequest(route, requestId, null);
             this.SendPacket(p);
+            p.Release();
             this.responseDispatcher.Register(requestId, rspHandler);
             return true;
         }
@@ -187,6 +189,7 @@ namespace mana.Foundation.Network.Client
             var requestId = this.GenRequestId();
             var p = Packet.CreatRequest(route, requestId, d);
             this.SendPacket(p);
+            p.Release();
             this.responseDispatcher.Register(requestId, proto, rspHandler);
             return true;
         }
@@ -212,6 +215,7 @@ namespace mana.Foundation.Network.Client
             var requestId = this.GenRequestId();
             var p = Packet.CreatRequest(route, requestId, null);
             this.SendPacket(p);
+            p.Release();
             this.responseDispatcher.Register(requestId, proto, rspHandler);
             return true;
         }
@@ -242,6 +246,7 @@ namespace mana.Foundation.Network.Client
             }
             var p = Packet.CreatNotify(route, notifySetter);
             this.SendPacket(p);
+            p.Release();
             return true;
         }
 
@@ -266,6 +271,7 @@ namespace mana.Foundation.Network.Client
             }
             var p = Packet.CreatNotify(route, d);
             this.SendPacket(p);
+            p.Release();
             return true;
         }
 
@@ -284,6 +290,7 @@ namespace mana.Foundation.Network.Client
             }
             var p = Packet.CreatNotify(route, null);
             this.SendPacket(p);
+            p.Release();
             return true;
         }
 

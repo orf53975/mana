@@ -26,7 +26,7 @@ namespace mana.Foundation
                 {
                     var p = sendingQue.Dequeue();
                     Packet.Encode(p, buff);
-                    p.ReleaseToPool();
+                    p.Release();
                 }
             }
         }
@@ -100,6 +100,7 @@ namespace mana.Foundation
 
         public void Push(Packet p)
         {
+            p.Retain();
             lock (sendingQue)
             {
                 sendingQue.Enqueue(p);

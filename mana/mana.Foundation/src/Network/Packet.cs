@@ -2,7 +2,7 @@
 
 namespace mana.Foundation
 {
-    public sealed class Packet
+    public sealed class Packet : RefCounter
     {
 
         #region <<Definition MessageType>>
@@ -50,7 +50,7 @@ namespace mana.Foundation
         #region <<Static Pool>>
 
         private static readonly ObjectPool<Packet> Pool = new ObjectPool<Packet>(
-            () => new Packet(true), null, (e) => e.Clear());
+            () => new Packet(true), (e) => e.Normalize(), (e) => e.Clear());
 
         public static void ChangePoolCapacity(int newCapacity)
         {
@@ -363,10 +363,15 @@ namespace mana.Foundation
 
         readonly bool isPoolManaged;
 
+        static int newCounter = 0;
+
         private Packet(bool bPoolManaged)
         {
-            msgData = new ByteBuffer(64);
             isPoolManaged = bPoolManaged;
+            msgData = new ByteBuffer(64);
+
+            newCounter++;
+            Logger.Warning("newCounter : {0}" , newCounter);
         }
 
         public void SetMsgToken(string token)
@@ -449,7 +454,7 @@ namespace mana.Foundation
             this.msgData.Clear();
         }
 
-        internal void ReleaseToPool()
+        protected override void OnReleased()
         {
             if (isPoolManaged)
             {

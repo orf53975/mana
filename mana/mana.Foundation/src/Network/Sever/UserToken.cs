@@ -202,6 +202,7 @@ namespace mana.Foundation.Network.Sever
             while (p != null)
             {
                 this.OnRecived(p);
+                p.Release();
                 p = packetRcver.Build();
             }
             lastActiveTime = Environment.TickCount;
@@ -322,6 +323,7 @@ namespace mana.Foundation.Network.Sever
             var p = Packet.CreatResponse(route, responseId, rspSetter);
             p.SetMsgToken(msgToken);
             this.Send(p);
+            p.Release();
         }
 
         public void SendPush<T>(string route, Action<T> setter, string msgToken = null)
@@ -330,6 +332,7 @@ namespace mana.Foundation.Network.Sever
             var p = Packet.CreatPush(route, setter);
             p.SetMsgToken(msgToken);
             this.Send(p);
+            p.Release();
         }
 
         void CloseSocket()
