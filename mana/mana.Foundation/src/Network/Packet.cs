@@ -371,7 +371,7 @@ namespace mana.Foundation
             msgData = new ByteBuffer(64);
 
             newCounter++;
-            Logger.Warning("newCounter : {0}" , newCounter);
+            Logger.Warning("Packet new Counter = {0}", newCounter);
         }
 
         public void SetMsgToken(string token)

@@ -48,6 +48,8 @@
     <Compile Include="src\Buffer\ByteReader.cs" />
     <Compile Include="src\Buffer\IReadableBuffer.cs" />
     <Compile Include="src\Buffer\IWritableBuffer.cs" />
+    <Compile Include="src\Cache\ObjectCache.cs" />
+    <Compile Include="src\Cache\IObjectPool.cs" />
     <Compile Include="src\Cache\RefCounter.cs" />
     <Compile Include="src\Network\AccountInfo.cs" />
     <Compile Include="src\Network\Client\NetDispatcher.Packet.cs" />
@@ -102,7 +104,6 @@
     <Compile Include="src\Util\CodingUtil.cs" />
     <Compile Include="src\Cache\ListCache.cs" />
     <Compile Include="src\Util\MathTools.cs" />
-    <Compile Include="src\Cache\ObjectCache.cs" />
     <Compile Include="src\Cache\ObjectPool.cs" />
     <Compile Include="src\Cache\StringBuilderCache.cs" />
     <Compile Include="src\Util\TimeUtil.cs" />

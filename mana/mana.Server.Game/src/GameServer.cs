@@ -38,6 +38,11 @@ namespace mana.Server.Game
             battleManager.Send(bscId, packet);
         }
 
+        public override string GenUID(AccountInfo accountInfo)
+        {
+            return accountInfo.username + accountInfo.password;
+        }
+
         #region <<UpdateThread>>
 
         const int kUpdateInterval = 500;

@@ -60,7 +60,7 @@ namespace mana.Test.Client
             Channel.Request<AccountInfo, Result>("Connector.BindToken",
                 (acc) =>
                 {
-                    acc.username = "testUser";
+                    acc.username = "TestUser";
                     acc.password = "12345678";
                 },
                 (res) =>

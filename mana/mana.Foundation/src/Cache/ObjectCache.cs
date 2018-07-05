@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 
 namespace mana.Foundation
 {
     public static class ObjectCache
     {
-        #region <<class ObjectCacheImpl>>
+        #region <<class ObjectPoolManager>>
 
-        private sealed class ObjectCacheImpl
+        private sealed class ObjectPoolManager
         {
             private readonly Dictionary<Type, IObjectPool> _objectPools = new Dictionary<Type, IObjectPool>();
 
@@ -40,29 +41,16 @@ namespace mana.Foundation
                 }
             }
 
-            internal ObjectPool<T> GetPool<T>() where T : class, new()
-            {
-                var pool = GetPool(typeof(T));
-                if (pool != null)
-                {
-                    return pool as ObjectPool<T>;
-                }
-                return null;
-            }
-
-            private ObjectPool<T> AddPool<T>() where T : class, new()
+            internal void AddPool(Type t, IObjectPool pool)
             {
                 try
                 {
                     _lockSlim.EnterWriteLock();
-                    var ret = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
-                    _objectPools.Add(typeof(T), ret);
-                    return ret;
+                    _objectPools.Add(t, pool);
                 }
                 catch (Exception e)
                 {
                     Logger.Exception(e);
-                    return null;
                 }
                 finally
                 {
@@ -70,21 +58,11 @@ namespace mana.Foundation
                 }
             }
 
-            internal ObjectPool<T> GetOrAddPool<T>() where T : class, new()
-            {
-                var ret = GetPool<T>();
-                if (ret == null)
-                {
-                    ret = AddPool<T>();
-                }
-                return ret;
-            }
-
-            internal void ClearAll()
+            internal void ClearAllPool()
             {
                 try
                 {
-                    _lockSlim.EnterWriteLock();
+                    _lockSlim.EnterReadLock();
                     for (var iter = _objectPools.GetEnumerator(); iter.MoveNext();)
                     {
                         iter.Current.Value.Clear();
@@ -96,40 +74,93 @@ namespace mana.Foundation
                 }
                 finally
                 {
-                    _lockSlim.ExitWriteLock();
+                    _lockSlim.ExitReadLock();
+                }
+            }
+
+            internal string GetStateInfo()
+            {
+                try
+                {
+                    _lockSlim.EnterReadLock();
+                    var sb = new StringBuilder("ObjectCache").AppendLine();
+                    for (var iter = _objectPools.GetEnumerator(); iter.MoveNext();)
+                    {
+                        sb.AppendLine(iter.Current.Value.ToString());
+                    }
+                    return sb.ToString();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                    return null;
+                }
+                finally
+                {
+                    _lockSlim.ExitReadLock();
                 }
             }
         }
 
         #endregion
 
-        private static readonly ObjectCacheImpl _instance = new ObjectCacheImpl();
+        #region <<class ObjectPoolCache>>
 
-        public static T Get<T>() 
-            where T : class, ICacheable, new()
+        private static class ObjectPoolCache<T> where T : class, new()
         {
-            var pool = _instance.GetPool<T>();
-            if (pool == null)
+            private static readonly object locker = new object();
+
+            private static ObjectPool<T> _pool = null;
+            public static ObjectPool<T> Pool
             {
-                return Activator.CreateInstance<T>();
+                get
+                {
+                    if (_pool == null)
+                    {
+                        lock (locker)
+                        {
+                            _pool = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
+                            ObjectCache._poolManager.AddPool(typeof(T), _pool);
+                        }
+                    }
+                    return _pool;
+                }
             }
-            return pool.Get();
+
+            public static T Get(Action<T> handler = null)
+            {
+                var obj = Pool.Get();
+                if (handler != null)
+                {
+                    handler(obj);
+                }
+                return obj;
+            }
+
+            public static bool Put(T item)
+            {
+                return Pool.Put(item);
+            }
+
+            public static void Clear()
+            {
+                ((IObjectPool)Pool).Clear();
+            }
         }
 
-        public static T Get<T>(Action<T> handler) 
-            where T : class, ICacheable, new()
+        #endregion
+
+        static readonly ObjectPoolManager _poolManager = new ObjectPoolManager();
+
+        public static T Get<T>(Action<T> handler = null)
+            where T : class, new()
         {
-            var obj = Get<T>();
-            if (handler != null)
-            {
-                handler(obj);
-            }
-            return obj;
+            return ObjectPoolCache<T>.Get(handler);
         }
 
-        internal static object TryGet(Type t)
+        public static object TryGet(Type t)
         {
-            var pool = _instance.GetPool(t);
+            var pool = _poolManager.GetPool(t);
             if (pool != null)
             {
                 return pool.Get();
@@ -137,25 +168,37 @@ namespace mana.Foundation
             return null;
         }
 
-        public static bool Put<T>(T obj) 
-            where T : class, ICacheable, new()
+
+        public static bool Put<T>(T item)
+            where T : class, new()
         {
-            return _instance.GetOrAddPool<T>().Put(obj);
+            return ObjectPoolCache<T>.Put(item);
+        }
+
+        public static bool TryPut(object item)
+        {
+            var pool = _poolManager.GetPool(item.GetType());
+            if (pool != null)
+            {
+                return pool.Put(item);
+            }
+            return false;
+        }
+
+        public static string GetStateInfo()
+        {
+            return _poolManager.GetStateInfo();
         }
 
         public static void Clear<T>()
-            where T : class, ICacheable, new()
+            where T : class, new()
         {
-            var pool = _instance.GetPool(typeof(T));
-            if (pool != null)
-            {
-                pool.Clear();
-            }
+            ObjectPoolCache<T>.Clear();
         }
 
         public static void Clear()
         {
-            _instance.ClearAll();
+            _poolManager.ClearAllPool();
         }
     }
 }

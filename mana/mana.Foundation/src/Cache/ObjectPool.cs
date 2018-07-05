@@ -1,22 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 
 namespace mana.Foundation
 {
-    #region <<definition interface IObjectPool>>
-    public interface IObjectPool
-    {
-        object Get();
-        bool Put(object item);
-        void Clear();
-    }
-    #endregion
-
     public class ObjectPool<T> : IObjectPool where T : class
     {
-
         private readonly Stack<T>   _objects = new Stack<T>();
         private readonly Func<T>    _objectGenerator;
         private readonly Action<T>  _objectOnGet;
@@ -93,7 +82,12 @@ namespace mana.Foundation
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            return string.Format("ObjectPool<{0}>[size = {1}]", typeof(T).Name, this._objects.Count);
+        }
+
+        public string GetAllObjectInfo()
+        {
+            var sb = new StringBuilder();
             lock (_objects)
             {
                 foreach (T o in _objects)
