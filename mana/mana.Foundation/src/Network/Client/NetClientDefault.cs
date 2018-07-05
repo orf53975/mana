@@ -18,6 +18,8 @@ namespace mana.Foundation.Network.Client
 
         int lastSndTime = 0;
 
+        int lastSndPingTime = 0;
+
         readonly Thread mSendThread;
 
         readonly int mPingPongTimeout;
@@ -213,6 +215,7 @@ namespace mana.Foundation.Network.Client
             curTime = 0;
             lastSndTime = 0;
             lastRcvTime = 0;
+            lastSndPingTime = 0;
         }
 
         private int curTime;
@@ -233,9 +236,10 @@ namespace mana.Foundation.Network.Client
             {
                 this.OnHeartbeatTimeout();
             }
-            else if (curTime - lastSndTime > mPingTimeSpan)
+            else if (curTime - lastSndPingTime > mPingTimeSpan)
             {
                 this.SendPingPacket();
+                lastSndPingTime = curTime;
             }
         }
     }

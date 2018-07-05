@@ -2,16 +2,16 @@
 using mana.Foundation;
 using mana.Foundation.Network.Sever;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Threading;
 using xxd.sync;
 
 namespace mana.Server.Battle
 {
-    class BattleServer : IOCPServer
+    class BattleServer : IOCPServer, BattleScene.IPlayerMessagePusher
     {
-        public static BattleServer StartNew(ServerSetting setting)
+        public static BattleServer StartNew(CustomSevSetting setting)
         {
             ProtocolManager.InitCodeGenerator(0xB001, 0xB001);
             var sev = new BattleServer(setting);
@@ -20,35 +20,103 @@ namespace mana.Server.Battle
             return sev;
         }
 
-        private BattleServer(ServerSetting setting) : base(setting)
+        public readonly int maxBattleNum;
+
+        private BattleServer(CustomSevSetting setting) : base(setting)
         {
+            maxBattleNum = Math.Max(8, setting.battleMaxNum);
             StartUpdateThread();
         }
 
-        readonly Dictionary<long, BattleScene> battles = new Dictionary<long, BattleScene>();
+
+        public void BroadcastServerStatus()
+        {
+            var battleNum = battles.Count;
+            var p = Packet.CreatPush<SevStatus>("Server.Status", (ss) =>
+            {
+                ss.balance = (float)battleNum / maxBattleNum;
+            });
+            this.BroadcastMessage(p);
+        }
+
+        #region <<about battles>>
+
+        readonly ConcurrentDictionary<long, BattleScene> battles = new ConcurrentDictionary<long, BattleScene>();
 
         public BattleScene CreateBattle(BattleCreateData bcd)
         {
-            var battle = new BattleScene(bcd);
-            lock (battles)
+            var battle = new BattleScene(bcd, this);
+            if (!battles.TryAdd(battle.UUID, battle))
             {
-                battles.Add(battle.UUID, battle);
+                Logger.Error("Battle UUID[{0}] conflict!", battle.UUID);
+                return null;
             }
+            this.BroadcastServerStatus();
             return battle;
         }
 
         public BattleScene GetBattle(long battleId)
         {
-            lock(battles)
+            BattleScene ret;
+            if (battles.TryGetValue(battleId, out ret))
             {
-                BattleScene ret;
-                if (battles.TryGetValue(battleId, out ret))
-                {
-                    return ret;
-                }
+                return ret;
             }
             return null;
         }
+
+        private void UpdateBattles(int deltaTime)
+        {
+            using (var rmvs = ListCache<long>.Get())
+            {
+                foreach(var kv in battles)
+                {
+                    try
+                    {
+                        kv.Value.Update(deltaTime);
+                        if (kv.Value.Destroyable)
+                        {
+                            rmvs.Add(kv.Key);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Exception(ex);
+                    }
+                }
+                BattleScene rmved;
+                for (var i = rmvs.Count - 1; i >= 0; i--)
+                {
+                    if(!battles.TryRemove(rmvs[i], out rmved))
+                    {
+
+                    }
+                }
+            }
+        }
+
+        [Obsolete]
+        void ForwardingToBattleScene(string channel, string playerId, Packet packet)
+        {
+            throw new NotImplementedException();
+        }
+
+        public BattleScene FindBattle(string channel, string playerId)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        #endregion
+
+        #region <<Implement BattleScene.IPlayerMessagePusher>>
+
+        public void Push(string channelToken, Packet p)
+        {
+            this.Send(channelToken, p);
+        }
+
+        #endregion
 
         #region <<UpdateThread>>
 
@@ -72,29 +140,6 @@ namespace mana.Server.Battle
             mUpdateThread.Join();
         }
 
-        void UpdateBattles(int deltaTime)
-        {
-            lock (battles)
-            {
-                using (var rmvs = ListCache<long>.Get())
-                {
-                    for (var it = battles.GetEnumerator(); it.MoveNext();)
-                    {
-                        var battle = it.Current.Value;
-                        battle.DoUpdate(deltaTime);
-                        if (battle.Destroyable)
-                        {
-                            rmvs.Add(it.Current.Key);
-                        }
-                    }
-                    for(var i = rmvs.Count - 1; i >= 0; i--)
-                    {
-                        battles.Remove(rmvs[i]);
-                    }
-                }
-            }
-        }
-
         void UpdateProc()
         {
             var curTime = Environment.TickCount;
@@ -107,8 +152,6 @@ namespace mana.Server.Battle
                 Thread.Sleep(kUpdateInterval);
             }
         }
-
         #endregion
-
     }
 }

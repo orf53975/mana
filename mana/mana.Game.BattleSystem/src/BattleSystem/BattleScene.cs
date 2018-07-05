@@ -10,6 +10,13 @@ namespace BattleSystem
 {
     public class BattleScene
     {
+        #region <<Definition IPlayerMessagePusher>>
+        public interface IPlayerMessagePusher
+        {
+            void Push(string channelToken, Packet p);
+        }
+        #endregion
+
         public enum BattleType : byte { normal = 0, arena = 1 }
 
         public readonly BattleType battleType;
@@ -21,6 +28,8 @@ namespace BattleSystem
         public readonly BattleRecorder recorder = new BattleRecorder();
 
         public readonly long UUID;
+
+        public readonly IPlayerMessagePusher playerMessagePusher;
 
         internal float frameTime
         {
@@ -34,14 +43,15 @@ namespace BattleSystem
             private set;
         }
 
-        public BattleScene(BattleCreateData battleCreateData)
+        public BattleScene(BattleCreateData bcd, IPlayerMessagePusher pmp)
         {
-            battleType = (BattleType)battleCreateData.type;
-            UUID = battleCreateData.uuid;
-            foreach (var ud in battleCreateData.units)
+            battleType = (BattleType)bcd.type;
+            UUID = bcd.uuid;
+            foreach (var ud in bcd.units)
             {
                 this.AddUnit(new Unit(this, ud));
             }
+            this.playerMessagePusher = pmp;
         }
 
         public Unit Find(int id)
@@ -96,25 +106,7 @@ namespace BattleSystem
             throw new NotImplementedException();
         }
 
-        public void OnOprationRequest(CastRequest cr)
-        {
-            var unit = Find(cr.unitId);
-            if (unit != null)
-            {
-                unit.OnPlayerOprationRequest(cr);
-            }
-        }
-
-        public void OnOprationRequest(MoveRequest mr)
-        {
-            var unit = Find(mr.unitId);
-            if (unit != null)
-            {
-                unit.OnPlayerOprationRequest(mr);
-            }
-        }
-
-        private byte[] Update(float deltaTime)
+        public void Update(float deltaTime)
         {
             this.frameTime = deltaTime;
             for (int i = units.Count - 1; i >= 0; i--)
@@ -123,48 +115,75 @@ namespace BattleSystem
             }
             for (int i = units.Count - 1; i >= 0; i--)
             {
-                if (units[i].destroyable)
+                var u = units[i];
+                if (u.destroyable)
                 {
-                    recorder.PushRemoveUnit(units[i]);
+                    recorder.PushRemoveUnit(u);
                     units.RemoveAt(i);
                 }
                 else
                 {
-                    units[i].LateUpdate();
+                    u.LateUpdate();
                 }
             }
-            return recorder.Build();
+            this.PushBattleSyncToAllPlayer();
         }
 
-        public void DoUpdate(float deltaTime)
+        private void PushBattleSyncToAllPlayer()
         {
-
-            //var ud = this.Update(deltaTime);
-            //return new Packet(0x2001, ud);
-
-        }
-
-        public Packet GetBattleSnapshot()
-        {
+            //token.SendPush<BattleSync>("Battle.Sync", (bs) =>
+            //{
+            //    bs.actions = new DataObject[3];
+            //    bs.actions[0] = ObjectCache.Get<AddUnit>();
+            //    bs.actions[1] = ObjectCache.Get<RemoveUnit>();
+            //    bs.actions[2] = ObjectCache.Get<BuffData>();
+            //}, packet.msgAttachId);
             //TODO
-            // -- 1 
-            //var bsd = DooObjectPool.Instance.Get<BattleSnapData>();
-            //bsd.type = (byte)this.battleType;
-            //bsd.uuid = this.UUID;
-
-            //bsd.units = new UnitInfo[units.Count];
+            //var packet = Packet.CreatPush()
             //for (int i = units.Count - 1; i >= 0; i--)
             //{
-            //    bsd.units[i] = this.units[i].GetSnapData();
+            //    var u = units[i];
+            //    if (u.channelToken != null)
+            //    {
+
+            //    }
             //}
-
-            //var p = new Packet(0x2005);
-            //p.Put(bsd);
-
-            //DooObjectPool.Instance.Recycle(ref bsd);
-            //return p;
-            return null;
+            //return recorder.Build();
         }
 
+
+
+        public void GetBattleSnapshot(BattleSnapData bsd)
+        {
+            bsd.type = (byte)this.battleType;
+            bsd.uuid = this.UUID;
+            bsd.units = new UnitInfo[units.Count];
+            for (int i = units.Count - 1; i >= 0; i--)
+            {
+                bsd.units[i] = this.units[i].GetSnapData();
+            }
+        }
+
+        #region <<Message >>
+
+        public void OnOprationRequest(string playerId, CastRequest cr)
+        {
+            var unit = Find(cr.unitId);
+            if (unit != null)
+            {
+                unit.OnPlayerOprationRequest(cr);
+            }
+        }
+
+        public void OnOprationRequest(string playerId, MoveRequest mr)
+        {
+            var unit = Find(mr.unitId);
+            if (unit != null)
+            {
+                unit.OnPlayerOprationRequest(mr);
+            }
+        }
+
+        #endregion
     }
 }

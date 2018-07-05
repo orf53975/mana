@@ -13,7 +13,8 @@ namespace mana.Server.Game.Handler
             //{
             //    token.GetServer<GameServer>().ForwardingToBattleServer(gamePlayer, packet);
             //}
-            packet.SetMsgToken(token.uid);
+            //TODO test
+            packet.SetAttach(token.uid);
             token.GetServer<GameServer>().ForwardingToBattleServer(0, packet);
         }
     }

@@ -37,7 +37,7 @@ namespace mana.Foundation.Network.Sever
             Packet.ChangePoolCapacity(8192);
         }
 
-        public IOCPServer(ServerSetting setting):
+        public IOCPServer(SevSetting setting):
             this(setting.connMax , setting.connBuffSize , setting.bindTimeOut , setting.pingTimeOut)
         {
             LoadPlugins(setting.plugins);

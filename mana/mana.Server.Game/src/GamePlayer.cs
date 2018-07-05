@@ -2,7 +2,7 @@
 {
     public class GamePlayer
     {
-        public string token;
+        public string playerId;
 
         public int bscId;
 

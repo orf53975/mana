@@ -23,7 +23,7 @@ namespace mana.Foundation
             NONE            = 0,
             ENCODE_ROUTE    = 1 << 0,
             COMPRESS        = 1 << 1,
-            TOKEN           = 1 << 2
+            ATTACH          = 1 << 2
         }
 
         static bool CheckFlag(Flag value, Flag flag)
@@ -198,9 +198,9 @@ namespace mana.Foundation
             // -- 2. message type
             p.msgType = msgType;
             // -- 3. message token
-            if (CheckFlag(msgFlag, Flag.TOKEN))
+            if (CheckFlag(msgFlag, Flag.ATTACH))
             {
-                p.msgToken = br.ReadUTF8();
+                p.msgAttach = br.ReadUTF8();
             }
             // -- 4. message route
             if (CheckFlag(msgFlag, Flag.ENCODE_ROUTE))
@@ -251,10 +251,10 @@ namespace mana.Foundation
             ByteBuffer msgCompressData = null;
             var packetSize = 0;
             // -- 3. message token
-            if (p.msgToken != null)
+            if (p.msgAttach != null)
             {
-                msgFlag |= Flag.TOKEN;
-                packetSize += CodingUtil.GetByteCountUTF8(p.msgToken) + 2;
+                msgFlag |= Flag.ATTACH;
+                packetSize += CodingUtil.GetByteCountUTF8(p.msgAttach) + 2;
             }
             // -- 4. message route
             var msgRouteCode = Protocol.Instance.GetRouteCode(msgRoute);
@@ -299,9 +299,9 @@ namespace mana.Foundation
             // -- 2. packet size
             bw.WriteInt24(packetSize);
             // -- 3. message token
-            if (p.msgToken != null)
+            if (p.msgAttach != null)
             {
-                bw.WriteUTF8(p.msgToken);
+                bw.WriteUTF8(p.msgAttach);
             }
             // -- 4. message route
             if (msgRouteCode != 0)
@@ -341,7 +341,7 @@ namespace mana.Foundation
             private set;
         }
 
-        public string msgToken
+        public string msgAttach
         {
             get;
             private set;
@@ -374,9 +374,9 @@ namespace mana.Foundation
             Logger.Warning("Packet new Counter = {0}", newCounter);
         }
 
-        public void SetMsgToken(string token)
+        public void SetAttach(string attach)
         {
-            this.msgToken = token;
+            this.msgAttach = attach;
         }
 
         public bool TryGet(ISerializable obj)
@@ -413,7 +413,7 @@ namespace mana.Foundation
             var ret = obj as ISerializable;
             if (ret == null)
             {
-                Logger.Error("Type[] does not implement the interface", t.FullName);
+                Logger.Error("Type[{0}] does not implement ISerializable", t.FullName);
                 return null;
             }
             if (!this.TryGet(ret))
@@ -431,7 +431,17 @@ namespace mana.Foundation
         public T TryGet<T>() 
             where T : class, ISerializable, new()
         {
-            return TryGet(typeof(T)) as T;
+            var ret = ObjectCache.Get<T>();
+            if (!this.TryGet(ret))
+            {
+                var cachedObj = ret as ICacheable;
+                if (cachedObj != null)
+                {
+                    cachedObj.ReleaseToCache();
+                }
+                return null;
+            }
+            return ret;
         }
 
         public DDNode TryGetDataNode(string tmplName)
@@ -450,7 +460,7 @@ namespace mana.Foundation
             this.msgType = MessageType.UNKNOW;
             this.msgRoute = null;
             this.msgRequestId = 0;
-            this.msgToken = null;
+            this.msgAttach = null;
             this.msgData.Clear();
         }
 

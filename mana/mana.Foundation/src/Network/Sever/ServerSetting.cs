@@ -1,8 +1,8 @@
 ﻿namespace mana.Foundation.Network.Sever
 {
-    public class ServerSetting
+    public class SevSetting
     {
-        private static readonly ServerSetting Default = new ServerSetting();
+        private static readonly SevSetting Default = new SevSetting();
 
         public string host = "127.0.0.1";
 
@@ -24,7 +24,7 @@
 
         public string[] plugins = { };
 
-        public void UpdateWith(ServerSetting other)
+        public void UpdateWith(SevSetting other)
         {
             if (other.host != Default.host)
             {

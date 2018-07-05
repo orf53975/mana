@@ -9,9 +9,18 @@ namespace mana.Server.Game.BattleLink
     {
         readonly IPEndPoint address;
 
-        readonly NetClient  channel;
+        readonly NetClient channel;
 
-        readonly BSCMgr     manager;
+        readonly BSCMgr manager;
+
+        /// <summary>
+        /// 战斗服的负载状态
+        /// </summary>
+        public float BalanceStatus
+        {
+            get;
+            private set;
+        }
 
         public BSClient(BSCMgr mgr, string addr)
         {
@@ -42,11 +51,16 @@ namespace mana.Server.Game.BattleLink
 
         void InitPacketListener()
         {
+            channel.AddPushListener<SevStatus>("Server.Status", (ss) =>
+            {
+                this.BalanceStatus = ss.balance;
+                Logger.Error("BalanceStatus:" + BalanceStatus);
+            });
             channel.AddPacketListener("Battle.Sync", (p) =>
             {
-                var uid = p.msgToken;
-                p.SetMsgToken(null);
-                manager.server.Send(uid , p);
+                var playerUID = p.msgAttach;
+                p.SetAttach(null);
+                manager.server.Send(playerUID, p);
             });
         }
 
@@ -63,6 +77,8 @@ namespace mana.Server.Game.BattleLink
                     Logger.Print("BindToken:{0}", res.code);
                 });
         }
+
+
 
         internal void SendPacket(Packet msg)
         {

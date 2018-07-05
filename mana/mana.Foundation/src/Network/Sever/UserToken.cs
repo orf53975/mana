@@ -317,20 +317,20 @@ namespace mana.Foundation.Network.Sever
             //}
         }
 
-        public void SendResponse<T>(string route, int responseId, Action<T> rspSetter, string msgToken = null)
+        public void SendResponse<T>(string route, int responseId, Action<T> rspSetter, string attachId = null)
             where T : class, DataObject, new()
         {
             var p = Packet.CreatResponse(route, responseId, rspSetter);
-            p.SetMsgToken(msgToken);
+            p.SetAttach(attachId);
             this.Send(p);
             p.Release();
         }
 
-        public void SendPush<T>(string route, Action<T> setter, string msgToken = null)
+        public void SendPush<T>(string route, Action<T> setter, string attachId = null)
             where T : class, DataObject, new()
         {
             var p = Packet.CreatPush(route, setter);
-            p.SetMsgToken(msgToken);
+            p.SetAttach(attachId);
             this.Send(p);
             p.Release();
         }

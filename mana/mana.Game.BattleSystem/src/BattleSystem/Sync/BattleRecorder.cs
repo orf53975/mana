@@ -110,24 +110,10 @@ namespace BattleSystem.Sync
             records.Add(ru);
         }
 
-
-        public byte[] Build()
+        public DataObject[] Build()
         {
-            var actions = records.ToArray();
+            var ret = records.ToArray();
             records.Clear();
-
-            byte[] ret = null;
-            var bs = ObjectCache.Get<BattleSync>();
-            bs.actions = actions;
-
-            //TODO
-            //using (var wb = doo.io.WriteonlyBuffer.Pool.Get())
-            //{
-            //    bs.Write(wb);
-            //    ret = wb.ToByteArray();
-            //}
-            bs.ReleaseToCache();
-
             return ret;
         }
     }

@@ -16,7 +16,7 @@ namespace BattleSystem.Units
         public readonly UnitProp baseProp;
 
         // -- TODO 网络通道
-        public string netChannel;
+        public string channelToken;
 
         public int ownerPlayerId
         {

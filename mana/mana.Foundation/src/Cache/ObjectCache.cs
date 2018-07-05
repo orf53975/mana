@@ -119,8 +119,16 @@ namespace mana.Foundation
                     {
                         lock (locker)
                         {
-                            _pool = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
-                            ObjectCache._poolManager.AddPool(typeof(T), _pool);
+                            try
+                            {
+                                Logger.Print("Create ObjectPoolCache<{0}>" , typeof(T).FullName);
+                                _pool = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
+                                ObjectCache._poolManager.AddPool(typeof(T), _pool);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Exception(ex);
+                            }
                         }
                     }
                     return _pool;

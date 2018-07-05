@@ -33,6 +33,7 @@ namespace mana.Server.Game.BattleLink
             clients[clientId].SendPacket(msg);
         }
 
+
         internal void Update(int deltaTime)
         {
             for (int i = 0; i < clients.Length; i++)

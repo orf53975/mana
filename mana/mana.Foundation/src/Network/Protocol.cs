@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace mana.Foundation
 {
-    public sealed partial class Protocol : DataObject
+    public sealed class Protocol : DataObject
     {
 
         #region <<Single Instance>>
@@ -18,6 +18,7 @@ namespace mana.Foundation
             AddProto(0x0003, new Proto("Connector.Pong", ProtoType.Push, null, typeof(Heartbeat).FullName));
             AddProto(0x0004, new Proto("Connector.BindToken", ProtoType.Request, typeof(AccountInfo).FullName, typeof(Result).FullName));
             AddProto(0x0005, new Proto("Connector.Kick", ProtoType.Push, null, typeof(Result).FullName));
+            AddProto(0x0006, new Proto("Server.Status", ProtoType.Push, null, typeof(SevStatus).FullName));
             // -- default types
             AddTypeCode(typeof(Protocol).FullName, 0x0001);
             AddTypeCode(typeof(Heartbeat).FullName, 0x0003);

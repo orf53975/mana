@@ -51,9 +51,10 @@
     <Compile Include="src\Cache\ObjectCache.cs" />
     <Compile Include="src\Cache\IObjectPool.cs" />
     <Compile Include="src\Cache\RefCounter.cs" />
-    <Compile Include="src\Network\AccountInfo.cs" />
+    <Compile Include="src\Network\CommonData\SevStatus.cs" />
+    <Compile Include="src\Network\CommonData\AccountInfo.cs" />
     <Compile Include="src\Network\Client\NetDispatcher.Packet.cs" />
-    <Compile Include="src\Network\Result.cs" />
+    <Compile Include="src\Network\CommonData\Result.cs" />
     <Compile Include="src\Network\Sever\Common\IDataTypeRegister.cs" />
     <Compile Include="src\Network\Sever\Util\ConfigUtil.cs" />
     <Compile Include="src\Network\Sever\ServerSetting.cs" />
@@ -67,7 +68,7 @@
     <Compile Include="src\Data\ISerializable.cs" />
     <Compile Include="src\Network\Client\NetClientIOCP.cs" />
     <Compile Include="src\Network\Client\NetClientDefault.cs" />
-    <Compile Include="src\Network\Heartbeat.cs" />
+    <Compile Include="src\Network\CommonData\Heartbeat.cs" />
     <Compile Include="src\Data\Static\DataObject.cs" />
     <Compile Include="src\Data\Static\DataObjectConfigAttribute.cs" />
     <Compile Include="src\Data\Static\DataObjectExtension.cs" />

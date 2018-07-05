@@ -7,15 +7,15 @@ namespace mana.Server.Battle
     {
         #region <<AppSetting>>
         private const string sevSettingFile = "sev.setting.json";
-        private static ServerSetting _sevSetting = null;
-        internal static ServerSetting SevSetting
+        private static CustomSevSetting _sevSetting = null;
+        internal static CustomSevSetting SevSetting
         {
             get
             {
                 if (_sevSetting == null)
                 {
-                    _sevSetting = ConfigUtil.LoadOrNewSave<ServerSetting>(sevSettingFile,
-                        (str) => JsonConvert.DeserializeObject<ServerSetting>(str),
+                    _sevSetting = ConfigUtil.LoadOrNewSave<CustomSevSetting>(sevSettingFile,
+                        (str) => JsonConvert.DeserializeObject<CustomSevSetting>(str),
                         (cfg) => JsonConvert.SerializeObject(cfg, Formatting.Indented));
                 }
                 return _sevSetting;

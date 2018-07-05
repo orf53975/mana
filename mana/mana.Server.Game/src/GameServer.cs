@@ -29,7 +29,7 @@ namespace mana.Server.Game
 
         internal void ForwardingToBattleServer(GamePlayer gamePlayer, Packet packet)
         {
-            packet.SetMsgToken(gamePlayer.token);
+            packet.SetAttach(gamePlayer.playerId);
             battleManager.Send(gamePlayer.bscId, packet);
         }
 
@@ -40,7 +40,8 @@ namespace mana.Server.Game
 
         public override string GenUID(AccountInfo accountInfo)
         {
-            return accountInfo.username + accountInfo.password;
+            //return accountInfo.username + accountInfo.password;
+            return base.GenUID(accountInfo);
         }
 
         #region <<UpdateThread>>

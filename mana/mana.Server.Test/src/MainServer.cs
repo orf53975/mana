@@ -7,7 +7,7 @@ namespace mana.Server.Test
 {
     class MainServer : IOCPServer
     {
-        public static MainServer StartNew(ServerSetting setting)
+        public static MainServer StartNew(SevSetting setting)
         {
             var sev = new MainServer(setting);
             var ipa = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
@@ -15,7 +15,7 @@ namespace mana.Server.Test
             return sev;
         }
 
-        private MainServer(ServerSetting setting) : base(setting)
+        private MainServer(SevSetting setting) : base(setting)
         {
             StartUpdateThread();
         }

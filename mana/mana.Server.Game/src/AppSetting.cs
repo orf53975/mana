@@ -2,7 +2,7 @@
 
 namespace mana.Server.Game
 {
-    class AppSetting : ServerSetting
+    class AppSetting : SevSetting
     {
         public string name = "测试服1";
 

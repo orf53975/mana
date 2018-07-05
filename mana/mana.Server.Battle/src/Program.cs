@@ -9,7 +9,10 @@ namespace mana.Server.Battle
     {
         static void Main(string[] args)
         {
-            TypeUtil.ParseArgs<ServerSetting>(args, opts => Config.SevSetting.UpdateWith(opts));
+            TypeUtil.ParseArgsUpdateObject(Config.SevSetting, args, (argv) =>
+            {
+                Console.WriteLine("parse[{0}] failed!", argv);
+            });
             Console.Title = string.Format("BattleServer-{0}", Config.SevSetting.port);
             var cr = new ConsoleRunning();
             BattleServer.StartNew(Config.SevSetting);

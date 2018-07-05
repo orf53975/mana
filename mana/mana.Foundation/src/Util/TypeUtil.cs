@@ -116,9 +116,9 @@ namespace mana.Foundation
             return false;
         }
 
-        public static T ParseArgs<T>(string[] args, Action<T> action , Action<string> parseArgvFailed = null)
+        public static void ParseArgsUpdateObject<T>(T obj, string[] args, Action<string> parseArgvFailed = null)
         {
-            var obj = Activator.CreateInstance<T>();
+            var error = new System.Text.StringBuilder();
             var t = obj.GetType();
             foreach (var argv in args)
             {
@@ -138,10 +138,9 @@ namespace mana.Foundation
                         {
                             f.SetValue(obj, Convert.ChangeType(v, f.FieldType));
                         }
-
                         continue;
                     }
-                    if(parseArgvFailed != null)
+                    if (parseArgvFailed != null)
                     {
                         parseArgvFailed(argv);
                     }
@@ -154,12 +153,6 @@ namespace mana.Foundation
                     }
                 }
             }
-            if (action != null)
-            {
-                action.Invoke(obj);
-            }
-            return obj;
         }
-
     }
 }
