@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "mana.Server.Game": {
+      "commandName": "Project"
+    }
+  }
+}

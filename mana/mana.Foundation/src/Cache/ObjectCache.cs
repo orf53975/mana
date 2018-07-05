@@ -41,21 +41,44 @@ namespace mana.Foundation
                 }
             }
 
-            internal void AddPool(Type t, IObjectPool pool)
+            internal ObjectPool<T> GetPool<T>() where T : class, new()
+            {
+                var pool = GetPool(typeof(T));
+                if (pool != null)
+                {
+                    return pool as ObjectPool<T>;
+                }
+                return null;
+            }
+
+            internal ObjectPool<T> AddPool<T>() where T : class, new()
             {
                 try
                 {
                     _lockSlim.EnterWriteLock();
-                    _objectPools.Add(t, pool);
+                    var pool = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
+                    _objectPools.Add(typeof(T), pool);
+                    return pool;
                 }
                 catch (Exception e)
                 {
                     Logger.Exception(e);
+                    return null;
                 }
                 finally
                 {
                     _lockSlim.ExitWriteLock();
                 }
+            }
+
+            internal ObjectPool<T> GetOrAddPool<T>() where T : class, new()
+            {
+                var pool = GetPool<T>();
+                if (pool == null)
+                {
+                    pool = AddPool<T>();
+                }
+                return pool;
             }
 
             internal void ClearAllPool()
@@ -104,67 +127,20 @@ namespace mana.Foundation
 
         #endregion
 
-        #region <<class ObjectPoolCache>>
-
-        private static class ObjectPoolCache<T> where T : class, new()
-        {
-            private static readonly object locker = new object();
-
-            private static ObjectPool<T> _pool = null;
-            public static ObjectPool<T> Pool
-            {
-                get
-                {
-                    if (_pool == null)
-                    {
-                        lock (locker)
-                        {
-                            try
-                            {
-                                Logger.Print("Create ObjectPoolCache<{0}>" , typeof(T).FullName);
-                                _pool = new ObjectPool<T>(() => Activator.CreateInstance<T>(), null, null, 16);
-                                ObjectCache._poolManager.AddPool(typeof(T), _pool);
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Exception(ex);
-                            }
-                        }
-                    }
-                    return _pool;
-                }
-            }
-
-            public static T Get(Action<T> handler = null)
-            {
-                var obj = Pool.Get();
-                if (handler != null)
-                {
-                    handler(obj);
-                }
-                return obj;
-            }
-
-            public static bool Put(T item)
-            {
-                return Pool.Put(item);
-            }
-
-            public static void Clear()
-            {
-                ((IObjectPool)Pool).Clear();
-            }
-        }
-
-        #endregion
-
         static readonly ObjectPoolManager _poolManager = new ObjectPoolManager();
 
         public static T Get<T>(Action<T> handler = null)
             where T : class, new()
         {
-            return ObjectPoolCache<T>.Get(handler);
+            var pool = _poolManager.GetPool<T>();
+            var item = pool != null ? pool.Get() : Activator.CreateInstance<T>();
+            if (handler != null)
+            {
+                handler(item);
+            }
+            return item;
         }
+
 
         public static object TryGet(Type t)
         {
@@ -180,7 +156,7 @@ namespace mana.Foundation
         public static bool Put<T>(T item)
             where T : class, new()
         {
-            return ObjectPoolCache<T>.Put(item);
+            return _poolManager.GetOrAddPool<T>().Put(item);
         }
 
         public static bool TryPut(object item)
@@ -201,7 +177,11 @@ namespace mana.Foundation
         public static void Clear<T>()
             where T : class, new()
         {
-            ObjectPoolCache<T>.Clear();
+            var pool = _poolManager.GetPool(typeof(T));
+            if (pool != null)
+            {
+                pool.Clear();
+            }
         }
 
         public static void Clear()
