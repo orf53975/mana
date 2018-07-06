@@ -107,6 +107,7 @@
     <Compile Include="src\Util\MathTools.cs" />
     <Compile Include="src\Cache\ObjectPool.cs" />
     <Compile Include="src\Cache\StringBuilderCache.cs" />
+    <Compile Include="src\Util\SynchronizedDictionary.cs" />
     <Compile Include="src\Util\TimeUtil.cs" />
     <Compile Include="src\Util\TypeUtil.cs" />
     <Compile Include="src\Util\Utils.cs" />

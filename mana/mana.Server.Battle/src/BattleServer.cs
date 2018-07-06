@@ -5,7 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Net;
 using System.Threading;
-using xxd.sync;
+using xxd.battle;
 
 namespace mana.Server.Battle
 {
@@ -41,21 +41,21 @@ namespace mana.Server.Battle
 
         #region <<about battles>>
 
-        readonly ConcurrentDictionary<long, BattleScene> battles = new ConcurrentDictionary<long, BattleScene>();
+        readonly ConcurrentDictionary<string, BattleScene> battles = new ConcurrentDictionary<string, BattleScene>();
 
-        public BattleScene CreateBattle(BattleCreateData bcd)
+        public BattleScene CreateBattle(BattleCreateInfo bcd, string creatorId)
         {
-            var battle = new BattleScene(bcd, this);
-            if (!battles.TryAdd(battle.UUID, battle))
+            var battle = new BattleScene(bcd, creatorId, this);
+            if (!battles.TryAdd(battle.uid, battle))
             {
-                Logger.Error("Battle UUID[{0}] conflict!", battle.UUID);
+                Logger.Error("Battle uid[{0}] conflict!", battle.uid);
                 return null;
             }
             this.BroadcastServerStatus();
             return battle;
         }
 
-        public BattleScene GetBattle(long battleId)
+        public BattleScene GetBattle(string battleId)
         {
             BattleScene ret;
             if (battles.TryGetValue(battleId, out ret))
@@ -65,16 +65,26 @@ namespace mana.Server.Battle
             return null;
         }
 
+        private void DeleteBattle(string battleId)
+        {
+            BattleScene rmved;
+            if (!battles.TryRemove(battleId, out rmved))
+            {
+                Logger.Error("Delete battle[{0}] failed!" , battleId);
+            }
+        }
+
         private void UpdateBattles(int deltaTime)
         {
-            using (var rmvs = ListCache<long>.Get())
+            using (var rmvs = ListCache<string>.Get())
             {
-                foreach(var kv in battles)
+                foreach (var kv in battles)
                 {
                     try
                     {
-                        kv.Value.Update(deltaTime);
-                        if (kv.Value.Destroyable)
+                        var battle = kv.Value;
+                        battle.Update(deltaTime);
+                        if (battle.Destroyable)
                         {
                             rmvs.Add(kv.Key);
                         }
@@ -84,13 +94,9 @@ namespace mana.Server.Battle
                         Logger.Exception(ex);
                     }
                 }
-                BattleScene rmved;
                 for (var i = rmvs.Count - 1; i >= 0; i--)
                 {
-                    if(!battles.TryRemove(rmvs[i], out rmved))
-                    {
-
-                    }
+                    DeleteBattle(rmvs[i]);
                 }
             }
         }

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using mana.Foundation;
-using xxd.sync;
+using xxd.battle;
 
 namespace BattleSystem.Units
 {

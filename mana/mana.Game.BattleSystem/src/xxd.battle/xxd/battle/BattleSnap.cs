@@ -1,11 +1,11 @@
 ﻿using mana.Foundation;
 
-namespace xxd.sync
+namespace xxd.battle
 {
 	/// <summary>
 	/// 当前场景快照数据
 	/// </summary>
-    public class BattleSnapData : DataObject
+    public class BattleSnap : DataObject
     {
 
 		#region ---flags---
@@ -130,9 +130,9 @@ namespace xxd.sync
 		#endregion
 
 		#region ---Clone---
-		public BattleSnapData Clone()
+		public BattleSnap Clone()
 		{            
-			var _clone = ObjectCache.Get<BattleSnapData>();
+			var _clone = ObjectCache.Get<BattleSnap>();
 			_clone._type = this._type;
 			_clone._uuid = this._uuid;
 			_clone._units = this._units;
@@ -159,7 +159,7 @@ namespace xxd.sync
 		public string ToFormatString(string newLineIndent)
         {
             var sb = StringBuilderCache.Acquire();
-            sb.Append("BattleSnapData{\r\n");
+            sb.Append("BattleSnap{\r\n");
 			var curIndent = newLineIndent + '\t';
 			if(HasType())
 			{

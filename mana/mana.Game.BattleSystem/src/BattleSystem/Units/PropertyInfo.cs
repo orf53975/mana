@@ -1,4 +1,4 @@
-﻿using xxd.sync;
+﻿using xxd.battle;
 
 namespace BattleSystem.Units
 {

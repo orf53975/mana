@@ -1,6 +1,6 @@
 ﻿using mana.Foundation;
 using System;
-using xxd.sync;
+using xxd.battle;
 
 namespace BattleSystem.Util
 {

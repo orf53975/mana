@@ -1,12 +1,12 @@
 ﻿using mana.Foundation;
 
-namespace xxd.sync
+namespace xxd.battle
 {
-    public class BattleSync : DataObject
+    public class AddUnit : DataObject
     {
 
 		#region ---flags---
-		public const byte __FLAG_ACTIONS = 0;
+		public const byte __FLAG_DATA = 0;
 		public const long __MASK_ALL_VALUE = 0x1;
 
 		#endregion
@@ -15,36 +15,36 @@ namespace xxd.sync
 		public readonly Mask mask = new Mask();
 		#endregion
 
-		#region ---actions---
-		private DataObject[] _actions = null;
-		public DataObject[] actions
+		#region ---data---
+		private UnitInfo _data = null;
+		public UnitInfo data
 		{
 			get
 			{
-				return _actions;
+				return _data;
 			}
 			set
 			{
-				if(this._actions != value)
+				if(this._data != value)
 				{
-					this._actions = value;
-					this.mask.AddFlag(__FLAG_ACTIONS);
+					this._data = value;
+					this.mask.AddFlag(__FLAG_DATA);
 				}
 			}
 		}
 
-		public bool HasActions()
+		public bool HasData()
 		{
-			return this.mask.CheckFlag(__FLAG_ACTIONS);
+			return this.mask.CheckFlag(__FLAG_DATA);
 		}
-		#endregion //actions
+		#endregion //data
 		
 		#region ---Encode---
         public void Encode(IWritableBuffer bw)
         {
-			if (mask.CheckFlag(__FLAG_ACTIONS))
+			if (mask.CheckFlag(__FLAG_DATA))
 			{
-				bw.WriteUnknowArray(_actions);
+				bw.Write(_data);
 			}
         }
 		#endregion
@@ -53,18 +53,18 @@ namespace xxd.sync
 		public void Decode(IReadableBuffer br)
 		{
 			this.mask.Decode(br);
-			if (HasActions())
+			if (HasData())
 			{
-				_actions = br.ReadUnknowArray();
+				_data = br.Read<UnitInfo>();
 			}
 		}
 		#endregion
 
 		#region ---Clone---
-		public BattleSync Clone()
+		public AddUnit Clone()
 		{            
-			var _clone = ObjectCache.Get<BattleSync>();
-			_clone._actions = this._actions;
+			var _clone = ObjectCache.Get<AddUnit>();
+			_clone._data = this._data;
 			return _clone;
 		}
 		#endregion
@@ -73,10 +73,10 @@ namespace xxd.sync
 		public void ReleaseToCache()
         {
 			this.mask.ClearAllFlag();
-			if(_actions != null)
+			if(_data != null)
 			{
-				_actions.ReleaseToCache();
-                _actions = null;
+				_data.ReleaseToCache();
+                _data = null;
 			}
 			ObjectCache.Put(this);
         }
@@ -86,12 +86,12 @@ namespace xxd.sync
 		public string ToFormatString(string newLineIndent)
         {
             var sb = StringBuilderCache.Acquire();
-            sb.Append("BattleSync{\r\n");
+            sb.Append("AddUnit{\r\n");
 			var curIndent = newLineIndent + '\t';
-			if(HasActions())
+			if(HasData())
 			{
-				sb.Append(",\r\n").Append(curIndent).Append("actions = ");
-				sb.Append(actions == null ? "null" : actions.ToFormatString(curIndent));
+				sb.Append(",\r\n").Append(curIndent).Append("data = ");
+				sb.Append(data == null ? "null" : data.ToFormatString(curIndent));
 			}
 			sb.Append("\r\n");
             sb.Append(newLineIndent).Append('}');

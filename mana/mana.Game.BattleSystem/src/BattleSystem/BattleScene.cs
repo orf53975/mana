@@ -3,8 +3,8 @@ using BattleSystem.Units;
 using mana.Foundation;
 using System;
 using System.Collections.Generic;
-using xxd.sync;
-using xxd.sync.opration;
+using xxd.battle;
+using xxd.battle.opration;
 
 namespace BattleSystem
 {
@@ -27,7 +27,7 @@ namespace BattleSystem
 
         public readonly BattleRecorder recorder = new BattleRecorder();
 
-        public readonly long UUID;
+        public readonly string uid;
 
         public readonly IPlayerMessagePusher playerMessagePusher;
 
@@ -43,15 +43,16 @@ namespace BattleSystem
             private set;
         }
 
-        public BattleScene(BattleCreateData bcd, IPlayerMessagePusher pmp)
+        public BattleScene(BattleCreateInfo bci, string requestor, IPlayerMessagePusher pmp)
         {
-            battleType = (BattleType)bcd.type;
-            UUID = bcd.uuid;
-            foreach (var ud in bcd.units)
-            {
-                this.AddUnit(new Unit(this, ud));
-            }
+            this.uid = requestor + "-" + Guid.NewGuid().ToString();
             this.playerMessagePusher = pmp;
+            this.InitWithTemplate(bci);
+        }
+
+        private void InitWithTemplate(BattleCreateInfo bci)
+        {
+            //TODO
         }
 
         public Unit Find(int id)
@@ -96,15 +97,12 @@ namespace BattleSystem
             units.Add(u);
         }
 
-        public void AddSummonUnit(Unit u)
+        public void AddUnit(UnitCreateData ucd)
         {
-            throw new NotImplementedException();
+            var u = new Unit(this, ucd);
+            this.AddUnit(u);
         }
 
-        public void AddBullet(Unit u)
-        {
-            throw new NotImplementedException();
-        }
 
         public void Update(float deltaTime)
         {
@@ -152,19 +150,19 @@ namespace BattleSystem
         }
 
 
+        //TODO
+        //public void GetBattleSnapshot(BattleSnapData bsd)
+        //{
+        //    bsd.type = (byte)this.battleType;
+        //    bsd.uuid = this.UUID;
+        //    bsd.units = new UnitInfo[units.Count];
+        //    for (int i = units.Count - 1; i >= 0; i--)
+        //    {
+        //        bsd.units[i] = this.units[i].GetSnapData();
+        //    }
+        //}
 
-        public void GetBattleSnapshot(BattleSnapData bsd)
-        {
-            bsd.type = (byte)this.battleType;
-            bsd.uuid = this.UUID;
-            bsd.units = new UnitInfo[units.Count];
-            for (int i = units.Count - 1; i >= 0; i--)
-            {
-                bsd.units[i] = this.units[i].GetSnapData();
-            }
-        }
-
-        #region <<Message >>
+        #region <<Message Request>>
 
         public void OnOprationRequest(string playerId, CastRequest cr)
         {

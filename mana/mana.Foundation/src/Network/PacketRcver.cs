@@ -23,7 +23,16 @@ namespace mana.Foundation
             var needSpace = 1024;
             var newCapacity = buff.Length + needSpace;
             buff.EnsureCapacity(newCapacity);
-            var count = socket.Receive(buff.data, buff.Length, needSpace, SocketFlags.None);
+
+            var buffer = buff.data;
+            var offset = buff.Length;
+            var size = needSpace;
+
+            if(offset < 0 || offset + size > buffer.Length)
+            {
+                Logger.Error("aaaaaaaaaaaaaaaaaaaaaaaa");
+            }
+            var count = socket.Receive(buffer, offset, size, SocketFlags.None);
             if (count > 0)
             {
                 buff.Write(count, null);
@@ -31,7 +40,8 @@ namespace mana.Foundation
             return count;
         }
 
-        public int PushData<T>(T param, Func<T, byte[], int, int, int> data_provider)
+        [Obsolete]
+        private int PushData<T>(T param, Func<T, byte[], int, int, int> data_provider)
         {
             var needSpace = 1024;
             var newCapacity = buff.Length + needSpace;

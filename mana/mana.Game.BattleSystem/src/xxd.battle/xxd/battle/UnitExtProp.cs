@@ -1,13 +1,13 @@
 ﻿using mana.Foundation;
 
-namespace xxd.sync
+namespace xxd.battle
 {
-    public class AbilityData : DataObject
+    public class UnitExtProp : DataObject
     {
 
 		#region ---flags---
-		public const byte __FLAG_TMPLID = 0;
-		public const byte __FLAG_LEV = 1;
+		public const byte __FLAG_KEY = 0;
+		public const byte __FLAG_VALUE = 1;
 		public const long __MASK_ALL_VALUE = 0x3;
 
 		#endregion
@@ -16,64 +16,64 @@ namespace xxd.sync
 		public readonly Mask mask = new Mask();
 		#endregion
 
-		#region ---tmplId---
-		private int _tmplId = 0;
-		public int tmplId
+		#region ---key---
+		private string _key = null;
+		public string key
 		{
 			get
 			{
-				return _tmplId;
+				return _key;
 			}
 			set
 			{
-				if(this._tmplId != value)
+				if(this._key != value)
 				{
-					this._tmplId = value;
-					this.mask.AddFlag(__FLAG_TMPLID);
+					this._key = value;
+					this.mask.AddFlag(__FLAG_KEY);
 				}
 			}
 		}
 
-		public bool HasTmplId()
+		public bool HasKey()
 		{
-			return this.mask.CheckFlag(__FLAG_TMPLID);
+			return this.mask.CheckFlag(__FLAG_KEY);
 		}
-		#endregion //tmplId
+		#endregion //key
 
-		#region ---lev---
-		private int _lev = 0;
-		public int lev
+		#region ---value---
+		private int _value = 0;
+		public int value
 		{
 			get
 			{
-				return _lev;
+				return _value;
 			}
 			set
 			{
-				if(this._lev != value)
+				if(this._value != value)
 				{
-					this._lev = value;
-					this.mask.AddFlag(__FLAG_LEV);
+					this._value = value;
+					this.mask.AddFlag(__FLAG_VALUE);
 				}
 			}
 		}
 
-		public bool HasLev()
+		public bool HasValue()
 		{
-			return this.mask.CheckFlag(__FLAG_LEV);
+			return this.mask.CheckFlag(__FLAG_VALUE);
 		}
-		#endregion //lev
+		#endregion //value
 		
 		#region ---Encode---
         public void Encode(IWritableBuffer bw)
         {
-			if (mask.CheckFlag(__FLAG_TMPLID))
+			if (mask.CheckFlag(__FLAG_KEY))
 			{
-				bw.WriteInt(_tmplId);
+				bw.WriteUTF8(_key);
 			}
-			if (mask.CheckFlag(__FLAG_LEV))
+			if (mask.CheckFlag(__FLAG_VALUE))
 			{
-				bw.WriteInt(_lev);
+				bw.WriteInt(_value);
 			}
         }
 		#endregion
@@ -82,23 +82,23 @@ namespace xxd.sync
 		public void Decode(IReadableBuffer br)
 		{
 			this.mask.Decode(br);
-			if (HasTmplId())
+			if (HasKey())
 			{
-				_tmplId = br.ReadInt();
+				_key = br.ReadUTF8();
 			}
-			if (HasLev())
+			if (HasValue())
 			{
-				_lev = br.ReadInt();
+				_value = br.ReadInt();
 			}
 		}
 		#endregion
 
 		#region ---Clone---
-		public AbilityData Clone()
+		public UnitExtProp Clone()
 		{            
-			var _clone = ObjectCache.Get<AbilityData>();
-			_clone._tmplId = this._tmplId;
-			_clone._lev = this._lev;
+			var _clone = ObjectCache.Get<UnitExtProp>();
+			_clone._key = this._key;
+			_clone._value = this._value;
 			return _clone;
 		}
 		#endregion
@@ -107,8 +107,8 @@ namespace xxd.sync
 		public void ReleaseToCache()
         {
 			this.mask.ClearAllFlag();
-			_tmplId = 0;
-			_lev = 0;
+			_key = null;
+			_value = 0;
 			ObjectCache.Put(this);
         }
 		#endregion
@@ -117,17 +117,17 @@ namespace xxd.sync
 		public string ToFormatString(string newLineIndent)
         {
             var sb = StringBuilderCache.Acquire();
-            sb.Append("AbilityData{\r\n");
+            sb.Append("UnitExtProp{\r\n");
 			var curIndent = newLineIndent + '\t';
-			if(HasTmplId())
+			if(HasKey())
 			{
-				sb.Append(",\r\n").Append(curIndent).Append("tmplId = ");
-				sb.Append(tmplId);
+				sb.Append(",\r\n").Append(curIndent).Append("key = ");
+				sb.Append(key);
 			}
-			if(HasLev())
+			if(HasValue())
 			{
-				sb.Append(",\r\n").Append(curIndent).Append("lev = ");
-				sb.Append(lev);
+				sb.Append(",\r\n").Append(curIndent).Append("value = ");
+				sb.Append(value);
 			}
 			sb.Append("\r\n");
             sb.Append(newLineIndent).Append('}');

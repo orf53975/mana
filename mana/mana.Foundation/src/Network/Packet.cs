@@ -75,7 +75,7 @@ namespace mana.Foundation
         }
 
         public static Packet CreatRequest<T>(string msgRoute, int requestId, Action<T> reqSetter, bool bPoolManaged = true) 
-            where T : class, ISerializable, ICacheable, new()
+            where T : class, ISerializable, new()
         {
             var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.REQUEST;
@@ -85,7 +85,12 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(reqSetter);
                 d.Encode(p.msgData);
-                d.ReleaseToCache();
+
+                var cachedObj = d as ICacheable;
+                if (cachedObj != null)
+                {
+                    cachedObj.ReleaseToCache();
+                }
             }
             return p;
         }
@@ -105,7 +110,7 @@ namespace mana.Foundation
 
 
         public static Packet CreatResponse<T>(string msgRoute, int requestId, Action<T> rspSetter, bool bPoolManaged = true)
-            where T : class, ISerializable, ICacheable, new()
+            where T : class, ISerializable, new()
         {
             var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.RESPONSE;
@@ -115,7 +120,12 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(rspSetter);
                 d.Encode(p.msgData);
-                d.ReleaseToCache();
+
+                var cachedObj = d as ICacheable;
+                if (cachedObj != null)
+                {
+                    cachedObj.ReleaseToCache();
+                }
             }
             return p;
         }
@@ -134,7 +144,7 @@ namespace mana.Foundation
         }
 
         public static Packet CreatNotify<T>(string msgRoute, Action<T> notifySetter, bool bPoolManaged = true) 
-            where T : class, ISerializable, ICacheable, new()
+            where T : class, ISerializable, new()
         {
             var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.NOTIFY;
@@ -143,7 +153,12 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(notifySetter);
                 d.Encode(p.msgData);
-                d.ReleaseToCache();
+
+                var cachedObj = d as ICacheable;
+                if (cachedObj != null)
+                {
+                    cachedObj.ReleaseToCache();
+                }
             }
             return p;
         }
@@ -162,7 +177,7 @@ namespace mana.Foundation
         }
 
         public static Packet CreatPush<T>(string msgRoute, Action<T> pushSetter, bool bPoolManaged = true)
-            where T : class, ISerializable, ICacheable, new()
+            where T : class, ISerializable, new()
         {
             var p = bPoolManaged ? Packet.Pool.Get() : new Packet(false);
             p.msgType = MessageType.PUSH;
@@ -171,7 +186,12 @@ namespace mana.Foundation
             {
                 var d = ObjectCache.Get(pushSetter);
                 d.Encode(p.msgData);
-                d.ReleaseToCache();
+
+                var cachedObj = d as ICacheable;
+                if (cachedObj != null)
+                {
+                    cachedObj.ReleaseToCache();
+                }
             }
             return p;
         }
@@ -470,6 +490,25 @@ namespace mana.Foundation
             {
                 Packet.Pool.Put(this);
             }
+        }
+
+        public override string ToString()
+        {
+            var sb = StringBuilderCache.Acquire();
+            sb.Append("Packet:Type=").Append(msgType).Append(",Route=").Append(msgRoute);
+            if (msgType == MessageType.REQUEST || msgType == MessageType.RESPONSE)
+            {
+                sb.Append(",RequsetId=").Append(msgRequestId);
+            }
+            if (msgAttach != null)
+            {
+                sb.Append(",Attach=").Append(msgAttach);
+            }
+            if (msgData.Available > 0)
+            {
+                sb.Append(",DataAvailable=").Append(msgData.Available);
+            }
+            return sb.ToString();
         }
     }
 }

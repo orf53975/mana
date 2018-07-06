@@ -1,6 +1,7 @@
 ﻿using mana.Foundation.Network.Sever;
-using xxd.sync.opration;
-namespace xxd.sync
+using xxd.battle.opration;
+using xxd.game;
+namespace xxd.battle
 {
 	/// <summary>
 	/// Auto Gen
@@ -11,8 +12,8 @@ namespace xxd.sync
 		{
 			ProtocolManager.AddTypeCode<AbilityData>();
 			ProtocolManager.AddTypeCode<AddUnit>();
-			ProtocolManager.AddTypeCode<BattleCreateData>();
-			ProtocolManager.AddTypeCode<BattleSnapData>();
+			ProtocolManager.AddTypeCode<BattleCreateInfo>();
+			ProtocolManager.AddTypeCode<BattleSnap>();
 			ProtocolManager.AddTypeCode<BattleSync>();
 			ProtocolManager.AddTypeCode<BuffData>();
 			ProtocolManager.AddTypeCode<Damage>();
@@ -25,6 +26,8 @@ namespace xxd.sync
 			ProtocolManager.AddTypeCode<UnitSync>();
 			ProtocolManager.AddTypeCode<CastRequest>();
 			ProtocolManager.AddTypeCode<MoveRequest>();
+			ProtocolManager.AddTypeCode<ChallengeDungeon>();
+			ProtocolManager.AddTypeCode<CreateDungeon>();
 		}
     }
 }

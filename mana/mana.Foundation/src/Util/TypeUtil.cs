@@ -6,7 +6,6 @@ namespace mana.Foundation
 {
     public static class TypeUtil
     {
- 
         public static void ForeachAllTypes(this AppDomain appDomain, Action<Type> action)
         {
             if (appDomain == null)

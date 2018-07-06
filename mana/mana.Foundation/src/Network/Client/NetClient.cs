@@ -99,6 +99,41 @@ namespace mana.Foundation.Network.Client
             return ++requestIdGenIndex;
         }
 
+        public bool Request<TREQ, TRSP>(string route, TREQ req, Action<TRSP> rspHandler)
+           where TREQ : class, DataObject, new()
+           where TRSP : class, DataObject, new()
+        {
+            var proto = Protocol.Instance.GetProto(route);
+            if (proto == null)
+            {
+                Logger.Error("route[{0}] error!", route);
+                return false;
+            }
+            if (proto.ptype != ProtoType.Request)
+            {
+                Logger.Error("proto type not match! [{0}->REQRSP]", proto.ptype);
+                return false;
+            }
+            var uldt = typeof(TREQ).FullName;
+            if (proto.c2sdt != uldt)
+            {
+                Logger.Error("proto uldt not match! [{0}->{1}]", proto.c2sdt, uldt);
+                return false;
+            }
+            var dldt = typeof(TRSP).FullName;
+            if (proto.s2cdt != dldt)
+            {
+                Logger.Error("proto dldt not match! [{0}->{1}]", proto.s2cdt, dldt);
+                return false;
+            }
+            var requestId = this.GenRequestId();
+            var p = Packet.CreatRequest(route, requestId, req);
+            this.SendPacket(p);
+            p.Release();
+            this.responseDispatcher.Register(requestId, rspHandler);
+            return true;
+        }
+
         public bool Request<TREQ, TRSP>(string route, Action<TREQ> reqSetter, Action<TRSP> rspHandler)
             where TREQ : class, DataObject, new()
             where TRSP : class, DataObject, new()
@@ -134,6 +169,7 @@ namespace mana.Foundation.Network.Client
             return true;
         }
 
+     
         public bool Request<TRSP>(string route, Action<TRSP> rspHandler)
             where TRSP : class, DataObject, new()
         {
@@ -194,6 +230,32 @@ namespace mana.Foundation.Network.Client
             return true;
         }
 
+        public bool Request(string route, DDNode req, Action<DDNode> rspHandler)
+        {
+            var proto = Protocol.Instance.GetProto(route);
+            if (proto == null)
+            {
+                Logger.Error("route[{0}] error!", route);
+                return false;
+            }
+            if (proto.ptype != ProtoType.Request)
+            {
+                Logger.Error("proto type not match! [{0}->REQRSP]", proto.ptype);
+                return false;
+            }
+            if (proto.c2sdt != req.Tmpl.fullName)
+            {
+                Logger.Error("proto uldt not match! [{0}->{1}]", proto.c2sdt, req.Tmpl.fullName);
+                return false;
+            }
+            var requestId = this.GenRequestId();
+            var p = Packet.CreatRequest(route, requestId, req);
+            this.SendPacket(p);
+            p.Release();
+            this.responseDispatcher.Register(requestId, proto, rspHandler);
+            return true;
+        }
+
         public bool Request(string route, Action<DDNode> rspHandler)
         {
             var proto = Protocol.Instance.GetProto(route);
@@ -224,6 +286,32 @@ namespace mana.Foundation.Network.Client
 
         #region <<About Notify>>
 
+        public bool Notify<T>(string route, T notifyObject)
+            where T : class, DataObject, new()
+        {
+            var proto = Protocol.Instance.GetProto(route);
+            if (proto == null)
+            {
+                Logger.Error("route[{0}] error!", route);
+                return false;
+            }
+            if (proto.ptype != ProtoType.Notify)
+            {
+                Logger.Error("proto type not match! [{0}->Notify]", proto.ptype);
+                return false;
+            }
+            var uldt = typeof(T).FullName;
+            if (proto.c2sdt != uldt)
+            {
+                Logger.Error("proto uldt not match! [{0}->{1}]", proto.c2sdt, uldt);
+                return false;
+            }
+            var p = Packet.CreatNotify(route, notifyObject);
+            this.SendPacket(p);
+            p.Release();
+            return true;
+        }
+
         public bool Notify<T>(string route, Action<T> notifySetter)
             where T : class, DataObject, new()
         {
@@ -249,6 +337,31 @@ namespace mana.Foundation.Network.Client
             p.Release();
             return true;
         }
+
+        public bool Notify(string route, DDNode notifyObject)
+        {
+            var proto = Protocol.Instance.GetProto(route);
+            if (proto == null)
+            {
+                Logger.Error("route[{0}] error!", route);
+                return false;
+            }
+            if (proto.ptype != ProtoType.Notify)
+            {
+                Logger.Error("proto type not match! [{0}->Notify]", proto.ptype);
+                return false;
+            }
+            if (proto.c2sdt != notifyObject.Tmpl.fullName)
+            {
+                Logger.Error("proto uldt type not match! [{0}->{1}]", proto.c2sdt, notifyObject.Tmpl.fullName);
+                return false;
+            }
+            var p = Packet.CreatNotify(route, notifyObject);
+            this.SendPacket(p);
+            p.Release();
+            return true;
+        }
+
 
         public bool Notify(string route, Action<DDNode> notifySetter)
         {

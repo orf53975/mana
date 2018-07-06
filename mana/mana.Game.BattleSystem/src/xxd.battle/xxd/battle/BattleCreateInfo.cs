@@ -1,15 +1,14 @@
 ﻿using mana.Foundation;
 
-namespace xxd.sync
+namespace xxd.battle
 {
-    public class BattleCreateData : DataObject
+    public class BattleCreateInfo : DataObject
     {
 
 		#region ---flags---
-		public const byte __FLAG_TYPE = 0;
-		public const byte __FLAG_UUID = 1;
-		public const byte __FLAG_UNITS = 2;
-		public const long __MASK_ALL_VALUE = 0x7;
+		public const byte __FLAG_SCENEMAP = 0;
+		public const byte __FLAG_UNITS = 1;
+		public const long __MASK_ALL_VALUE = 0x3;
 
 		#endregion
 
@@ -17,53 +16,29 @@ namespace xxd.sync
 		public readonly Mask mask = new Mask();
 		#endregion
 
-		#region ---type---
-		private byte _type = 0;
-		public byte type
+		#region ---sceneMap---
+		private string _sceneMap = null;
+		public string sceneMap
 		{
 			get
 			{
-				return _type;
+				return _sceneMap;
 			}
 			set
 			{
-				if(this._type != value)
+				if(this._sceneMap != value)
 				{
-					this._type = value;
-					this.mask.AddFlag(__FLAG_TYPE);
+					this._sceneMap = value;
+					this.mask.AddFlag(__FLAG_SCENEMAP);
 				}
 			}
 		}
 
-		public bool HasType()
+		public bool HasSceneMap()
 		{
-			return this.mask.CheckFlag(__FLAG_TYPE);
+			return this.mask.CheckFlag(__FLAG_SCENEMAP);
 		}
-		#endregion //type
-
-		#region ---uuid---
-		private long _uuid = 0;
-		public long uuid
-		{
-			get
-			{
-				return _uuid;
-			}
-			set
-			{
-				if(this._uuid != value)
-				{
-					this._uuid = value;
-					this.mask.AddFlag(__FLAG_UUID);
-				}
-			}
-		}
-
-		public bool HasUuid()
-		{
-			return this.mask.CheckFlag(__FLAG_UUID);
-		}
-		#endregion //uuid
+		#endregion //sceneMap
 
 		#region ---units---
 		private UnitCreateData[] _units = null;
@@ -92,13 +67,9 @@ namespace xxd.sync
 		#region ---Encode---
         public void Encode(IWritableBuffer bw)
         {
-			if (mask.CheckFlag(__FLAG_TYPE))
+			if (mask.CheckFlag(__FLAG_SCENEMAP))
 			{
-				bw.WriteByte(_type);
-			}
-			if (mask.CheckFlag(__FLAG_UUID))
-			{
-				bw.WriteLong(_uuid);
+				bw.WriteUTF8(_sceneMap);
 			}
 			if (mask.CheckFlag(__FLAG_UNITS))
 			{
@@ -111,13 +82,9 @@ namespace xxd.sync
 		public void Decode(IReadableBuffer br)
 		{
 			this.mask.Decode(br);
-			if (HasType())
+			if (HasSceneMap())
 			{
-				_type = br.ReadByte();
-			}
-			if (HasUuid())
-			{
-				_uuid = br.ReadLong();
+				_sceneMap = br.ReadUTF8();
 			}
 			if (HasUnits())
 			{
@@ -127,11 +94,10 @@ namespace xxd.sync
 		#endregion
 
 		#region ---Clone---
-		public BattleCreateData Clone()
+		public BattleCreateInfo Clone()
 		{            
-			var _clone = ObjectCache.Get<BattleCreateData>();
-			_clone._type = this._type;
-			_clone._uuid = this._uuid;
+			var _clone = ObjectCache.Get<BattleCreateInfo>();
+			_clone._sceneMap = this._sceneMap;
 			_clone._units = this._units;
 			return _clone;
 		}
@@ -141,8 +107,7 @@ namespace xxd.sync
 		public void ReleaseToCache()
         {
 			this.mask.ClearAllFlag();
-			_type = 0;
-			_uuid = 0;
+			_sceneMap = null;
 			if(_units != null)
 			{
 				_units.ReleaseToCache();
@@ -156,17 +121,12 @@ namespace xxd.sync
 		public string ToFormatString(string newLineIndent)
         {
             var sb = StringBuilderCache.Acquire();
-            sb.Append("BattleCreateData{\r\n");
+            sb.Append("BattleCreateInfo{\r\n");
 			var curIndent = newLineIndent + '\t';
-			if(HasType())
+			if(HasSceneMap())
 			{
-				sb.Append(",\r\n").Append(curIndent).Append("type = ");
-				sb.Append(type);
-			}
-			if(HasUuid())
-			{
-				sb.Append(",\r\n").Append(curIndent).Append("uuid = ");
-				sb.Append(uuid);
+				sb.Append(",\r\n").Append(curIndent).Append("sceneMap = ");
+				sb.Append(sceneMap);
 			}
 			if(HasUnits())
 			{

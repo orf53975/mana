@@ -1,16 +1,13 @@
 ﻿using mana.Foundation;
 using mana.Foundation.Network.Client;
-using System;
 using System.Threading;
-using xxd.sync.opration;
+using xxd.game;
 
 namespace mana.Test.Client
 {
     public class TestClient
     {
         public readonly NetClient Channel;
-
-        readonly Thread mThread;
 
         readonly int clientId;
 
@@ -23,9 +20,6 @@ namespace mana.Test.Client
             this.clientId = id;
             this.ip = ip;
             this.port = port;
-
-            mThread = new Thread(UpdateProc);
-            mThread.Start();
 
             Channel = new NetClientDefault(true, 20000);
             this.InitChannel();
@@ -69,29 +63,27 @@ namespace mana.Test.Client
                 });
         }
 
-
-        private void UpdateProc()
-        {
-            while (true)
-            {
-                if(Channel != null)
-                {
-                    Channel.Update(20);
-                }
-                Thread.Sleep(20);
-            }
-        }
-
         internal void DoTest()
         {
-            Channel.Notify<MoveRequest>("Battle.PlayerMove",
-                (mr) =>
+            //Channel.Notify<MoveRequest>("Battle.PlayerMove",
+            //    (mr) =>
+            //    {
+            //        mr.unitId = 1001;
+            //        mr.x = 10;
+            //        mr.y = 10;
+            //        mr.z = 10;
+            //        mr.type = 0;
+            //    });
+
+            Channel.Request<ChallengeDungeon, Result>("Game.Dungeon.Challenge",
+                (req) =>
                 {
-                    mr.unitId = 1001;
-                    mr.x = 10;
-                    mr.y = 10;
-                    mr.z = 10;
-                    mr.type = 0;
+                    req.dungeonTmpl = "mszc_1";
+                    req.difficulty = 0;
+                },
+                (rt) =>
+                {
+                    Logger.Print("Game.Dungeon.Challenge:{0}", rt);
                 });
         }
 

@@ -3,8 +3,8 @@ using BattleSystem.Units.SM;
 using mana.Foundation;
 using System;
 using System.Collections.Generic;
-using xxd.sync;
-using xxd.sync.opration;
+using xxd.battle;
+using xxd.battle.opration;
 
 namespace BattleSystem.Units
 {

@@ -1,4 +1,4 @@
-﻿using xxd.sync.opration;
+﻿using xxd.battle.opration;
 
 namespace BattleSystem.Units.SM
 {

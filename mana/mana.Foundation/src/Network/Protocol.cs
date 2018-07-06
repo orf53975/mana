@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace mana.Foundation
 {
     public sealed class Protocol : DataObject
     {
-
         #region <<Single Instance>>
 
         public static readonly Protocol Instance = new Protocol(true);
@@ -244,19 +242,25 @@ namespace mana.Foundation
             var indent1 = curIndent + '\t';
             // -- protos
             sb.Append(curIndent).Append("protoMap = {\r\n");
-            foreach (var kv in protosDict)
+            var protosKeys = protosDict.GetKeys();
+            protosKeys.Sort();
+            for (int i = 0; i < protosKeys.Count; i++)
             {
+                var key = protosKeys[i];
                 sb.Append(indent1);
-                sb.Append("0x").Append(kv.Key.ToString("X4")).Append(" : ").Append(kv.Value);
+                sb.Append("0x").Append(key.ToString("X4")).Append(" : ").Append(protosDict[key]);
                 sb.Append(",\r\n");
             }
             sb.Append(curIndent).Append("},\r\n");
             // -- types
             sb.Append(curIndent).Append("typeMap = {\r\n");
-            foreach (var kv in typesCode)
+            var types = typesCode.GetKeys();
+            types.Sort();
+            for (int i = 0; i < types.Count; i++)
             {
+                var key = types[i];
                 sb.Append(indent1);
-                sb.Append("0x").Append(kv.Value.ToString("X4")).Append(" : ").Append(kv.Key);
+                sb.Append("0x").Append(typesCode[key].ToString("X4")).Append(" : ").Append(key);
                 sb.Append(",\r\n");
             }
             sb.Append(curIndent).Append('}');

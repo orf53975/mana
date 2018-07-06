@@ -2,16 +2,17 @@
 using mana.Foundation.Network.Client;
 using System;
 using System.Net;
+using xxd.game;
 
 namespace mana.Server.Game.BattleLink
 {
     class BSClient
     {
-        readonly IPEndPoint address;
+        public readonly IPEndPoint address;
 
-        readonly NetClient channel;
+        public readonly NetClient channel;
 
-        readonly BSCMgr manager;
+        public readonly BSCMgr manager;
 
         /// <summary>
         /// 战斗服的负载状态
@@ -25,7 +26,7 @@ namespace mana.Server.Game.BattleLink
         public BSClient(BSCMgr mgr, string addr)
         {
             this.manager = mgr;
-            this.channel = new NetClientIOCP(5000, 2048, 1024, true);
+            this.channel = new NetClientIOCP(50000, 2048, 1024, true);
             this.address = Utils.GetIPEndPoint(addr);
             this.InitPacketListener();
         }
@@ -78,7 +79,10 @@ namespace mana.Server.Game.BattleLink
                 });
         }
 
-
+        internal void RequestCreateBattle(CreateDungeon req, Action<Result> callback)
+        {
+            channel.Request<CreateDungeon, Result>("Battle.CreateDungeon", req, callback);
+        }
 
         internal void SendPacket(Packet msg)
         {

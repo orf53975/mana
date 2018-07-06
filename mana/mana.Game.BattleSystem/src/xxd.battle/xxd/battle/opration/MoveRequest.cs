@@ -1,6 +1,6 @@
 ﻿using mana.Foundation;
 
-namespace xxd.sync.opration
+namespace xxd.battle.opration
 {
     public class MoveRequest : DataObject
     {

@@ -1,6 +1,6 @@
 ﻿using mana.Foundation;
 
-namespace xxd.sync
+namespace xxd.battle
 {
     public class UnitInfo : DataObject
     {

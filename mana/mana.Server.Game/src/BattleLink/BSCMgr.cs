@@ -1,5 +1,6 @@
 ﻿using mana.Foundation;
 using System;
+using xxd.game;
 
 namespace mana.Server.Game.BattleLink
 {
@@ -31,6 +32,33 @@ namespace mana.Server.Game.BattleLink
         internal void Send(int clientId, Packet msg)
         {
             clients[clientId].SendPacket(msg);
+        }
+
+        internal BSClient FindBalanceLowestClient()
+        {
+            int findIndex = -1;
+            for (int i = 0; i < clients.Length; i++)
+            {
+                if (!clients[i].channel.Connected)
+                {
+                    continue;
+                }
+                if (findIndex == -1 ||
+                    clients[i].BalanceStatus < clients[findIndex].BalanceStatus)
+                {
+                    findIndex = i;
+                }
+            }
+            return findIndex >= 0 ? clients[findIndex] : null;
+        }
+
+        public void CreateBattle(CreateDungeon createData, Action<Result> callback)
+        {
+            var c = FindBalanceLowestClient();
+            if (c != null)
+            {
+                c.RequestCreateBattle(createData, callback);
+            }
         }
 
         internal void Update(int deltaTime)

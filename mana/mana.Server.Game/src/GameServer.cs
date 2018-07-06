@@ -18,7 +18,7 @@ namespace mana.Server.Game
             return sev;
         }
 
-        private readonly BSCMgr battleManager;
+        internal readonly BSCMgr battleManager;
 
         private GameServer(AppSetting setting)
             : base(setting)

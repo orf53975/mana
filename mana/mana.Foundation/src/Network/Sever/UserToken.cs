@@ -287,6 +287,10 @@ namespace mana.Foundation.Network.Sever
 
         public void Send(Packet p)
         {
+            if (EnablePrintPacketInfo)
+            {
+                Logger.Print("UserToken[{0}] Send Packet[{1}]", uid, p.msgRoute);
+            }
             if (state != kStateLink)
             {
                 Logger.Warning("UserToken.Send Failed! state = {0} error!", state);
@@ -317,8 +321,17 @@ namespace mana.Foundation.Network.Sever
             //}
         }
 
+        public void SendResponse<T>(string route, int responseId, T data, string attachId = null)
+            where T : class, ISerializable, new()
+        {
+            var p = Packet.CreatResponse(route, responseId, data);
+            p.SetAttach(attachId);
+            this.Send(p);
+            p.Release();
+        }
+
         public void SendResponse<T>(string route, int responseId, Action<T> rspSetter, string attachId = null)
-            where T : class, DataObject, new()
+            where T : class, ISerializable, new()
         {
             var p = Packet.CreatResponse(route, responseId, rspSetter);
             p.SetAttach(attachId);
@@ -326,8 +339,17 @@ namespace mana.Foundation.Network.Sever
             p.Release();
         }
 
+        public void SendPush<T>(string route, T data, string attachId = null)
+            where T : class, ISerializable, new()
+        {
+            var p = Packet.CreatPush(route, data);
+            p.SetAttach(attachId);
+            this.Send(p);
+            p.Release();
+        }
+
         public void SendPush<T>(string route, Action<T> setter, string attachId = null)
-            where T : class, DataObject, new()
+            where T : class, ISerializable, new()
         {
             var p = Packet.CreatPush(route, setter);
             p.SetAttach(attachId);

@@ -1,16 +1,24 @@
 ﻿using mana.Foundation;
 
-namespace xxd.sync
+namespace xxd.battle
 {
-    public class Healing : DataObject
+    public class Damage : DataObject
     {
 
 		#region ---flags---
 		public const byte __FLAG_UNITID = 0;
 		public const byte __FLAG_BASEVALUE = 1;
 		public const byte __FLAG_VALUE = 2;
-		public const long __MASK_ALL_VALUE = 0x7;
+		public const byte __FLAG_DAMAGETYPE = 3;
+		public const byte __FLAG_DAMAGEFLAG = 4;
+		public const byte __FLAG_KILLEDPARAM = 5;
+		public const long __MASK_ALL_VALUE = 0x3f;
 
+		#endregion
+		#region ---constants---
+		public const byte dtype_pure = 0;
+		public const byte dtype_physical = 1;
+		public const byte dtype_magic = 2;
 		#endregion
 
 		#region ---mask---
@@ -88,6 +96,78 @@ namespace xxd.sync
 			return this.mask.CheckFlag(__FLAG_VALUE);
 		}
 		#endregion //value
+
+		#region ---damageType---
+		private int _damageType = 0;
+		public int damageType
+		{
+			get
+			{
+				return _damageType;
+			}
+			set
+			{
+				if(this._damageType != value)
+				{
+					this._damageType = value;
+					this.mask.AddFlag(__FLAG_DAMAGETYPE);
+				}
+			}
+		}
+
+		public bool HasDamageType()
+		{
+			return this.mask.CheckFlag(__FLAG_DAMAGETYPE);
+		}
+		#endregion //damageType
+
+		#region ---damageFlag---
+		private int _damageFlag = 0;
+		public int damageFlag
+		{
+			get
+			{
+				return _damageFlag;
+			}
+			set
+			{
+				if(this._damageFlag != value)
+				{
+					this._damageFlag = value;
+					this.mask.AddFlag(__FLAG_DAMAGEFLAG);
+				}
+			}
+		}
+
+		public bool HasDamageFlag()
+		{
+			return this.mask.CheckFlag(__FLAG_DAMAGEFLAG);
+		}
+		#endregion //damageFlag
+
+		#region ---killedParam---
+		private byte _killedParam = 0;
+		public byte killedParam
+		{
+			get
+			{
+				return _killedParam;
+			}
+			set
+			{
+				if(this._killedParam != value)
+				{
+					this._killedParam = value;
+					this.mask.AddFlag(__FLAG_KILLEDPARAM);
+				}
+			}
+		}
+
+		public bool HasKilledParam()
+		{
+			return this.mask.CheckFlag(__FLAG_KILLEDPARAM);
+		}
+		#endregion //killedParam
 		
 		#region ---Encode---
         public void Encode(IWritableBuffer bw)
@@ -103,6 +183,18 @@ namespace xxd.sync
 			if (mask.CheckFlag(__FLAG_VALUE))
 			{
 				bw.WriteInt(_value);
+			}
+			if (mask.CheckFlag(__FLAG_DAMAGETYPE))
+			{
+				bw.WriteInt(_damageType);
+			}
+			if (mask.CheckFlag(__FLAG_DAMAGEFLAG))
+			{
+				bw.WriteInt(_damageFlag);
+			}
+			if (mask.CheckFlag(__FLAG_KILLEDPARAM))
+			{
+				bw.WriteByte(_killedParam);
 			}
         }
 		#endregion
@@ -123,16 +215,31 @@ namespace xxd.sync
 			{
 				_value = br.ReadInt();
 			}
+			if (HasDamageType())
+			{
+				_damageType = br.ReadInt();
+			}
+			if (HasDamageFlag())
+			{
+				_damageFlag = br.ReadInt();
+			}
+			if (HasKilledParam())
+			{
+				_killedParam = br.ReadByte();
+			}
 		}
 		#endregion
 
 		#region ---Clone---
-		public Healing Clone()
+		public Damage Clone()
 		{            
-			var _clone = ObjectCache.Get<Healing>();
+			var _clone = ObjectCache.Get<Damage>();
 			_clone._unitId = this._unitId;
 			_clone._baseValue = this._baseValue;
 			_clone._value = this._value;
+			_clone._damageType = this._damageType;
+			_clone._damageFlag = this._damageFlag;
+			_clone._killedParam = this._killedParam;
 			return _clone;
 		}
 		#endregion
@@ -144,6 +251,9 @@ namespace xxd.sync
 			_unitId = 0;
 			_baseValue = 0;
 			_value = 0;
+			_damageType = 0;
+			_damageFlag = 0;
+			_killedParam = 0;
 			ObjectCache.Put(this);
         }
 		#endregion
@@ -152,7 +262,7 @@ namespace xxd.sync
 		public string ToFormatString(string newLineIndent)
         {
             var sb = StringBuilderCache.Acquire();
-            sb.Append("Healing{\r\n");
+            sb.Append("Damage{\r\n");
 			var curIndent = newLineIndent + '\t';
 			if(HasUnitId())
 			{
@@ -168,6 +278,21 @@ namespace xxd.sync
 			{
 				sb.Append(",\r\n").Append(curIndent).Append("value = ");
 				sb.Append(value);
+			}
+			if(HasDamageType())
+			{
+				sb.Append(",\r\n").Append(curIndent).Append("damageType = ");
+				sb.Append(damageType);
+			}
+			if(HasDamageFlag())
+			{
+				sb.Append(",\r\n").Append(curIndent).Append("damageFlag = ");
+				sb.Append(damageFlag);
+			}
+			if(HasKilledParam())
+			{
+				sb.Append(",\r\n").Append(curIndent).Append("killedParam = ");
+				sb.Append(killedParam);
 			}
 			sb.Append("\r\n");
             sb.Append(newLineIndent).Append('}');

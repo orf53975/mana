@@ -30,12 +30,6 @@ namespace mana.Foundation.Network.Client
 
         Socket _socket = null;
 
-        int lastRcvTime = 0;
-
-        int lastSndTime = 0;
-
-        int lastSndPingTime = 0;
-
         public override bool Connected
         {
             get
@@ -299,18 +293,18 @@ namespace mana.Foundation.Network.Client
                     Monitor.Exit(sndEventArg);
                 }
             }
-            lastSndTime = curTime;
         }
 
         public void ResetCheckTime()
         {
             curTime = 0;
-            lastSndTime = 0;
-            lastRcvTime = 0;
             lastSndPingTime = 0;
+            lastRcvTime = 0;
         }
 
-        private int curTime;
+        private int curTime = 0;
+        private int lastSndPingTime = 0;
+        private int lastRcvTime = 0;
 
         public override void Update(int deltaTimeMs)
         {

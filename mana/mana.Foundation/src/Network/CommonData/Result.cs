@@ -33,7 +33,13 @@
 
         public string ToFormatString(string nlIndent)
         {
-            return "ComResponse:" + code;
+            return string.Format("Result:code={0},info={1}", code, info == null ? "nulll" : info);
         }
+
+        public override string ToString()
+        {
+            return this.ToFormatString(null);
+        }
+
     }
 }

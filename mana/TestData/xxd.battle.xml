@@ -13,14 +13,13 @@
         <CField const="false" type="UnitInfo" name="data" />
       </Fields>
     </CClass>
-    <CClass nameSpace="xxd.battle" name="BattleCreateData" TypeCode="0x0" pool="false">
+    <CClass nameSpace="xxd.battle" name="BattleCreateInfo" TypeCode="0x0" pool="false">
       <Fields>
-        <CField const="false" type="byte" name="type" />
-        <CField const="false" type="long" name="uuid" />
+        <CField const="false" type="string" name="sceneMap" />
         <CField const="false" type="UnitCreateData[]" name="units" />
       </Fields>
     </CClass>
-    <CClass nameSpace="xxd.battle" name="BattleSnapData" note="当前场景快照数据&#xD;" TypeCode="0x0" pool="false">
+    <CClass nameSpace="xxd.battle" name="BattleSnap" note="当前场景快照数据&#xD;" TypeCode="0x0" pool="false">
       <Fields>
         <CField const="false" type="byte" name="type" />
         <CField const="false" type="long" name="uuid" />
@@ -162,6 +161,20 @@
         <CField const="false" type="float" name="y" />
         <CField const="false" type="float" name="z" />
         <CField const="false" type="float" name="faceTo" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.game" name="ChallengeDungeon" note="挑战副本&#xD;" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="string" name="dungeonTmpl" note="副本模板" />
+        <CField const="false" type="int" name="difficulty" note="挑战难度" />
+      </Fields>
+    </CClass>
+    <CClass nameSpace="xxd.game" name="CreateDungeon" TypeCode="0x0" pool="false">
+      <Fields>
+        <CField const="false" type="string" name="dungeonTmpl" note="副本模板" />
+        <CField const="false" type="int" name="difficulty" note="挑战难度" />
+        <CField const="false" type="int" name="dungeonLevel" note="副本等级" />
+        <CField const="false" type="string" name="others" note="副本其他参数" />
       </Fields>
     </CClass>
   </Classes>

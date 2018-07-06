@@ -28,8 +28,15 @@ namespace mana.Test.Client
             {
                 var uid = uidGen ++;
                 var ntc = new TestClient(uid, "127.0.0.1", 8081);
-                lock (clients) { clients.Add(uid, ntc); }
                 Console.WriteLine("new TestClient [{0}]!", uid);
+
+                lock (clients)
+                {
+                    ForeachClient(tc => tc.Channel.Disconnect());
+                    clients.Clear();
+                    clients.Add(uid, ntc);
+                }
+
                 ntc.StartConnect();
                 return true;
             }

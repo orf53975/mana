@@ -1,5 +1,5 @@
 ﻿using mana.Foundation.Network.Sever;
-using xxd.sync;
+using xxd.battle;
 
 namespace mana.Server.Battle
 {

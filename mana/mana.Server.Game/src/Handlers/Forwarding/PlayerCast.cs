@@ -2,7 +2,7 @@
 using mana.Foundation.Network.Sever;
 using System;
 
-namespace mana.Server.Game.Handler
+namespace mana.Server.Game.Handler.Forwarding
 {
     [MessageForwarding("Battle.PlayerCast")]
     class PlayerCast : IMessageHandler
