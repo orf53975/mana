@@ -66,7 +66,8 @@ namespace xxd.battle
 		
 		#region ---Encode---
         public void Encode(IWritableBuffer bw)
-        {
+        {		
+			this.mask.Encode(bw);
 			if (mask.CheckFlag(__FLAG_SCENEMAP))
 			{
 				bw.WriteUTF8(_sceneMap);

@@ -41,7 +41,8 @@ namespace xxd.battle
 		
 		#region ---Encode---
         public void Encode(IWritableBuffer bw)
-        {
+        {		
+			this.mask.Encode(bw);
 			if (mask.CheckFlag(__FLAG_DATA))
 			{
 				bw.Write(_data);

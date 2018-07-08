@@ -128,7 +128,8 @@ namespace xxd.game
 		
 		#region ---Encode---
         public void Encode(IWritableBuffer bw)
-        {
+        {		
+			this.mask.Encode(bw);
 			if (mask.CheckFlag(__FLAG_DUNGEONTMPL))
 			{
 				bw.WriteUTF8(_dungeonTmpl);
