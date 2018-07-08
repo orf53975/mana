@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F48484F9-57BF-4075-8B5E-CB5DF0622BD2}</ProjectGuid>
+    <ProjectGuid>{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>mana.Network.Tcp</RootNamespace>
-    <AssemblyName>mana.Network.Tcp</AssemblyName>
+    <RootNamespace>mana.Network.TCP</RootNamespace>
+    <AssemblyName>mana.Network.TCP</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -63,12 +63,6 @@
     <Compile Include="src\Sever\UserToken.cs" />
     <Compile Include="src\Sever\UserTokenPool.cs" />
     <Compile Include="src\Sever\Util\ConfigUtil.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\mana.Foundation\mana.Foundation.csproj">
-      <Project>{58d5fd90-f169-4363-b5a5-d633e2f69158}</Project>
-      <Name>mana.Foundation</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

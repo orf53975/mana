@@ -15,7 +15,7 @@
 /mana/mana.Server.Battle/bin
 /mana/mana.Server.Game/bin
 /mana/mana.Server.Game/obj
-/mana/mana.Network.Raknet/bin
-/mana/mana.Network.Raknet/obj
-/mana/mana.Network.Tcp/bin
-/mana/mana.Network.Tcp/obj
+/mana/mana.Network.TCP/bin
+/mana/mana.Network.TCP/obj
+/mana/mana.Network.UDP/bin
+/mana/mana.Network.UDP/obj

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // 有关程序集的一般信息由以下
 // 控制。更改这些特性值可修改
 // 与程序集关联的信息。
-[assembly: AssemblyTitle("mana.Network.Raknet")]
+[assembly: AssemblyTitle("mana.Network.UDP")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("mana.Network.Raknet")]
+[assembly: AssemblyProduct("mana.Network.UDP")]
 [assembly: AssemblyCopyright("Copyright © Microsoft 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // 如果此项目向 COM 公开，则下列 GUID 用于类型库的 ID
-[assembly: Guid("1ec25b67-7b52-4552-8e1b-8690031597db")]
+[assembly: Guid("c4f7e9ca-43a8-487f-b6a0-8b131755b97f")]
 
 // 程序集的版本信息由下列四个值组成: 
 //
