@@ -19,7 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Game.BattleSystem", "m
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Network.UDP", "mana.Network.UDP\mana.Network.UDP.csproj", "{C4F7E9CA-43A8-487F-B6A0-8B131755B97F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Network.TCP", "mana.Network.TCP\mana.Network.TCP.csproj", "{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "mana.Network.TCP", "mana.Network.TCP\mana.Network.TCP.csproj", "{0ECA6AD7-8642-405C-A5ED-64DA214FB859}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -92,14 +92,14 @@ Global
 		{C4F7E9CA-43A8-487F-B6A0-8B131755B97F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C4F7E9CA-43A8-487F-B6A0-8B131755B97F}.Release|x86.ActiveCfg = Release|Any CPU
 		{C4F7E9CA-43A8-487F-B6A0-8B131755B97F}.Release|x86.Build.0 = Release|Any CPU
-		{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}.Debug|x86.Build.0 = Debug|Any CPU
-		{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}.Release|x86.ActiveCfg = Release|Any CPU
-		{66D6C670-ECCB-47B7-919E-B4467CFDFC5B}.Release|x86.Build.0 = Release|Any CPU
+		{0ECA6AD7-8642-405C-A5ED-64DA214FB859}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0ECA6AD7-8642-405C-A5ED-64DA214FB859}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0ECA6AD7-8642-405C-A5ED-64DA214FB859}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0ECA6AD7-8642-405C-A5ED-64DA214FB859}.Debug|x86.Build.0 = Debug|Any CPU
+		{0ECA6AD7-8642-405C-A5ED-64DA214FB859}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0ECA6AD7-8642-405C-A5ED-64DA214FB859}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0ECA6AD7-8642-405C-A5ED-64DA214FB859}.Release|x86.ActiveCfg = Release|Any CPU
+		{0ECA6AD7-8642-405C-A5ED-64DA214FB859}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

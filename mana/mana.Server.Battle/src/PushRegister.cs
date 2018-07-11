@@ -1,11 +1,11 @@
-﻿using mana.Foundation.Network.Sever;
+﻿using mana.Foundation.Network.Server;
 using xxd.battle;
 
 namespace mana.Server.Battle
 {
-    class PushRegister : IPushRegister
+    class PushRegister : IPushProtoRegister
     {
-        public void RegistPushMessage()
+        public void RegistPushProto()
         {
             ProtocolManager.AddProtoPush<BattleSync>("Battle.Sync");
         }

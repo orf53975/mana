@@ -1,6 +1,7 @@
 ﻿using BattleSystem;
 using mana.Foundation;
-using mana.Foundation.Network.Sever;
+using mana.Foundation.Network.Server;
+using mana.Network.TCP.Sever;
 using System;
 using System.Collections.Concurrent;
 using System.Net;
@@ -9,7 +10,7 @@ using xxd.battle;
 
 namespace mana.Server.Battle
 {
-    class BattleServer : IOCPServer, BattleScene.IPlayerMessagePusher
+    class BattleServer : TCPServer, BattleScene.IPlayerMessagePusher
     {
         public static BattleServer StartNew(CustomSevSetting setting)
         {

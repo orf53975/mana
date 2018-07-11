@@ -10,7 +10,7 @@ namespace mana.Foundation
 
         private readonly ReaderWriterLockSlim _lockSlim = new ReaderWriterLockSlim();
 
-        internal TValue GetValue(TKey key)
+        internal TValue GetValue(TKey key, TValue defaultValue = default(TValue))
         {
             try
             {
@@ -29,7 +29,7 @@ namespace mana.Foundation
             {
                 _lockSlim.ExitReadLock();
             }
-            return default(TValue);
+            return defaultValue;
         }
 
         internal bool TryAdd(TKey key, TValue value)
@@ -37,10 +37,6 @@ namespace mana.Foundation
             try
             {
                 _lockSlim.EnterWriteLock();
-                //if (!_dictionary.ContainsKey(key))
-                //{
-              
-                //}
                 _dictionary.Add(key, value);
                 return true;
             }

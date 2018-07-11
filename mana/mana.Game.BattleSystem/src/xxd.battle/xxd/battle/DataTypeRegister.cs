@@ -1,12 +1,12 @@
-﻿using mana.Foundation.Network.Sever;
+﻿using mana.Foundation.Network.Server;
 using xxd.battle.opration;
 using xxd.game;
 namespace xxd.battle
 {
-	/// <summary>
-	/// Auto Gen
-	/// </summary>
-	class DataTypeRegister : IDataTypeRegister
+    /// <summary>
+    /// Auto Gen
+    /// </summary>
+    class DataTypeRegister : IDataTypeRegister
     {
 		public void RegistDataType()
 		{

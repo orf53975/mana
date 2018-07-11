@@ -1,8 +1,8 @@
-﻿using mana.Foundation.Network.Sever;
+﻿using mana.Foundation.Network.Server;
 
 namespace mana.Server.Battle
 {
-    class CustomSevSetting : SevSetting
+    class CustomSevSetting : ServerSetting
     {
         public int battleMaxNum = 128;
     }

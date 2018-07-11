@@ -3,25 +3,18 @@
     public abstract class RefCounter
     {
         private int _refCount = 1;
-        public int RefCount
-        {
-            get
-            {
-                return _refCount;
-            }
-        }
 
         protected void Normalize()
         {
             _refCount = 1;
         }
 
-        public void Retain(object refOwner = null)
+        public void Retain()
         {
             _refCount++;
         }
 
-        public void Release(object refOwner = null)
+        public void Release()
         {
             _refCount--;
             if (_refCount < 0)
