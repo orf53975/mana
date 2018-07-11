@@ -1,5 +1,6 @@
 ﻿using mana.Foundation;
 using mana.Foundation.Network.Client;
+using mana.Network.TCP.Client;
 using System;
 using System.Net;
 using xxd.game;

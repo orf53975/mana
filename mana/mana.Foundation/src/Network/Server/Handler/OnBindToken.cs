@@ -7,27 +7,27 @@ namespace mana.Foundation.Network.Server
     {
         public void Process(UserToken token, Packet packet)
         {
-            //var server = token.GetServer<IOCPServer>();
-            //// -- 1 gen  uid
-            //var accountInfo = packet.TryGet<AccountInfo>();
-            //var uId = server.GenUID(accountInfo);
-            //accountInfo.ReleaseToCache();
-            //// -- 2 kick old 
-            //server.TryKick(uId);
-            //// -- 3 bind uid
-            //var error = token.TryBind(uId);
-            //if (error == null)
-            //{
-            //    token.SendResponse<Result>("Connector.BindToken", packet.msgRequestId,
-            //        (response) =>
-            //        {
-            //            response.code = Result.Code.sucess;
-            //        });
-            //}
-            //else
-            //{
-            //    Logger.Error(error);
-            //}
+            var server = token.server;
+            // -- 1 gen  uid
+            var accountInfo = packet.TryGet<AccountInfo>();
+            var uId = server.GenUID(accountInfo);
+            accountInfo.ReleaseToCache();
+            // -- 2 kick old 
+            server.TryKick(uId);
+            // -- 3 bind uid
+            var error = token.TryBind(uId);
+            if (error == null)
+            {
+                token.SendResponse<Result>("Connector.BindToken", packet.msgRequestId,
+                    (response) =>
+                    {
+                        response.code = Result.Code.sucess;
+                    });
+            }
+            else
+            {
+                Logger.Error(error);
+            }
         }
     }
 }

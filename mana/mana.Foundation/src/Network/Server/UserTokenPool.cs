@@ -47,9 +47,9 @@ namespace mana.Foundation.Network.Server
             return null;
         }
 
-        public void WaitOne()
+        public bool WaitOne()
         {
-            acceptedClientsSemaphore.WaitOne();
+            return acceptedClientsSemaphore.WaitOne();
         }
 
         void Bind(int tokenIndex)

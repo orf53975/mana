@@ -1,13 +1,14 @@
-﻿using mana.Foundation.Network.Sever;
+﻿using mana.Foundation.Network.Server;
+using mana.Network.TCP.Sever;
 using System;
 using System.Net;
 using System.Threading;
 
 namespace mana.Server.Test
 {
-    class MainServer : IOCPServer
+    class MainServer : TCPServer
     {
-        public static MainServer StartNew(SevSetting setting)
+        public static MainServer StartNew(ServerSetting setting)
         {
             var sev = new MainServer(setting);
             var ipa = string.IsNullOrEmpty(setting.host) ? IPAddress.Any : IPAddress.Parse(setting.host);
@@ -15,7 +16,7 @@ namespace mana.Server.Test
             return sev;
         }
 
-        private MainServer(SevSetting setting) : base(setting)
+        private MainServer(ServerSetting setting) : base(setting)
         {
             StartUpdateThread();
         }

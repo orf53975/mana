@@ -1,5 +1,5 @@
 ﻿using mana.Foundation;
-using mana.Foundation.Network.Sever;
+using mana.Foundation.Network.Server;
 using xxd.game;
 
 namespace mana.Server.Game.Handler.Request

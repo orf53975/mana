@@ -58,6 +58,10 @@
       <Project>{c063a433-472f-40c2-b01b-c698911a3c77}</Project>
       <Name>mana.Game.BattleSystem</Name>
     </ProjectReference>
+    <ProjectReference Include="..\mana.Network.TCP\mana.Network.TCP.csproj">
+      <Project>{0eca6ad7-8642-405c-a5ed-64da214fb859}</Project>
+      <Name>mana.Network.TCP</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

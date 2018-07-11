@@ -32,8 +32,8 @@ namespace mana.Test.Client
 
                 lock (clients)
                 {
-                    ForeachClient(tc => tc.Channel.Disconnect());
-                    clients.Clear();
+                    //ForeachClient(tc => tc.Channel.Disconnect());
+                    //clients.Clear();
                     clients.Add(uid, ntc);
                 }
 

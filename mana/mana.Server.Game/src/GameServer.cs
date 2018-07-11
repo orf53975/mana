@@ -1,5 +1,5 @@
 ﻿using mana.Foundation;
-using mana.Foundation.Network.Sever;
+using mana.Network.TCP.Sever;
 using mana.Server.Game.BattleLink;
 using System;
 using System.Net;
@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace mana.Server.Game
 {
-    class GameServer : IOCPServer
+    class GameServer : TCPServer
     {
         public static GameServer StartNew(AppSetting setting)
         {

@@ -1,4 +1,4 @@
-﻿using mana.Foundation.Network.Sever;
+﻿using mana.Foundation.Network.Server;
 using Newtonsoft.Json;
 
 namespace mana.Server.Test
@@ -7,15 +7,15 @@ namespace mana.Server.Test
     {
         #region <<AppSetting>>
         private const string appSettingFile = "sev.setting.json";
-        private static SevSetting _appSetting = null;
-        internal static SevSetting AppSetting
+        private static ServerSetting _appSetting = null;
+        internal static ServerSetting AppSetting
         {
             get
             {
                 if (_appSetting == null)
                 {
-                    _appSetting = ConfigUtil.LoadOrNewSave<SevSetting>(appSettingFile,
-                        (str) => JsonConvert.DeserializeObject<SevSetting>(str),
+                    _appSetting = ConfigUtil.LoadOrNewSave<ServerSetting>(appSettingFile,
+                        (str) => JsonConvert.DeserializeObject<ServerSetting>(str),
                         (cfg) => JsonConvert.SerializeObject(cfg, Formatting.Indented));
                 }
                 return _appSetting;

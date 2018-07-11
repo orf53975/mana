@@ -1,6 +1,6 @@
 ﻿using mana.Foundation;
 using mana.Foundation.Network.Client;
-using System.Threading;
+using mana.Network.TCP.Client;
 using xxd.game;
 
 namespace mana.Test.Client

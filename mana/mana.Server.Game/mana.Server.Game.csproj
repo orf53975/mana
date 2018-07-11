@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\mana.Foundation\mana.Foundation.csproj" />
     <ProjectReference Include="..\mana.Game.BattleSystem\mana.Game.BattleSystem.csproj" />
+    <ProjectReference Include="..\mana.Network.TCP\mana.Network.TCP.csproj" />
   </ItemGroup>
 
 </Project>

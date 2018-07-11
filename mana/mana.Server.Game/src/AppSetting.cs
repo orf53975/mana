@@ -1,8 +1,8 @@
-﻿using mana.Foundation.Network.Sever;
+﻿using mana.Foundation.Network.Server;
 
 namespace mana.Server.Game
 {
-    class AppSetting : SevSetting
+    class AppSetting : ServerSetting
     {
         public string name = "测试服1";
 

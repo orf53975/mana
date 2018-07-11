@@ -1,4 +1,4 @@
-﻿using mana.Foundation.Network.Sever;
+﻿using mana.Foundation.Network.Server;
 using Newtonsoft.Json;
 
 namespace mana.Server.Game
